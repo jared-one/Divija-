@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Divija | A Birthday Celebration</title>
+    <meta name="description" content="A birthday celebration for someone divine">
+    <style>
+        :root {
+            --void: #030305;
+            --deep: #050510;
+            --starlight: #e8e8ff;
+            --celestial: #9d4edd;
+            --divine: #c77dff;
+            --cyan: #00d4ff;
+            --gold: #ffd700;
+            --text: rgba(255,255,255,0.92);
+            --text-dim: rgba(255,255,255,0.5);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+
+        body {
+            background: var(--void);
+            color: var(--starlight);
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        /* === PRELOADER === */
+        #preloader {
+            position: fixed; inset: 0;
+            background: var(--void);
+            z-index: 3000;
+            display: grid; place-items: center;
+            transition: opacity 0.6s, visibility 0.6s;
+        }
+        #preloader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader { width: 44px; height: 44px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--divine); border-radius: 50%; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === CANVAS === */
+        #cosmos { position: fixed; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 100%, #0c0c18 0%, var(--void) 70%); }
+
+        /* === CURSOR === */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
+            .cursor { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%; }
+            .cursor-dot { width: 5px; height: 5px; background: #fff; }
+            .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.4); margin: -13.5px 0 0 -13.5px; transition: transform 0.1s, border-color 0.2s; }
+            a:hover ~ .cursor-ring, button:hover ~ .cursor-ring { transform: scale(1.4); border-color: var(--divine); }
+        }
+
+        /* === GATEWAY === */
+        #gateway {
+            position: fixed; inset: 0;
+            background: var(--void);
+            z-index: 1000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 24px;
+            transition: opacity 1.4s ease-out, visibility 1.4s;
+        }
+        #gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .g-date { font-size: 0.7rem; letter-spacing: 0.6em; color: var(--cyan); opacity: 0.5; text-transform: uppercase; margin-bottom: 2.5rem; animation: fadeUp 1s ease 0.3s both; }
+        .g-title { font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 300; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.3rem; animation: fadeUp 1s ease 0.5s both; }
+        .g-name { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 400; background: linear-gradient(100deg, var(--divine), var(--cyan), var(--divine)); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fadeUp 1s ease 0.7s both, shimmer 5s linear infinite; }
+        .g-meaning { font-size: 0.85rem; font-style: italic; color: var(--text-dim); letter-spacing: 0.2em; margin-top: 0.4rem; margin-bottom: 3.5rem; animation: fadeUp 1s ease 0.9s both; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shimmer { to { background-position: 200% center; } }
+
+        .enter-btn {
+            padding: 1rem 3rem; background: transparent;
+            border: 1px solid rgba(255,255,255,0.12);
+            color: var(--starlight); font-family: inherit; font-size: 0.8rem;
+            letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative; overflow: hidden;
+            animation: fadeUp 1s ease 1.2s both;
+        }
+        .enter-btn:hover { border-color: var(--divine); box-shadow: 0 0 50px rgba(157,78,221,0.2), inset 0 0 30px rgba(157,78,221,0.08); transform: translateY(-2px); letter-spacing: 0.35em; }
+        .enter-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: translateX(-100%); }
+        .enter-btn:hover::after { transform: translateX(100%); transition: transform 0.7s; }
+
+        /* === MAIN CONTENT === */
+        #journey {
+            max-width: 820px; margin: 0 auto;
+            padding: 90px 28px 150px;
+            opacity: 0; transform: translateY(35px);
+            transition: opacity 1.6s ease, transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        #journey.visible { opacity: 1; transform: translateY(0); }
+
+        /* Reveal animation */
+        .rv { opacity: 0; transform: translateY(25px); transition: opacity 0.9s ease, transform 0.9s ease; }
+        .rv.show { opacity: 1; transform: translateY(0); }
+
+        /* === HERO === */
+        .hero { text-align: center; padding: 30px 0 70px; }
+        .hero-pre { font-size: 0.75rem; letter-spacing: 0.5em; color: var(--cyan); opacity: 0.6; text-transform: uppercase; margin-bottom: 1.2rem; }
+        .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 300; line-height: 1.3; }
+        .hero-name { display: block; font-size: clamp(2.8rem, 8vw, 5.2rem); font-weight: 400; background: linear-gradient(120deg, var(--divine), var(--starlight), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.15; margin-top: 0.2rem; }
+        .hero-sub { font-size: 0.95rem; letter-spacing: 0.4em; color: var(--text-dim); font-style: italic; margin-top: 1.2rem; }
+        .divider { width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--celestial), transparent); margin: 55px auto; }
+
+        /* === PLAYER === */
+        .player {
+            background: rgba(255,255,255,0.012); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.035); border-radius: 18px;
+            padding: 26px 28px; max-width: 340px; margin: 0 auto 90px; text-align: center;
+        }
+        .track-name { font-size: 1rem; color: var(--starlight); margin-bottom: 3px; }
+        .track-artist { font-size: 0.72rem; color: rgba(255,255,255,0.3); font-style: italic; margin-bottom: 18px; }
+        #visualizer { display: flex; align-items: flex-end; justify-content: center; gap: 3px; height: 50px; }
+        .vb { width: 3px; background: linear-gradient(to top, var(--celestial), var(--cyan)); border-radius: 2px; min-height: 3px; will-change: height; transition: height 0.07s linear; }
+
+        /* === GALLERY === */
+        .gallery { display: grid; gap: 14px; margin: 80px 0; }
+        @media (min-width: 580px) {
+            .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 18px; }
+            .gf-p { grid-row: 1 / 3; }
+        }
+        .gf {
+            position: relative; overflow: hidden; border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.015);
+            transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.4s ease;
+        }
+        .gf:hover { transform: translateY(-5px) scale(1.008); box-shadow: 0 30px 60px rgba(0,0,0,0.45); border-color: rgba(157,78,221,0.2); }
+        .gf img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s ease, transform 0.7s ease; }
+        .gf img.ld { opacity: 1; }
+        .gf:hover img { transform: scale(1.06); }
+        .gf::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.55) 100%); pointer-events: none; opacity: 0; transition: opacity 0.4s; }
+        .gf:hover::after { opacity: 1; }
+        .gf-p { aspect-ratio: 3 / 4.2; }
+        .gf-l { aspect-ratio: 16 / 10; }
+        @media (max-width: 579px) { .gf-p { aspect-ratio: 4 / 5; max-height: 420px; } }
+        .gf-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.18); font-size: 0.75rem; letter-spacing: 0.1em; }
+
+        /* === LETTER === */
+        .letter-wrap { margin: 90px 0; }
+        .letter {
+            background: linear-gradient(160deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.032) 100%);
+            padding: clamp(28px, 6vw, 58px); padding-left: clamp(32px, 7vw, 65px);
+            border-left: 2px solid var(--celestial); position: relative;
+        }
+        .letter::before { content: '"'; position: absolute; top: 15px; left: 18px; font-size: 3.5rem; color: var(--celestial); opacity: 0.12; font-family: Georgia, serif; line-height: 1; }
+        .letter p { margin-bottom: 1.9rem; line-height: 2.05; font-size: clamp(0.98rem, 2.1vw, 1.1rem); color: var(--text); }
+        .letter p:last-child { margin-bottom: 0; }
+
+        /* Highlights */
+        .hl { color: var(--cyan); }
+        .hlg { color: var(--divine); text-shadow: 0 0 25px rgba(199,125,255,0.25); }
+        .hlw { color: var(--starlight); font-weight: 500; }
+        .hlgd { color: var(--gold); font-weight: 500; }
+
+        /* === CLOSING === */
+        .closing { text-align: center; padding: 70px 0 30px; }
+        .sig { font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 4.5vw, 2.8rem); background: linear-gradient(120deg, var(--cyan), var(--divine)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2.5rem; }
+        .ms { margin-bottom: 2.5rem; }
+        .ms-num { display: block; font-size: 2.2rem; font-weight: 300; color: var(--divine); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+        .ms-txt { font-size: 0.78rem; letter-spacing: 0.4em; color: rgba(255,255,255,0.35); text-transform: uppercase; }
+        .punch { font-size: 0.95rem; color: rgba(255,255,255,0.65); line-height: 1.9; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); max-width: 460px; margin: 0 auto; }
+        .daddy { display: inline-block; color: var(--gold); font-weight: 600; text-shadow: 0 0 18px rgba(255,215,0,0.45); letter-spacing: 0.05em; animation: glow 2.5s ease-in-out infinite alternate; }
+        @keyframes glow { from { text-shadow: 0 0 18px rgba(255,215,0,0.45); } to { text-shadow: 0 0 28px rgba(255,215,0,0.7), 0 0 40px rgba(255,215,0,0.3); } }
+
+        /* === UTILITIES === */
+        .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="preloader"><div class="loader"></div></div>
+    <div class="cursor cursor-dot"></div>
+    <div class="cursor cursor-ring"></div>
+    <canvas id="cosmos"></canvas>
+
+    <section id="gateway">
+        <p class="g-date">A Special Day</p>
+        <h1 class="g-title">Happy Birthday</h1>
+        <p class="g-name">Divija</p>
+        <p class="g-meaning">"Born from Heaven"</p>
+        <button class="enter-btn" id="enterBtn">Begin Journey</button>
+    </section>
+
+    <main id="journey">
+        <header class="hero rv">
+            <p class="hero-pre">A Celebration of</p>
+            <h1 class="hero-title">My Beloved<span class="hero-name">Divija</span></h1>
+            <p class="hero-sub">The One Written in Stars</p>
+            <div class="divider"></div>
+        </header>
+
+        <section class="player rv">
+            <p class="track-name">Fallen Down</p>
+            <p class="track-artist">For you</p>
+            <div id="visualizer"></div>
+            <audio id="audio" loop preload="metadata"><source src="fallen-down.mp3" type="audio/mpeg"></audio>
+        </section>
+
+        <section class="gallery rv">
+            <figure class="gf gf-p" data-src="K1.png"><span class="gf-ph">Loading...</span></figure>
+            <figure class="gf gf-l" data-src="K2.png"><span class="gf-ph">Loading...</span></figure>
+            <figure class="gf gf-l" data-src="K3.png"><span class="gf-ph">Loading...</span></figure>
+        </section>
+
+        <section class="letter-wrap rv">
+            <article class="letter">
+                <p><span class="hlg">Divija</span> — your name holds the whisper of the cosmos: <span class="hl">"born from heaven."</span> After everything we have been through, I finally understand why the universe chose that name for you. Not because you are untouchable, but because you carry a fire within that could only be <span class="hlw">celestial</span> in origin.</p>
+                
+                <p>When we first met, it was not gentle. You were <span class="hl">sharp</span>. Guarded. I looked at you and thought: impossible. This stubborn, fierce presence that seemed to test every boundary, every patience I had. You spoke with edges. You walked with walls. Honestly? I was ready to walk away.</p>
+                
+                <p>But something made me <span class="hlw">stay</span>.</p>
+                
+                <p>And staying was the best decision I ever made. Behind that fortress — behind the independence you wear like armor, behind the sharp tongue that keeps the world at arm's length — I discovered someone <span class="hlg">extraordinary</span>. A mind that dances with numbers like poetry. A work ethic that puts entire rooms to shame. A heart so fiercely protected because it feels more deeply than you will ever admit.</p>
+                
+                <p>You look in mirrors and count flaws. I look at you and see a <span class="hl">constellation</span> — each point of light a quality you dismiss too easily. Your <span class="hlw">brilliance</span> in mathematics is not just skill; it is art. Your strength is not stubbornness; it is <span class="hlg">resilience</span>. Your directness is not rudeness; it is honesty in a world drowning in pretense.</p>
+                
+                <p><span class="hlgd">One year.</span> 365 days of learning you. Of writing notes about you that you may never see. Of watching you fight battles with the world and yourself. Of seeing you evolve from someone who swung swords at everything into someone who has learned when to wield the blade and when to extend a hand.</p>
+                
+                <p>You have reached a <span class="hlg">milestone</span>, my love — not just in age, but in spirit. The maturity that has quietly blossomed in you allows me to rest my heart in yours with a trust I never knew I could give. You have changed. <span class="hlw">Beautifully. Powerfully. Intentionally.</span> And I have witnessed every step.</p>
+                
+                <p>So on this day — the day the universe chose to gift itself with you — I celebrate not just your birth, but your <span class="hl">becoming</span>. The becoming that continues to unfold. The becoming I am honored to witness.</p>
+                
+                <p>Happy Birthday, my <span class="hlg">divine</span> one. My tough cookie. My star.</p>
+            </article>
+        </section>
+
+        <footer class="closing rv">
+            <p class="sig">Forever Yours</p>
+            <div class="ms"><span class="ms-num">1</span><span class="ms-txt">Year Together</span></div>
+            <p class="punch">As much as you may hate to hear this:<br>I will always be <span class="daddy">DADDY</span></p>
+        </footer>
+    </main>
+
+    <script>
+    'use strict';
+    (()=>{
+    /* ═══════════════════════════════════════════════════════════
+       FINAL DRAFT: Optimized Functional Programming Architecture
+       - TypeScript-style JSDoc typing
+       - Immutable patterns where practical
+       - Lazy evaluation, memoization
+       - Robust error handling
+       - Optimal performance algorithms
+    ═══════════════════════════════════════════════════════════ */
+
+    // ─── PURE UTILITIES ────────────────────────────────────────
+    const clamp = (min, max) => v => v < min ? min : v > max ? max : v;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const rand = (a, b) => Math.random() * (b - a) + a;
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
+    const times = n => fn => { const r = []; for(let i = 0; i < n; i++) r.push(fn(i)); return r; };
+
+    // Safe promise wrapper (Result type pattern)
+    const tryCatch = async p => { try { return [await p, null]; } catch(e) { return [null, e]; } };
+
+    // Throttle for resize events
+    const throttle = (fn, ms) => { let t = 0; return (...a) => { const n = Date.now(); if(n - t >= ms) { t = n; fn(...a); } }; };
+
+    // ─── COSMOS RENDERER ───────────────────────────────────────
+    const Cosmos = (() => {
+        const canvas = $('#cosmos');
+        if(!canvas) return { init:()=>{}, warp:()=>{} };
+        const ctx = canvas.getContext('2d');
+        let W = 0, H = 0, stars = [], speed = 1, target = 1, raf = 0;
+
+        const resize = () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; };
+        
+        const makeStar = init => ({ x: (Math.random()-0.5)*W*2, y: (Math.random()-0.5)*H*2, z: init ? rand(1,2000) : 2000, s: rand(0.4,1.6), c: Math.random()>0.9?'#00d4ff':'#fff' });
+        
+        const draw = () => {
+            ctx.fillStyle = 'rgba(3,3,5,0.18)';
+            ctx.fillRect(0,0,W,H);
+            speed = lerp(speed, target, 0.012);
+            
+            for(let i = 0, l = stars.length; i < l; i++) {
+                const st = stars[i];
+                st.z -= speed;
+                if(st.z < 1) { st.x = (Math.random()-0.5)*W*2; st.y = (Math.random()-0.5)*H*2; st.z = 2000; }
+                const k = 550 / st.z;
+                const x = st.x * k + W/2;
+                const y = st.y * k + H/2;
+                if(x > -5 && x < W+5 && y > -5 && y < H+5) {
+                    ctx.globalAlpha = clamp(0,1)((2000-st.z)/1100);
+                    ctx.fillStyle = st.c;
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.max(0.4, k*st.s), 0, 6.2832);
+                    ctx.fill();
+                }
+            }
+            raf = requestAnimationFrame(draw);
+        };
+
+        return {
+            init: () => { resize(); addEventListener('resize', throttle(resize, 120)); stars = 
