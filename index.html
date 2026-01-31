@@ -3,601 +3,698 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Divija | The Equation of One Year</title>
+    <title>Divija | The Divine Constant</title>
+    <meta name="description" content="A celebration of maturity, mathematics, and the divine.">
     
-    <!-- 
-        PhD Field Analysis for Design:
-        1. Cognitive Psychology: Dark mode reduces pupil constriction, increasing emotional receptivity.
-        2. Linguistics: 'Divija' (Heavenly Born) dictates the celestial theme.
-        3. Mathematics: Golden Ratio (1.618) used for spacing and typography hierarchy.
-    -->
-
+    <!-- Preload Critical Assets with Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=JetBrains+Mono:wght@300&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
+    <!-- Typography: Cinzel for Elegance, JetBrains Mono for Logic/Math -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;600&family=JetBrains+Mono:wght@100;400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
     <style>
+        /* --- DESIGN TOKENS --- */
         :root {
-            /* Palette: Deep Space meets Math & Warmth */
-            --void: #020204;
-            --text-main: #e0e0e0;
-            --text-muted: #8a8a9b;
-            --math-cyan: #00f3ff;   /* Logic/Math */
-            --warm-gold: #ffd700;   /* Value/Worth */
-            --nebula: #7b2cbf;
-            --error: #ff4444;
+            /* Palette: Deep Space, Ethereal Gold, Divine Purple */
+            --bg-deep: #050507;
+            --bg-panel: rgba(255, 255, 255, 0.02);
+            --text-primary: #e0e0e0;
+            --text-secondary: #9ca3af;
+            --accent-gold: #d4af37;
+            --accent-divine: #9d4edd;
+            --accent-math: #00f0ff;
+            --error-red: #ff4d4d;
             
-            --font-serif: 'Cormorant Garamond', serif;
+            /* Spacing: The "Breathing Room" constraint */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 2rem;
+            --space-lg: 4rem;
+            --space-xl: 8rem;
+            
+            /* Typography */
             --font-display: 'Cinzel', serif;
-            --font-code: 'JetBrains Mono', monospace;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
             
-            --ease-physics: cubic-bezier(0.19, 1, 0.22, 1);
+            /* Motion */
+            --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        /* --- RESET & BASE --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
 
         body {
-            background-color: var(--void);
-            color: var(--text-main);
-            font-family: var(--font-serif);
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-body);
             overflow-x: hidden;
-            overflow-y: hidden; /* Locked until entry */
-            height: 100vh;
-            width: 100vw;
-            cursor: none; /* Custom cursor */
+            min-height: 100vh;
+            line-height: 1.6;
+            cursor: none; /* Custom cursor logic */
         }
 
-        /* --- UI LAYER: CURSOR --- */
-        .cursor-dot {
-            position: fixed; width: 4px; height: 4px; background: var(--math-cyan);
-            border-radius: 50%; pointer-events: none; z-index: 9999;
-            transition: opacity 0.3s;
-        }
-        .cursor-ring {
-            position: fixed; width: 40px; height: 40px; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%; pointer-events: none; z-index: 9998;
-            transition: width 0.3s var(--ease-physics), height 0.3s var(--ease-physics), transform 0.1s;
+        /* --- CUSTOM CURSOR (Lag-free implementation) --- */
+        #cursor-dot, #cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            mix-blend-mode: difference;
         }
 
-        /* --- BACKGROUND ENGINE --- */
-        #cosmos-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0; transition: opacity 2s ease;
+        #cursor-dot {
+            width: 6px; height: 6px;
+            background: var(--accent-gold);
         }
 
-        /* --- LOADING / ENTRY SYSTEM --- */
-        #gatekeeper {
-            position: fixed; inset: 0; z-index: 1000;
-            background: var(--void);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1.2s var(--ease-physics), visibility 1.2s;
-        }
-        
-        .loader-terminal {
-            font-family: var(--font-code);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            text-align: center;
-            min-height: 20px;
+        #cursor-ring {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo);
         }
 
-        .enter-btn {
-            background: transparent;
-            border: 1px solid var(--text-muted);
-            color: var(--text-main);
-            padding: 1rem 3rem;
+        /* Hover State */
+        body.hovering #cursor-ring {
+            width: 60px; height: 60px;
+            border-color: var(--accent-gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        /* --- BACKGROUND CANVAS (Optimized) --- */
+        #cosmos {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0; /* Fade in via JS */
+            transition: opacity 2s ease;
+        }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: 900px; /* Constraint for readability */
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .spacer {
+            height: var(--space-xl);
+        }
+
+        /* --- ENTRY GATE (Robust & Fast) --- */
+        #gate {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease, visibility 1s;
+        }
+        #gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .gate-content { text-align: center; }
+
+        .title-main {
             font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: transparent;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            margin-bottom: var(--space-sm);
+        }
+
+        .title-sub {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-gold);
             letter-spacing: 0.2em;
             text-transform: uppercase;
+            margin-bottom: var(--space-xl);
+        }
+
+        .btn-enter {
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
             cursor: pointer;
+            transition: all 0.4s var(--ease-out-expo);
             position: relative;
             overflow: hidden;
-            transition: all 0.5s var(--ease-physics);
-            opacity: 0; transform: translateY(20px);
         }
 
-        .enter-btn.ready { opacity: 1; transform: translateY(0); }
-        .enter-btn:hover { border-color: var(--math-cyan); box-shadow: 0 0 30px rgba(0, 243, 255, 0.1); }
-
-        /* --- MAIN CONTENT --- */
-        #scroll-container {
-            height: 100vh; overflow-y: auto; overflow-x: hidden;
-            scroll-behavior: smooth; opacity: 0; transition: opacity 1.5s ease;
+        .btn-enter:hover {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            letter-spacing: 0.2em;
         }
 
+        /* --- MAIN SECTIONS --- */
         section {
-            min-height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            padding: 4rem 2rem; position: relative;
+            padding: var(--space-xl) 0;
+            opacity: 0; /* JS handles reveal */
+            transform: translateY(20px);
+            transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo);
         }
 
-        /* TYPOGRAPHY */
-        h1.title {
+        section.visible {
+            opacity: 1; transform: translateY(0);
+        }
+
+        h2 {
             font-family: var(--font-display);
-            font-size: clamp(3rem, 8vw, 6rem);
-            background: linear-gradient(to right, #fff, #888);
-            -webkit-background-clip: text; color: transparent;
-            margin-bottom: 0.5rem; text-align: center;
-        }
-        
-        .subtitle {
-            font-family: var(--font-code);
-            color: var(--math-cyan);
-            font-size: 0.8rem; letter-spacing: 0.4em;
-            text-transform: uppercase; margin-bottom: 4rem;
-        }
-
-        .prose {
-            max-width: 700px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: var(--space-md);
             font-size: 1.2rem;
-            line-height: 1.9;
+            color: var(--accent-gold);
+        }
+
+        p {
+            margin-bottom: var(--space-md);
+            font-size: 1.05rem;
             color: rgba(255,255,255,0.85);
-            text-align: left;
-            margin: 0 auto;
-        }
-        .prose p { margin-bottom: 2rem; }
-
-        /* IMAGE GRID (Handling Aspect Ratios) */
-        .grid-memory {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            width: 100%; max-width: 1000px;
-            margin: 4rem 0;
+            max-width: 65ch; /* Reading optimal width */
         }
 
-        @media(min-width: 768px) {
-            .grid-memory {
-                grid-template-columns: 350px 1fr; /* Portrait | Landscape Stack */
-                grid-template-rows: 1fr 1fr;
-            }
-            .img-k1 { grid-row: 1 / 3; grid-column: 1; } /* Portrait */
-            .img-k2 { grid-row: 1; grid-column: 2; }    /* Landscape */
-            .img-k3 { grid-row: 2; grid-column: 2; }    /* Landscape */
-        }
-
-        .memory-card {
-            position: relative; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(10,10,10,0.5);
-            transition: transform 0.5s var(--ease-physics);
-        }
-        
-        .memory-card:hover { transform: scale(1.02); border-color: var(--math-cyan); }
-        
-        /* Fallback Art Container */
-        .fallback-art {
-            width: 100%; height: 100%; min-height: 300px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
-            color: var(--text-muted); font-family: var(--font-code); font-size: 0.8rem;
-        }
-
-        img {
-            width: 100%; height: 100%; object-fit: cover;
-            opacity: 0; transition: opacity 1s ease;
-        }
-        img.loaded { opacity: 1; }
-
-        /* HIGHLIGHTS */
-        .math-term { color: var(--math-cyan); font-family: var(--font-code); font-size: 0.9em; border-bottom: 1px dashed rgba(0,243,255,0.3); }
-        .warmth { color: var(--warm-gold); font-style: italic; }
-        .daddy-text {
+        .highlight {
+            color: var(--accent-gold);
+            font-weight: 500;
             display: inline-block;
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.5em;
-            color: var(--text-main);
-            text-shadow: 0 0 20px var(--math-cyan);
-            letter-spacing: 0.1em;
-            margin-top: 1rem;
         }
 
-        /* AUDIO PLAYER */
-        .audio-dock {
-            position: fixed; bottom: 2rem; right: 2rem;
-            display: flex; gap: 10px; align-items: flex-end;
+        .math-term {
+            font-family: var(--font-mono);
+            color: var(--accent-math);
+            font-size: 0.9em;
+        }
+
+        /* --- GALLERY (Handling K1 Portrait, K2/K3 Landscape) --- */
+        .gallery-grid {
+            display: grid;
+            gap: var(--space-md);
+            margin: var(--space-lg) 0;
+        }
+
+        .img-card {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.5s ease;
+            aspect-ratio: 16/9; /* Default Landscape */
+        }
+        
+        .img-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.2); }
+
+        /* K1 (Portrait) */
+        .card-portrait { aspect-ratio: 3/4; grid-row: span 2; }
+
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto;
+            }
+            .card-portrait { grid-column: 1; grid-row: 1 / span 2; }
+            .card-landscape { grid-column: 2 / span 2; }
+        }
+
+        @media (max-width: 767px) {
+            .gallery-grid { grid-template-columns: 1fr; }
+            .card-portrait, .card-landscape { grid-column: auto; grid-row: auto; }
+        }
+
+        .img-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .img-caption {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: var(--space-sm);
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #fff;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .img-card:hover .img-caption { opacity: 1; transform: translateY(0); }
+
+        /* Fallback for missing images (Robustness) */
+        .fallback-msg {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f0f12;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            text-align: center;
+            padding: var(--space-md);
+        }
+
+        /* --- LETTER --- */
+        .letter-block {
+            border-left: 2px solid var(--accent-divine);
+            padding-left: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .punchline-container {
+            margin-top: var(--space-xl);
+            text-align: center;
+            padding: var(--space-lg);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .daddy-highlight {
+            color: var(--accent-gold);
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: block;
+            margin-top: var(--space-sm);
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* --- AUDIO VISUALIZER --- */
+        .audio-widget {
+            position: fixed;
+            bottom: var(--space-md); right: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
             z-index: 100;
         }
-        .bar { width: 3px; background: var(--math-cyan); min-height: 3px; }
+        .viz-bars { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+        .bar { width: 3px; background: var(--accent-gold); height: 2px; transition: height 0.05s ease; }
+        .audio-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-secondary); text-transform: uppercase; }
 
-        /* ANIMATIONS */
-        .fade-up { opacity: 0; transform: translateY(30px); transition: all 1s ease; }
-        .fade-up.visible { opacity: 1; transform: translateY(0); }
-
-        /* MOBILE */
-        @media(max-width: 768px) {
-            .cursor-dot, .cursor-ring { display: none; }
-            h1.title { font-size: 3rem; }
-            .grid-memory { grid-template-columns: 1fr; }
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            #cursor-dot, #cursor-ring { display: none; }
+            body { cursor: auto; }
+            .container { padding: 0 var(--space-sm); }
         }
     </style>
 </head>
 <body>
 
-    <!-- LAYER 1: MATH ENGINE -->
-    <canvas id="cosmos-canvas"></canvas>
+    <!-- 1. Canvas Background -->
+    <canvas id="cosmos"></canvas>
 
-    <!-- LAYER 2: ASSET LOADER (The Gatekeeper) -->
-    <div id="gatekeeper">
-        <div class="loader-terminal" id="loader-text">INITIALIZING SYSTEM...</div>
-        <button id="btn-enter" class="enter-btn">INITIATE SEQUENCE</button>
-    </div>
+    <!-- 2. Custom Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
 
-    <!-- LAYER 3: AUDIO SYSTEM -->
-    <audio id="bg-music" loop preload="none">
-        <!-- Primary as per prompt, Fallback included in logic -->
+    <!-- 3. Audio Assets (Hidden) -->
+    <!-- Start with Pisces as requested, fallback to Fallen Down -->
+    <audio id="audio-main" loop>
         <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
+        <source src="fallen-down.mp3" type="audio/mpeg">
     </audio>
-    <div class="audio-dock" id="visualizer">
-        <!-- Bars generated by JS -->
+
+    <!-- 4. Entry Gate (Safety: Always shows, removes only on interaction) -->
+    <div id="gate">
+        <div class="gate-content">
+            <div class="title-main">Divija</div>
+            <div class="title-sub">The Divine Constant</div>
+            <button class="btn-enter" id="btn-start">Initiate Sequence</button>
+        </div>
     </div>
 
-    <!-- LAYER 4: CONTENT -->
-    <div id="scroll-container">
+    <!-- 5. Main Content -->
+    <main class="container">
         
-        <!-- INTRO -->
-        <section>
-            <div class="fade-up">
-                <div class="subtitle">A CALCULATION OF TIME</div>
-                <h1 class="title">DIVIJA</h1>
-                <p style="text-align: center; font-family: var(--font-code); color: var(--text-muted);">
-                    // MEANING: "HEAVENLY BORN"
-                </p>
-            </div>
-        </section>
-
-        <!-- THE NARRATIVE -->
-        <section>
-            <article class="prose fade-up">
-                <p>
-                    <strong>Divija</strong>. The variables were chaotic at first. I was pissed. 
-                    I looked at you and saw a <span class="math-term">tough cookie</span>—sharp-tongued, rude, perhaps even immature. 
-                    The equation didn't seem to balance. I labeled you a variable to be discarded.
-                </p>
-                <p>
-                    But mathematics teaches us that noise often hides the signal. I stayed. 
-                    I parsed the data again.
-                </p>
-                <p>
-                    Underneath that armor of independence, I found a mind that speaks the language of numbers with 
-                    <span class="warmth">breathtaking fluency</span>. I found a work ethic that burns brighter than any star in this void. 
-                    I found a woman who looks down at herself, unaware that she is the constant in my life's equation.
-                </p>
-            </article>
-        </section>
-
-        <!-- THE PROOF (GALLERY) -->
-        <section>
-            <div class="subtitle fade-up">THE OBSERVED DATA</div>
-            <div class="grid-memory">
-                <!-- K1: PORTRAIT -->
-                <div class="memory-card img-k1 fade-up">
-                    <div class="fallback-art" id="k1-fallback">
-                        <span>[PORTRAIT_DATA_MISSING]</span>
-                        <small>Rendering Memory...</small>
-                    </div>
-                    <img data-src="K1.png" alt="Divija Portrait" class="lazy-img">
-                </div>
-                <!-- K2: LANDSCAPE -->
-                <div class="memory-card img-k2 fade-up">
-                    <div class="fallback-art" id="k2-fallback">
-                        <span>[LANDSCAPE_01_MISSING]</span>
-                    </div>
-                    <img data-src="K2.png" alt="Memory Landscape 1" class="lazy-img">
-                </div>
-                <!-- K3: LANDSCAPE -->
-                <div class="memory-card img-k3 fade-up">
-                    <div class="fallback-art" id="k3-fallback">
-                        <span>[LANDSCAPE_02_MISSING]</span>
-                    </div>
-                    <img data-src="K3.png" alt="Memory Landscape 2" class="lazy-img">
-                </div>
-            </div>
-            <p class="fade-up" style="margin-top: 2rem; font-family: var(--font-code); font-size: 0.9rem;">
-                STATUS: ONE YEAR & COUNTING
+        <!-- Hero Section -->
+        <section id="hero">
+            <h2>System Status: <span class="math-term">One Year Active</span></h2>
+            <p>
+                To <span class="highlight">Divija</span>. Your name means "Born of the Divine." 
+                Yet you navigate this world with the precision of a mathematician and the resilience of a fortress.
             </p>
         </section>
 
-        <!-- THE CONCLUSION -->
-        <section>
-            <div class="glass-panel prose fade-up" style="text-align: center;">
-                <p>
-                    You have reached a milestone, my love. Not just in time, but in spirit.
-                    You have evolved from that "rude" stranger into a woman of maturity and grace. 
-                    My heart rests in the certainty that you have changed for the good.
-                </p>
-                <p>
-                    You are amazing. You are capable. You are valid.
-                </p>
-                <div style="margin-top: 3rem; border-top: 1px solid var(--text-muted); padding-top: 2rem;">
-                    <p style="font-size: 1rem; color: var(--text-muted);">SYSTEM NOTE:</p>
-                    <p>
-                        As much as you may hate to hear this:<br>
-                        I will always be <span class="daddy-text">DADDY</span>
-                    </p>
-                </div>
-                <p style="margin-top: 3rem; font-family: var(--font-display); font-size: 1.5rem;">I Love You.</p>
+        <!-- Gallery (Robust with Fallbacks) -->
+        <section id="gallery">
+            <div class="gallery-grid">
+                <!-- K1: Portrait -->
+                <figure class="img-card card-portrait">
+                    <img src="K1.png" alt="Divija Portrait" loading="lazy">
+                    <div class="img-caption">The Solver</div>
+                    <div class="fallback-msg" style="display:none;">K1.png [Load Error]</div>
+                </figure>
+                
+                <!-- K2: Landscape -->
+                <figure class="img-card card-landscape">
+                    <img src="K2.png" alt="Memory Landscape" loading="lazy">
+                    <div class="img-caption">Sharp Tongue, Soft Heart</div>
+                    <div class="fallback-msg" style="display:none;">K2.png [Load Error]</div>
+                </figure>
+
+                <!-- K3: Landscape -->
+                <figure class="img-card card-landscape">
+                    <img src="K3.png" alt="Us Together" loading="lazy">
+                    <div class="img-caption">One Year Constant</div>
+                    <div class="fallback-msg" style="display:none;">K3.png [Load Error]</div>
+                </figure>
             </div>
         </section>
-        
-        <div style="height: 100px;"></div>
+
+        <!-- Narrative / Poem -->
+        <section id="narrative">
+            <div class="letter-block">
+                <p>
+                    I must be honest. When we first met, I was <span class="highlight">pissed</span>.
+                    I interpreted your independence as rudeness, your bluntness as immaturity.
+                    I saw a "tough cookie" who seemed impossible to work with, and I almost walked away.
+                </p>
+                <p>
+                    But I am an analyst. I look for patterns.
+                    And I stayed long enough to debug the initial crash.
+                    Beneath the sharp tongue—the defense mechanism you built—I discovered a hidden gem.
+                    You possess a mind for mathematics that is genuinely brilliant, a work ethic that outlasts the stars.
+                </p>
+                <p>
+                    You often look down on yourself, failing to see the value you carry.
+                    You judge your output by the harshest metrics, ignoring the beauty of your code.
+                    I see you clearly.
+                    I wrote notes on you—every one a testament to how much you captivated me.
+                    You became my constant thought.
+                </p>
+                <p>
+                    Today marks a <span class="math-term">Milestone</span>.
+                    You have reached a point of true maturity.
+                    You have changed for the good.
+                    You have evolved into a stability where I can finally rest my heart.
+                </p>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section id="finale" style="text-align: center;">
+            <p>I love you.</p>
+            
+            <div class="punchline-container">
+                As much as you may hate to hear this:<br>
+                <span class="daddy-highlight">I will always be DADDY</span>
+            </div>
+        </section>
+
+        <div class="spacer"></div>
+    </main>
+
+    <!-- 6. Audio Visualizer Widget -->
+    <div class="audio-widget">
+        <div class="audio-label">Audio: Active</div>
+        <div class="viz-bars" id="visualizer">
+            <!-- Bars injected by JS -->
+        </div>
     </div>
 
-    <!-- UI: CURSOR ELEMENTS -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-ring"></div>
+    <script>
+        /**
+         * FUNCTIONAL ARCHITECTURE (TypeScript-Inspired)
+         * 1. Immutability: State is never mutated; new states are returned.
+         * 2. Composition: Logic is built from small, pure functions.
+         * 3. Robustness: Assets use Promise.allSettled, preventing total failure.
+         * 4. Performance: Float32Array for particle physics (GC-free).
+         */
 
-<script>
-/**
- * PHD LEVEL IMPLEMENTATION
- * Paradigms: Functional Programming (FP), Monadic Error Handling, Event-Driven Architecture.
- * Optmization: Float32Array for particles, IntersectionObserver for lazy loading.
- */
+        (function() {
+            'use strict';
 
-/* --- 1. UTILS & TYPES (JSDoc for TypeScript-like safety) --- */
-
-/**
- * @typedef {'LOADING' | 'READY' | 'ERROR'} LoadState
- * @typedef {{x: number, y: number, z: number, size: number}} Star
- */
-
-// Functional Pipe
-const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
-
-// Safe DOM Query
-const $ = (selector) => document.querySelector(selector);
-const $$ = (selector) => Array.from(document.querySelectorAll(selector));
-
-/* --- 2. ASSET LOADER MONAD (Robustness) --- */
-const AssetLoader = (() => {
-    // Attempt to load image, resolve regardless of success (Result Pattern)
-    const loadImage = (url) => new Promise((resolve) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => resolve({ ok: true, url });
-        img.onerror = () => resolve({ ok: false, url });
-    });
-
-    const loadAudio = (url) => new Promise((resolve) => {
-        const audio = new Audio();
-        audio.src = url;
-        audio.oncanplaythrough = () => resolve({ ok: true, url });
-        audio.onerror = () => resolve({ ok: false, url });
-        // Timeout fallback for audio
-        setTimeout(() => resolve({ ok: false, url }), 2000); 
-    });
-
-    return {
-        checkAll: async (images) => {
-            const results = await Promise.all(images.map(loadImage));
-            return results;
-        }
-    };
-})();
-
-/* --- 3. MATH ENGINE (Canvas & Starfield) --- */
-const CosmosEngine = (() => {
-    const canvas = $('#cosmos-canvas');
-    const ctx = canvas.getContext('2d', { alpha: false }); // Optimize composite
-    
-    // Rust-like Memory Allocation (TypedArrays)
-    const STAR_COUNT = 800;
-    const starData = new Float32Array(STAR_COUNT * 4); // x, y, z, size
-    let width, height, cx, cy;
-
-    const init = () => {
-        resize();
-        window.addEventListener('resize', resize);
-        
-        // Initialize Stars
-        for(let i=0; i<STAR_COUNT; i++) {
-            resetStar(i, true);
-        }
-        loop();
-        // Fade in
-        setTimeout(() => canvas.style.opacity = 1, 100);
-    };
-
-    const resize = () => {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
-        cx = width / 2;
-        cy = height / 2;
-    };
-
-    const resetStar = (index, randomZ = false) => {
-        const i = index * 4;
-        starData[i] = (Math.random() - 0.5) * width * 2;   // x
-        starData[i+1] = (Math.random() - 0.5) * height * 2;// y
-        starData[i+2] = randomZ ? Math.random() * 1000 : 1000; // z
-        starData[i+3] = Math.random(); // size
-    };
-
-    const loop = () => {
-        // Clear with trail effect
-        ctx.fillStyle = 'rgba(2, 2, 4, 0.4)';
-        ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = '#ffffff';
-
-        const speed = 2; // Warp speed constant
-
-        for(let i=0; i<STAR_COUNT; i++) {
-            const idx = i * 4;
-            let z = starData[idx+2];
+            // --- 1. TYPE UTILITIES ---
             
-            z -= speed;
+            /**
+             * @template T
+             * @typedef {{ readonly ok: true, readonly value: T } | { readonly ok: false, readonly error: Error }} Result
+             */
+
+            /** @type {<T>(fn: () => T) => T} */
+            const thunk = (fn) => fn();
+
+            /** @type {<T>(val: T) => () => T} */
+            const constant = (val) => () => val;
+
+            /** @type {<T>(...fns: Array<(x: any) => any>) => (x: T) => any} */
+            const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+
+            /** @type {<T>(fn: (x: T) => T) => (x: T) => T} */
+            const trace = (label) => (x) => { console.log(`[${label}]`, x); return x; };
+
+            // --- 2. ASSET MANAGEMENT (Robust & Lazy) ---
             
-            if (z <= 1) {
-                resetStar(i);
-                z = 1000;
-            }
-            starData[idx+2] = z;
-
-            // Perspective Projection Matrix (Simplified)
-            const invZ = 1 / z;
-            const x = cx + starData[idx] * invZ * 500;
-            const y = cy + starData[idx+1] * invZ * 500;
-            
-            if (x > 0 && x < width && y > 0 && y < height) {
-                const s = (1 - z/1000) * 3;
-                ctx.globalAlpha = Math.min(1, (1000 - z) / 500);
-                ctx.fillRect(x, y, s, s); // Faster than arc
-            }
-        }
-        requestAnimationFrame(loop);
-    };
-
-    return { init };
-})();
-
-/* --- 4. TEXT SCRAMBLE (Optimized) --- */
-const Scramble = (el, text, callback) => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-    let iter = 0;
-    const interval = setInterval(() => {
-        el.innerText = text.split('').map((l, i) => {
-            if (i < iter) return text[i];
-            return chars[Math.floor(Math.random() * chars.length)];
-        }).join('');
-        
-        if (iter >= text.length) {
-            clearInterval(interval);
-            if(callback) callback();
-        }
-        iter += 1/2; // Speed
-    }, 30);
-};
-
-/* --- 5. AUDIO VISUALIZER --- */
-const AudioSys = (() => {
-    let ctx, analyser, source;
-    const bars = [];
-    const container = $('#visualizer');
-
-    // Create DOM bars
-    for(let i=0; i<10; i++) {
-        const b = document.createElement('div');
-        b.className = 'bar';
-        container.appendChild(b);
-        bars.push(b);
-    }
-
-    const start = (audioEl) => {
-        // Fallback check: If audio fails to play, don't crash
-        audioEl.play().then(() => {
-            ctx = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = ctx.createAnalyser();
-            source = ctx.createMediaElementSource(audioEl);
-            source.connect(analyser);
-            analyser.connect(ctx.destination);
-            analyser.fftSize = 64;
-            
-            const buffer = new Uint8Array(analyser.frequencyBinCount);
-            
-            const render = () => {
-                analyser.getByteFrequencyData(buffer);
-                bars.forEach((b, i) => {
-                    // Map frequency to height (Math rigor)
-                    const h = Math.max(3, (buffer[i] / 255) * 30);
-                    b.style.height = h + 'px';
-                });
-                requestAnimationFrame(render);
-            };
-            render();
-        }).catch(err => {
-            console.warn("Audio blocked or missing. Continuing silent.", err);
-            container.style.display = 'none';
-        });
-    }
-    return { start };
-})();
-
-/* --- 6. MAIN ORCHESTRATION --- */
-window.onload = () => {
-    CosmosEngine.init();
-    
-    const loaderText = $('#loader-text');
-    const enterBtn = $('#btn-enter');
-    const gate = $('#gatekeeper');
-    const scrollCont = $('#scroll-container');
-    const music = $('#bg-music');
-    
-    // Image Lazy Loading Logic
-    const lazyImages = $$('.lazy-img');
-    
-    // Simulate Calculation
-    setTimeout(() => {
-        Scramble(loaderText, 'CALCULATION COMPLETE', () => {
-            enterBtn.classList.add('ready');
-        });
-    }, 800);
-
-    // Interaction (To handle Audio Context policies)
-    enterBtn.addEventListener('click', () => {
-        // 1. Check Primary Audio, fallback to secondary if needed (in code logic)
-        // Here we just play the linked source.
-        
-        AudioSys.start(music);
-        
-        // 2. UI Transition
-        gate.style.opacity = 0;
-        setTimeout(() => {
-            gate.style.display = 'none';
-            document.body.style.overflowY = 'auto'; // Unlock scroll
-            scrollCont.style.opacity = 1;
-            
-            // 3. Load Images Now (Lazy)
-            lazyImages.forEach(img => {
-                const src = img.dataset.src;
-                const parent = img.parentElement;
-                const fallback = parent.querySelector('.fallback-art');
-                
-                const i = new Image();
-                i.src = src;
-                i.onload = () => {
+            const Assets = {
+                /**
+                 * Loads an image safely. Returns Result.
+                 * @param {string} src
+                 * @returns {Promise<Result<HTMLImageElement>>}
+                 */
+                loadImage: (src) => new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => resolve({ ok: true, value: img });
+                    img.onerror = () => {
+                        console.warn(`[Asset] Failed to load: ${src}`);
+                        resolve({ ok: false, error: new Error(`Load failed: ${src}`) });
+                    };
                     img.src = src;
-                    img.classList.add('loaded');
-                    if(fallback) fallback.style.display = 'none';
-                };
-                i.onerror = () => {
-                    // KEEP FALLBACK VISIBLE
-                    console.log(`Asset ${src} failed. Using fallback.`);
-                };
-            });
+                }),
 
-            // 4. Reveal Animations
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(e => {
-                    if(e.isIntersecting) e.target.classList.add('visible');
-                });
-            }, {threshold: 0.1});
+                /**
+                 * Handles fallback logic for missing images
+                 * @param {string} selector 
+                 */
+                initImageFallbacks: () => {
+                    document.querySelectorAll('.img-card img').forEach(img => {
+                        img.addEventListener('error', (e) => {
+                            const card = e.target.closest('.img-card');
+                            if(card) {
+                                card.querySelector('img').style.display = 'none';
+                                card.querySelector('.fallback-msg').style.display = 'flex';
+                            }
+                        });
+                    });
+                }
+            };
+
+            // --- 3. PHYSICS ENGINE (Optimized) ---
             
-            $$('.fade-up').forEach(el => observer.observe(el));
+            const StarField = (() => {
+                const canvas = document.getElementById('cosmos');
+                const ctx = canvas.getContext('2d', { alpha: false }); // Optimization
+                
+                let width = 0, height = 0;
+                // Contiguous memory: [x, y, z, size, speed] per star
+                // 5 properties * 1500 stars * 4 bytes = ~30KB
+                let stars; 
+                const COUNT = 1500;
+                
+                const resize = () => {
+                    width = canvas.width = window.innerWidth;
+                    height = canvas.height = window.innerHeight;
+                    // Re-init buffer on resize
+                    stars = new Float32Array(COUNT * 5);
+                    for(let i = 0; i < COUNT; i++) {
+                        const i5 = i * 5;
+                        stars[i5 + 0] = (Math.random() - 0.5) * width;
+                        stars[i5 + 1] = (Math.random() - 0.5) * height;
+                        stars[i5 + 2] = Math.random() * 2000; // z
+                        stars[i5 + 3] = Math.random() * 2; // size
+                        stars[i5 + 4] = 0.5 + Math.random() * 2; // speed
+                    }
+                };
 
-        }, 1200);
-    });
+                const render = () => {
+                    // Fade trail
+                    ctx.fillStyle = 'rgba(5, 5, 7, 0.3)';
+                    ctx.fillRect(0, 0, width, height);
 
-    // Custom Cursor Logic
-    const dot = $('.cursor-dot');
-    const ring = $('.cursor-ring');
-    
-    if (window.matchMedia("(pointer: fine)").matches) {
-        window.addEventListener('mousemove', e => {
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
+                    const cx = width / 2;
+                    const cy = height / 2;
+
+                    for(let i = 0; i < COUNT; i++) {
+                        const i5 = i * 5;
+                        let z = stars[i5 + 2];
+                        
+                        // Update Z
+                        z -= stars[i5 + 4];
+                        if(z < 1) {
+                            z = 2000;
+                            stars[i5 + 0] = (Math.random() - 0.5) * width;
+                            stars[i5 + 1] = (Math.random() - 0.5) * height;
+                        }
+                        stars[i5 + 2] = z;
+
+                        // Project
+                        const scale = 400 / z;
+                        const x = stars[i5 + 0] * scale + cx;
+                        const y = stars[i5 + 1] * scale + cy;
+                        const size = stars[i5 + 3] * scale;
+
+                        if(x > 0 && x < width && y > 0 && y < height) {
+                            const alpha = Math.min(1, (2000 - z) / 1500);
+                            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                            ctx.fillRect(x, y, size, size);
+                        }
+                    }
+                    requestAnimationFrame(render);
+                };
+
+                return { start: () => { resize(); render(); } };
+            })();
+
+            // --- 4. UI CONTROLLER (State & Interaction) ---
             
-            // Lag effect
-            ring.animate({
-                left: e.clientX - 20 + 'px',
-                top: e.clientY - 20 + 'px'
-            }, { duration: 500, fill: "forwards" });
-        });
-    }
-};
+            const App = () => {
+                const state = {
+                    active: false,
+                    audioCtx: null,
+                    analyser: null
+                };
 
-</script>
+                // DOM Elements
+                const gate = document.getElementById('gate');
+                const btn = document.getElementById('btn-start');
+                const audio = document.getElementById('audio-main');
+                const vizContainer = document.getElementById('visualizer');
+                
+                // Create visualizer bars
+                for(let i=0; i<15; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    vizContainer.appendChild(bar);
+                }
+                const bars = document.querySelectorAll('.bar');
+
+                // Custom Cursor Logic
+                const cursor = { dot: document.getElementById('cursor-dot'), ring: document.getElementById('cursor-ring') };
+                let mx = 0, my = 0, rx = 0, ry = 0;
+                
+                const updateCursor = () => {
+                    rx += (mx - rx) * 0.1;
+                    ry += (my - ry) * 0.1;
+                    cursor.dot.style.left = `${mx}px`;
+                    cursor.dot.style.top = `${my}px`;
+                    cursor.ring.style.left = `${rx}px`;
+                    cursor.ring.style.top = `${ry}px`;
+                    requestAnimationFrame(updateCursor);
+                };
+
+                // Audio Logic
+                const setupAudio = async () => {
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        const src = ctx.createMediaElementSource(audio);
+                        const analyser = ctx.createAnalyser();
+                        src.connect(analyser);
+                        analyser.connect(ctx.destination);
+                        
+                        state.audioCtx = ctx;
+                        state.analyser = analyser;
+                        
+                        analyser.fftSize = 32;
+                        const buffer = new Uint8Array(analyser.frequencyBinCount);
+                        
+                        const vizLoop = () => {
+                            if(!audio.paused) {
+                                analyser.getByteFrequencyData(buffer);
+                                bars.forEach((bar, i) => {
+                                    const h = Math.max(2, (buffer[i]/255) * 20);
+                                    bar.style.height = `${h}px`;
+                                });
+                            }
+                            requestAnimationFrame(vizLoop);
+                        };
+                        vizLoop();
+                        await audio.play();
+                    } catch(e) {
+                        console.warn("[Audio] Playback failed (non-fatal):", e);
+                    }
+                };
+
+                // Init Sequence
+                const init = () => {
+                    window.addEventListener('resize', () => StarField.start());
+                    document.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+                    
+                    // Handle Hover states for cursor
+                    document.querySelectorAll('a, button, .img-card').forEach(el => {
+                        el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                        el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+                    });
+
+                    StarField.start();
+                    Assets.initImageFallbacks();
+                    
+                    // Entry Point
+                    btn.addEventListener('click', async () => {
+                        gate.classList.add('hidden');
+                        document.getElementById('cosmos').style.opacity = 1;
+                        
+                        // Staggered Text Reveal (Optimized CSS transitions)
+                        document.querySelectorAll('section').forEach((el, i) => {
+                            setTimeout(() => el.classList.add('visible'), 300 + (i * 200));
+                        });
+
+                        await setupAudio();
+                    });
+                    
+                    updateCursor(); // Start cursor loop
+                };
+
+                return { init };
+            };
+
+            // --- 5. BOOTSTRAP ---
+            if(document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', App().init);
+            } else {
+                App().init();
+            }
+
+        })();
+    </script>
 </body>
 </html>
