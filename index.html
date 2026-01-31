@@ -4,1770 +4,796 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Divija | The Entropy of Love</title>
-    <meta name="description" content="Solving the equation from chaos to the divine.">
+    <meta name="description" content="From Chaos to Order.">
     
+    <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@200;400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --void: #050505;
-            --signal: #E0E0E0;
-            --math-cyan: #00F3FF;
-            --warn-red: #FF2A6D;
-            --divine-gold: #FFD700;
-            --purple-glow: #9D00FF;
-            --glitch-offset: 2px;
-            --entropy: 1;
+            --void: #030303;
+            --starlight: #F0F0F0;
+            --cyan-ether: #00F0FF;
+            --red-shift: #FF0055;
+            --gold-horizon: #FFD700;
+            --matrix-green: #0F0;
+            --entropy: 1; /* 1 = Chaos, 0 = Order */
             
-            --font-display: 'Cinzel', serif;
-            --font-ui: 'JetBrains Mono', monospace;
-            --font-body: 'Montserrat', sans-serif;
+            --f-display: 'Cinzel', serif;
+            --f-code: 'JetBrains Mono', monospace;
+            --f-body: 'Montserrat', sans-serif;
+            
+            --grid-gap: 2rem;
         }
 
+        /* --- CORE RESET & BASICS --- */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
+        
+        html, body {
+            width: 100%;
+            height: 100%;
             background-color: var(--void);
-            color: var(--signal);
-            font-family: var(--font-body);
+            color: var(--starlight);
+            font-family: var(--f-body);
             overflow-x: hidden;
-            min-height: 100vh;
-            width: 100vw;
-            cursor: none;
+            cursor: none; /* Custom cursor is mandatory */
         }
+        
+        /* Smooth scrolling with inertia feel handled by JS, but native as fallback */
+        html { scroll-behavior: smooth; }
 
-        /* --- LOADING SCREEN --- */
-        #loader {
+        /* --- 1. THE SINGULARITY (Entrance) --- */
+        #singularity-gate {
             position: fixed;
             inset: 0;
-            z-index: 10000;
+            z-index: 9999;
             background: var(--void);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s, visibility 0.5s;
+            transition: opacity 1.5s cubic-bezier(0.7, 0, 0.3, 1);
         }
-        #loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        .loader-ring {
-            width: 60px;
-            height: 60px;
-            border: 2px solid transparent;
-            border-top-color: var(--math-cyan);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        .loader-ring::before {
-            content: '';
-            position: absolute;
-            inset: 5px;
-            border: 2px solid transparent;
-            border-top-color: var(--warn-red);
-            border-radius: 50%;
-            animation: spin 0.5s linear infinite reverse;
-        }
-        .loader-text {
-            margin-top: 20px;
-            font-family: var(--font-ui);
-            font-size: 0.8rem;
-            color: var(--math-cyan);
-            animation: flicker 0.5s infinite;
-        }
-
-        /* --- SPRITE (Enhanced Cursor) --- */
-        #sprite-core {
-            position: fixed;
+        
+        .singularity-point {
             width: 8px;
             height: 8px;
-            background: var(--math-cyan);
+            background: var(--starlight);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            box-shadow: 0 0 10px var(--math-cyan), 0 0 20px var(--math-cyan);
-            transition: transform 0.05s, width 0.2s, height 0.2s, background 0.3s;
-            mix-blend-mode: screen;
-        }
-        #sprite-field {
-            position: fixed;
-            width: 60px;
-            height: 60px;
-            border: 1px dashed rgba(255,255,255,0.2);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: all 0.15s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: 0 0 20px var(--starlight), 0 0 50px var(--cyan-ether);
+            cursor: none;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: breathe 3s infinite ease-in-out;
+            position: relative;
         }
         
-        /* Cursor Trail */
-        .cursor-trail {
-            position: fixed;
-            width: 6px;
-            height: 6px;
-            background: var(--math-cyan);
+        .singularity-point::after {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-        }
-
-        /* Sprite States */
-        body.stabilizing #sprite-field {
-            border-color: var(--divine-gold);
-            transform: scale(1.5);
-            background: rgba(255, 215, 0, 0.05);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-        }
-        body.corrupted #sprite-core {
-            background: var(--warn-red);
-            box-shadow: 0 0 15px var(--warn-red), 0 0 30px var(--warn-red);
-        }
-        body.corrupted #sprite-field {
-            border-color: var(--warn-red);
-            border-style: solid;
-            animation: pulse-ring 1s infinite;
+            animation: spin-slow 10s linear infinite;
         }
         
-        /* Sprite hover states */
-        body.hovering-interactive #sprite-core {
-            width: 12px;
-            height: 12px;
-            background: var(--divine-gold);
+        .click-hint {
+            margin-top: 40px;
+            font-family: var(--f-code);
+            font-size: 0.8rem;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            animation: flicker 2s infinite;
         }
-        body.hovering-interactive #sprite-field {
-            transform: scale(1.8);
-            border-color: var(--divine-gold);
-        }
-
-        /* --- DIGITAL RAIN (Matrix Effect) --- */
-        #digital-rain {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            opacity: 0.15;
+        
+        /* Explosion Animation Class */
+        body.bang #singularity-gate {
+            opacity: 0;
             pointer-events: none;
         }
-
-        /* --- FLOW FIELD (The Universe) --- */
-        #flow-field {
+        
+        /* --- 2. BACKEND VISUALS --- */
+        #universe-canvas {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0;
-            transition: opacity 2s ease;
+            opacity: 0; /* Hidden until Big Bang */
+            transition: opacity 2s ease-in;
         }
+        body.bang #universe-canvas { opacity: 1; }
 
-        /* --- PARALLAX LAYERS --- */
-        .parallax-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .floating-symbol {
-            position: absolute;
-            font-family: var(--font-ui);
-            color: var(--math-cyan);
-            opacity: 0.1;
-            font-size: 2rem;
-            animation: float 10s infinite ease-in-out;
-            will-change: transform;
-        }
-
-        /* --- HUD OVERLAY --- */
-        .hud-overlay {
+        /* --- 3. UI OVERLAY --- */
+        .hud {
             position: fixed;
             top: 2rem;
             left: 2rem;
             right: 2rem;
             display: flex;
             justify-content: space-between;
-            font-family: var(--font-ui);
-            font-size: 0.7rem;
-            color: var(--math-cyan);
-            z-index: 500;
+            align-items: flex-start;
             pointer-events: none;
-            mix-blend-mode: exclusion;
+            z-index: 100;
+            mix-blend-mode: difference;
+            opacity: 0;
+            transition: opacity 1s 1s;
         }
-        
-        .sys-label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .sys-label::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--math-cyan);
-            border-radius: 50%;
-            animation: blink 2s infinite;
-        }
-        
-        .entropy-meter {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .entropy-bar {
-            width: 150px;
-            height: 6px;
-            background: rgba(255,255,255,0.1);
-            position: relative;
-            overflow: hidden;
-            border-radius: 3px;
-        }
-        .entropy-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, var(--math-cyan), var(--warn-red));
-            transform-origin: left;
-            transform: scaleX(1);
-            transition: transform 0.1s linear;
-            border-radius: 3px;
-        }
-        .entropy-fill::after {
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -2px;
-            width: 2px;
-            height: 10px;
-            background: white;
-            box-shadow: 0 0 10px white;
-            animation: pulse 0.5s infinite;
-        }
-        
-        .entropy-value {
-            min-width: 50px;
-            text-align: right;
-        }
+        body.bang .hud { opacity: 1; }
 
-        /* Corner Decorations */
-        .corner-deco {
-            position: fixed;
-            width: 100px;
-            height: 100px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            pointer-events: none;
-            z-index: 400;
-        }
-        .corner-deco.tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
-        .corner-deco.tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
-        .corner-deco.bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
-        .corner-deco.br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
-
-        /* --- ENTRANCE GATE --- */
-        #gate {
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            background: var(--void);
+        .sys-info {
+            font-family: var(--f-code);
+            font-size: 0.75rem;
+            color: var(--cyan-ether);
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 1s ease, transform 1s ease;
-        }
-        #gate.closing {
-            opacity: 0;
-            transform: scale(1.1);
+            gap: 5px;
         }
         
-        .gate-title {
-            font-family: var(--font-display);
-            font-size: clamp(3rem, 10vw, 6rem);
-            margin-bottom: 1rem;
-            position: relative;
-            letter-spacing: 0.3em;
+        .entropy-display {
+            text-align: right;
+            font-family: var(--f-code);
         }
-        
-        /* Enhanced Glitch Effect */
-        .glitch {
-            position: relative;
-            animation: glitch-skew 4s infinite linear alternate-reverse;
-        }
-        .glitch::before,
-        .glitch::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--void);
-        }
-        .glitch::before {
-            left: 2px;
-            text-shadow: -2px 0 var(--warn-red);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
-        }
-        .glitch::after {
-            left: -2px;
-            text-shadow: -2px 0 var(--math-cyan), 2px 2px var(--purple-glow);
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 3s infinite linear alternate-reverse;
-        }
-        
-        .gate-subtitle {
-            font-family: var(--font-ui);
-            color: var(--warn-red);
-            margin-bottom: 2rem;
-            animation: flicker 3s infinite;
-        }
-        
-        .init-btn {
-            background: transparent;
-            border: 1px solid var(--math-cyan);
-            color: var(--math-cyan);
-            padding: 1rem 3rem;
-            font-family: var(--font-ui);
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            cursor: none;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .init-btn::before {
-            content: '';
-            position: absolute;
+        .entropy-label { font-size: 0.7rem; color: var(--red-shift); }
+        .entropy-val { font-size: 1.5rem; font-weight: 700; color: var(--starlight); }
+
+        /* Progress Line */
+        .timeline-track {
+            position: fixed;
+            right: 2rem;
             top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(0, 243, 255, 0.1);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+            transform: translateY(-50%);
+            height: 200px;
+            width: 2px;
+            background: rgba(255,255,255,0.05);
+            z-index: 90;
         }
-        .init-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-        .init-btn:hover {
-            background: rgba(0, 243, 255, 0.1);
-            box-shadow: 0 0 20px var(--math-cyan), 0 0 40px var(--math-cyan), inset 0 0 20px rgba(0, 243, 255, 0.1);
-            transform: scale(1.05);
-        }
-        .init-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Scan Line Animation on Gate */
-        .gate-scanline {
+        .timeline-thumb {
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--math-cyan), transparent);
-            animation: scanline-move 3s linear infinite;
-            opacity: 0.5;
+            left: -1px;
+            width: 4px;
+            height: 20px;
+            background: var(--cyan-ether);
+            box-shadow: 0 0 10px var(--cyan-ether);
+            transition: top 0.1s linear;
         }
 
-        /* --- MAIN CONTENT --- */
-        #scroll-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        /* --- 4. SCROLL CONTENT --- */
+        #main-viewport {
             opacity: 0;
-            transition: opacity 1s ease;
-            position: relative;
-            z-index: 10;
+            transition: opacity 1s 0.5s;
         }
+        body.bang #main-viewport { opacity: 1; }
 
         section {
             min-height: 100vh;
+            padding: 6rem 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
             position: relative;
-            padding: 4rem 0;
         }
 
-        /* Section Markers */
-        .section-marker {
-            font-family: var(--font-ui);
-            font-size: 0.7rem;
-            color: var(--math-cyan);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .section-marker::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(90deg, var(--math-cyan), transparent);
-            max-width: 200px;
-        }
-
-        /* Headers with enhanced effects */
+        /* Typography */
         h1, h2 {
-            font-family: var(--font-display);
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            position: relative;
-            color: var(--signal);
+            font-family: var(--f-display);
+            color: var(--starlight);
+            line-height: 1.1;
             margin-bottom: 2rem;
         }
+        h1 { font-size: clamp(3rem, 8vw, 6rem); }
+        h2 { font-size: clamp(2rem, 5vw, 4rem); }
         
-        h2 {
-            font-size: clamp(2rem, 5vw, 3rem);
-        }
-
-        /* Text Reveal Animation */
-        .reveal-text {
-            overflow: hidden;
-        }
-        .reveal-text span {
-            display: inline-block;
-            transform: translateY(100%);
-            opacity: 0;
-            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.8s;
-        }
-        .reveal-text.visible span {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* THE MEMORY GRID */
-        .memory-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 4rem;
-            margin: 4rem 0;
-        }
-        @media(min-width: 768px) {
-            .memory-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .mem-portrait {
-                grid-row: span 2;
-            }
-        }
-
-        .memory-unit {
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: opacity 1s ease, transform 1s ease, border-color 0.5s;
-            cursor: none;
-            background: #0a0a0a;
-        }
-        
-        .memory-unit.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .memory-unit:hover {
-            border-color: var(--divine-gold);
-        }
-
-        .memory-unit img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .subtitle {
+            font-family: var(--f-code);
+            color: var(--cyan-ether);
+            margin-bottom: 1rem;
             display: block;
-            filter: grayscale(100%) contrast(1.2) brightness(0.8);
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-            transform: scale(1.1);
         }
         
-        /* FIXED: Stabilized state - persists after click */
-        .memory-unit.stabilized img {
-            filter: grayscale(0%) contrast(1.0) brightness(1.0);
-            transform: scale(1);
-        }
-        
-        .memory-unit:hover img {
-            filter: grayscale(50%) contrast(1.1) brightness(0.9);
-            transform: scale(1.05);
-        }
-        
-        .memory-unit.stabilized:hover img {
-            filter: grayscale(0%) contrast(1.05) brightness(1.05);
-            transform: scale(1.02);
-        }
-
-        /* Corruption Overlays */
-        .scanline-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 51%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.5;
-            transition: opacity 0.8s;
-        }
-        .memory-unit.stabilized .scanline-overlay {
-            opacity: 0;
-        }
-        
-        .corruption-overlay {
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 2px,
-                rgba(255, 42, 109, 0.03) 2px,
-                rgba(255, 42, 109, 0.03) 4px
-            );
-            pointer-events: none;
-            z-index: 3;
-            opacity: 1;
-            transition: opacity 0.5s;
-        }
-        .memory-unit.stabilized .corruption-overlay {
-            opacity: 0;
-        }
-        
-        .noise-overlay {
-            position: absolute;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)'/%3E%3C/svg%3E");
-            opacity: 0.08;
-            pointer-events: none;
-            z-index: 4;
-            mix-blend-mode: overlay;
-            transition: opacity 0.5s;
-        }
-        .memory-unit.stabilized .noise-overlay {
-            opacity: 0;
-        }
-
-        .memory-label {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            font-family: var(--font-ui);
-            font-size: 0.7rem;
-            color: var(--warn-red);
-            background: rgba(0,0,0,0.9);
-            padding: 8px 15px;
-            z-index: 5;
-            border-left: 2px solid var(--warn-red);
-            transition: all 0.5s;
-        }
-        .memory-unit.stabilized .memory-label {
-            color: var(--divine-gold);
-            border-left-color: var(--divine-gold);
-        }
-        
-        /* Stabilize prompt */
-        .stabilize-prompt {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--font-ui);
-            font-size: 0.8rem;
-            color: var(--math-cyan);
-            background: rgba(0,0,0,0.8);
-            padding: 10px 20px;
-            border: 1px solid var(--math-cyan);
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        .memory-unit:hover:not(.stabilized) .stabilize-prompt {
-            opacity: 1;
-        }
-
-        /* Click ripple effect */
-        .click-ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--divine-gold) 0%, transparent 70%);
-            transform: scale(0);
-            animation: ripple 0.8s ease-out forwards;
-            pointer-events: none;
-            z-index: 20;
-        }
-
-        /* TEXT STYLES */
-        .narrative {
+        p {
             font-size: 1.1rem;
-            line-height: 2;
-            color: rgba(255,255,255,0.85);
-            max-width: 650px;
+            line-height: 1.8;
+            color: rgba(255,255,255,0.8);
+            max-width: 65ch;
+            margin-bottom: 1.5rem;
         }
-        .narrative p {
-            margin-bottom: 2rem;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .narrative p.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
+
+        /* Highlight Logic */
         .highlight {
-            color: var(--divine-gold);
-            font-weight: 600;
-            text-shadow: 0 0 10px rgba(255,215,0,0.3);
             position: relative;
+            display: inline-block;
+            color: var(--gold-horizon);
+            font-weight: 600;
         }
         .highlight::after {
             content: '';
             position: absolute;
-            bottom: -2px;
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 1px;
-            background: var(--divine-gold);
+            background: var(--gold-horizon);
             transform: scaleX(0);
             transform-origin: right;
-            transition: transform 0.5s;
+            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
         }
         .highlight:hover::after {
             transform: scaleX(1);
             transform-origin: left;
         }
-        
-        .math-term {
-            color: var(--math-cyan);
-            font-family: var(--font-ui);
-            border-bottom: 1px dashed var(--math-cyan);
-            cursor: help;
-            position: relative;
-        }
-        .math-term::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--void);
-            border: 1px solid var(--math-cyan);
-            padding: 5px 10px;
-            font-size: 0.7rem;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
-        }
-        .math-term:hover::before {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(100% + 5px);
+
+        /* --- 5. HOLOGRAPHIC IMAGE GRID (Bento Box) --- */
+        .holo-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-auto-rows: 300px;
+            gap: 2rem;
+            margin: 4rem 0;
+            perspective: 1000px;
         }
 
-        /* THE PUNCHLINE */
-        .sys-out {
-            background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
-            border-left: 3px solid var(--math-cyan);
-            padding: 2rem;
-            margin-top: 3rem;
-            font-family: var(--font-ui);
+        .holo-card {
             position: relative;
+            grid-column: span 12;
+            background: rgba(10,10,10,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
             overflow: hidden;
+            cursor: none;
+            transition: transform 0.3s, border-color 0.3s;
         }
-        .sys-out::before {
-            content: '';
+
+        /* Desktop Layout Logic */
+        @media (min-width: 900px) {
+            .holo-card.portrait { grid-column: span 4; grid-row: span 2; }
+            .holo-card.landscape { grid-column: span 8; grid-row: span 1; }
+            .holo-card.wide { grid-column: span 8; grid-row: span 1; }
+        }
+
+        /* The Image Shard Logic */
+        .holo-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            /* Chaos State */
+            filter: grayscale(100%) contrast(1.2) brightness(0.7);
+            transform: scale(1.1);
+            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        /* Shards (Clip Path overlays) */
+        .shard {
+            position: absolute;
+            inset: 0;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.5;
+            transition: transform 0.5s ease-out;
+            pointer-events: none;
+            mix-blend-mode: hard-light;
+        }
+        
+        .holo-card:not(.stabilized) .shard:nth-child(1) { clip-path: polygon(0 0, 40% 0, 60% 100%, 0% 100%); transform: translate(-5px, 2px); }
+        .holo-card:not(.stabilized) .shard:nth-child(2) { clip-path: polygon(40% 0, 100% 0, 100% 40%, 60% 100%); transform: translate(5px, -2px); }
+        .holo-card:not(.stabilized) .shard:nth-child(3) { clip-path: polygon(100% 40%, 100% 100%, 60% 100%); transform: translate(2px, 5px); }
+        
+        /* Scanline */
+        .scan-bar {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, var(--math-cyan), var(--divine-gold), var(--warn-red));
-            animation: gradient-shift 3s linear infinite;
-            background-size: 200% 100%;
+            height: 4px;
+            background: var(--red-shift);
+            box-shadow: 0 0 15px var(--red-shift);
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* STABILIZED STATE */
+        .holo-card.stabilized {
+            border-color: var(--gold-horizon);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+        }
+        .holo-card.stabilized .holo-content {
+            filter: grayscale(0%) contrast(1) brightness(1);
+            transform: scale(1);
+        }
+        .holo-card.stabilized .shard {
+            transform: translate(0, 0);
+            opacity: 0; /* Hide shards, reveal main image */
+        }
+        .holo-card.stabilized .scan-bar {
+            background: var(--gold-horizon);
+            box-shadow: 0 0 15px var(--gold-horizon);
+            animation: scan-success 1s forwards;
+            opacity: 1;
         }
         
-        .daddy-bold {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            color: var(--math-cyan);
-            font-weight: 700;
+        /* Interactive Prompt */
+        .interact-prompt {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            font-family: var(--f-code);
+            font-size: 0.7rem;
+            background: black;
+            color: var(--red-shift);
+            padding: 0.2rem 0.5rem;
+            border: 1px solid var(--red-shift);
+            z-index: 5;
+            transition: all 0.3s;
+        }
+        .holo-card.stabilized .interact-prompt {
+            color: var(--gold-horizon);
+            border-color: var(--gold-horizon);
+            content: "STABLE";
+        }
+
+        .holo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Crucial: Ensures images fill the bento box */
             display: block;
-            margin-top: 1rem;
-            text-shadow: 2px 2px var(--warn-red), -1px -1px var(--purple-glow);
-            animation: text-glow 2s ease-in-out infinite alternate;
         }
 
-        /* Birthday Message */
-        .birthday-message {
-            margin-top: 3rem;
-            font-family: var(--font-display);
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            color: var(--divine-gold);
-            text-align: center;
-            position: relative;
-        }
-        .birthday-message::before,
-        .birthday-message::after {
-            content: '✧';
-            margin: 0 1rem;
-            animation: sparkle 1.5s ease-in-out infinite;
-        }
-        .birthday-message::after {
-            animation-delay: 0.75s;
-        }
-
-        /* Progress Indicator */
-        #progress-bar {
+        /* --- 6. ADVANCED CURSOR --- */
+        #cursor-sys {
             position: fixed;
             top: 0;
             left: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--warn-red), var(--math-cyan), var(--divine-gold));
-            z-index: 1000;
-            transform-origin: left;
-            transform: scaleX(0);
-            transition: transform 0.1s linear;
-        }
-
-        /* AUDIO VIZ */
-        #audio-viz {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            display: flex;
-            gap: 3px;
-            align-items: flex-end;
-            height: 40px;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
-            z-index: 500;
+            z-index: 99999;
+            mix-blend-mode: difference;
         }
-        .bar {
-            width: 3px;
-            background: var(--math-cyan);
-            height: 2px;
-            border-radius: 2px;
-            transition: background 0.3s;
+        
+        .cursor-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--cyan-ether);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        
+        .cursor-ring {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.1s ease-out;
+        }
+        
+        /* Cursor Interaction States */
+        body.hovering .cursor-dot { width: 10px; height: 10px; background: var(--gold-horizon); }
+        body.hovering .cursor-ring { width: 60px; height: 60px; border-color: var(--gold-horizon); border-style: dashed; animation: rotate-cursor 4s linear infinite; }
+        
+        /* --- 7. FOOTER PUNCHLINE --- */
+        .sys-log {
+            background: rgba(255,255,255,0.03);
+            border-left: 2px solid var(--cyan-ether);
+            padding: 2rem;
+            font-family: var(--f-code);
+            margin-top: 2rem;
+        }
+        .final-msg {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--starlight);
+            text-shadow: 0 0 20px var(--cyan-ether);
+            margin-top: 1rem;
+            display: block;
         }
 
-        /* Floating Action Hint */
-        .scroll-hint {
-            position: fixed;
-            bottom: 3rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-ui);
-            font-size: 0.7rem;
-            color: var(--math-cyan);
-            opacity: 0.5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-            animation: bounce 2s infinite;
-        }
-        .scroll-hint .arrow {
-            width: 20px;
-            height: 20px;
-            border-right: 2px solid var(--math-cyan);
-            border-bottom: 2px solid var(--math-cyan);
-            transform: rotate(45deg);
-        }
+        /* --- KEYFRAMES --- */
+        @keyframes breathe { 0%,100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } }
+        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
+        @keyframes flicker { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } 10%, 90% { opacity: 0.1; } }
+        @keyframes rotate-cursor { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes scan-success { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
-        /* === KEYFRAMES === */
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-            52% { opacity: 0.4; }
-            54% { opacity: 0.9; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        
-        @keyframes pulse-ring {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-        }
-        
-        @keyframes blink {
-            0%, 50%, 100% { opacity: 1; }
-            25%, 75% { opacity: 0.3; }
-        }
-        
-        @keyframes glitch-anim {
-            0% { clip: rect(31px, 9999px, 94px, 0); transform: skew(0.5deg); }
-            5% { clip: rect(70px, 9999px, 71px, 0); transform: skew(0.6deg); }
-            10% { clip: rect(29px, 9999px, 24px, 0); transform: skew(0.95deg); }
-            15% { clip: rect(54px, 9999px, 36px, 0); transform: skew(0.3deg); }
-            20% { clip: rect(2px, 9999px, 48px, 0); transform: skew(0.85deg); }
-            25% { clip: rect(95px, 9999px, 86px, 0); transform: skew(0.75deg); }
-            30% { clip: rect(23px, 9999px, 84px, 0); transform: skew(0.1deg); }
-            35% { clip: rect(15px, 9999px, 63px, 0); transform: skew(0.45deg); }
-            40% { clip: rect(10px, 9999px, 59px, 0); transform: skew(0.9deg); }
-            45% { clip: rect(73px, 9999px, 22px, 0); transform: skew(0.25deg); }
-            50% { clip: rect(62px, 9999px, 31px, 0); transform: skew(0.7deg); }
-            55% { clip: rect(89px, 9999px, 91px, 0); transform: skew(0.55deg); }
-            60% { clip: rect(44px, 9999px, 19px, 0); transform: skew(0.4deg); }
-            65% { clip: rect(51px, 9999px, 11px, 0); transform: skew(0.95deg); }
-            70% { clip: rect(28px, 9999px, 71px, 0); transform: skew(0.15deg); }
-            75% { clip: rect(16px, 9999px, 69px, 0); transform: skew(0.8deg); }
-            80% { clip: rect(80px, 9999px, 43px, 0); transform: skew(0.35deg); }
-            85% { clip: rect(39px, 9999px, 82px, 0); transform: skew(0.65deg); }
-            90% { clip: rect(91px, 9999px, 57px, 0); transform: skew(0.2deg); }
-            95% { clip: rect(68px, 9999px, 35px, 0); transform: skew(0.5deg); }
-            100% { clip: rect(15px, 9999px, 94px, 0); transform: skew(0.85deg); }
-        }
-        
-        @keyframes glitch-anim2 {
-            0% { clip: rect(65px, 9999px, 99px, 0); transform: skew(0.3deg); }
-            5% { clip: rect(19px, 9999px, 71px, 0); transform: skew(0.7deg); }
-            10% { clip: rect(84px, 9999px, 13px, 0); transform: skew(0.15deg); }
-            15% { clip: rect(42px, 9999px, 56px, 0); transform: skew(0.55deg); }
-            20% { clip: rect(91px, 9999px, 28px, 0); transform: skew(0.9deg); }
-            25% { clip: rect(37px, 9999px, 81px, 0); transform: skew(0.2deg); }
-            30% { clip: rect(73px, 9999px, 45px, 0); transform: skew(0.6deg); }
-            35% { clip: rect(58px, 9999px, 67px, 0); transform: skew(0.35deg); }
-            40% { clip: rect(26px, 9999px, 89px, 0); transform: skew(0.8deg); }
-            45% { clip: rect(12px, 9999px, 34px, 0); transform: skew(0.45deg); }
-            50% { clip: rect(79px, 9999px, 52px, 0); transform: skew(0.1deg); }
-            55% { clip: rect(48px, 9999px, 96px, 0); transform: skew(0.75deg); }
-            60% { clip: rect(21px, 9999px, 77px, 0); transform: skew(0.25deg); }
-            65% { clip: rect(93px, 9999px, 41px, 0); transform: skew(0.65deg); }
-            70% { clip: rect(35px, 9999px, 63px, 0); transform: skew(0.4deg); }
-            75% { clip: rect(67px, 9999px, 18px, 0); transform: skew(0.85deg); }
-            80% { clip: rect(54px, 9999px, 88px, 0); transform: skew(0.5deg); }
-            85% { clip: rect(82px, 9999px, 29px, 0); transform: skew(0.95deg); }
-            90% { clip: rect(46px, 9999px, 74px, 0); transform: skew(0.3deg); }
-            95% { clip: rect(71px, 9999px, 55px, 0); transform: skew(0.7deg); }
-            100% { clip: rect(38px, 9999px, 92px, 0); transform: skew(0.15deg); }
-        }
-        
-        @keyframes glitch-skew {
-            0% { transform: skew(0deg); }
-            10% { transform: skew(0.5deg); }
-            20% { transform: skew(-0.3deg); }
-            30% { transform: skew(0.8deg); }
-            40% { transform: skew(-0.2deg); }
-            50% { transform: skew(0.4deg); }
-            60% { transform: skew(-0.6deg); }
-            70% { transform: skew(0.2deg); }
-            80% { transform: skew(-0.4deg); }
-            90% { transform: skew(0.6deg); }
-            100% { transform: skew(0deg); }
-        }
-        
-        @keyframes scanline-move {
-            0% { top: -10%; }
-            100% { top: 110%; }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        @keyframes ripple {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(4); opacity: 0; }
-        }
-        
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-        
-        @keyframes text-glow {
-            from { text-shadow: 2px 2px var(--warn-red), -1px -1px var(--purple-glow), 0 0 10px var(--math-cyan); }
-            to { text-shadow: 2px 2px var(--warn-red), -1px -1px var(--purple-glow), 0 0 20px var(--math-cyan), 0 0 30px var(--math-cyan); }
-        }
-        
-        @keyframes sparkle {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-        }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
-        }
-
-        /* === RESPONSIVE === */
+        /* Mobile Adjustments */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .gate-title { font-size: 2.5rem; letter-spacing: 0.1em; }
-            #sprite-core, #sprite-field, .cursor-trail { display: none; }
+            #cursor-sys { display: none; }
             body { cursor: auto; }
-            .corner-deco { display: none; }
-            .hud-overlay { 
-                flex-direction: column; 
-                gap: 10px;
-                top: 1rem;
-                left: 1rem;
-                right: 1rem;
-            }
-            section { min-height: auto; padding: 3rem 0; }
-            .memory-grid { gap: 2rem; }
+            .holo-card { grid-column: span 12 !important; height: 250px; }
+            h1 { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
-    <!-- LOADING SCREEN -->
-    <div id="loader">
-        <div class="loader-ring"></div>
-        <div class="loader-text">INITIALIZING ENTROPY ENGINE...</div>
-    </div>
 
-    <!-- PROGRESS BAR -->
-    <div id="progress-bar"></div>
-
-    <!-- DIGITAL RAIN -->
-    <canvas id="digital-rain"></canvas>
-
-    <!-- FLOW FIELD -->
-    <canvas id="flow-field"></canvas>
-
-    <!-- PARALLAX FLOATING SYMBOLS -->
-    <div class="parallax-layer" id="parallax-symbols"></div>
-
-    <!-- CORNER DECORATIONS -->
-    <div class="corner-deco tl"></div>
-    <div class="corner-deco tr"></div>
-    <div class="corner-deco bl"></div>
-    <div class="corner-deco br"></div>
-
-    <!-- HUD -->
-    <div class="hud-overlay">
-        <div class="sys-label">SYS.DIVIJA // V.2.0</div>
-        <div class="entropy-meter">
-            <span>ENTROPY:</span>
-            <div class="entropy-bar">
-                <div class="entropy-fill" id="entropy-val"></div>
-            </div>
-            <span class="entropy-value" id="entropy-text">100%</span>
-        </div>
-    </div>
-
-    <!-- ENTRANCE GATE -->
-    <div id="gate">
-        <div class="gate-scanline"></div>
-        <h1 class="gate-title glitch" data-text="DIVIJA">DIVIJA</h1>
-        <p class="gate-subtitle">[WARNING]: High Entropy Detected. System Unstable.</p>
-        <button class="init-btn" id="btn-start">⟨ Stabilize System ⟩</button>
-    </div>
-
-    <!-- AUDIO -->
-    <audio id="bg-music" loop crossorigin="anonymous">
+    <!-- AUDIO SYSTEM -->
+    <audio id="bg-audio" loop preload="auto">
         <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
     </audio>
-    <div id="audio-viz"></div>
 
-    <!-- SCROLL HINT (shown after gate opens) -->
-    <div class="scroll-hint" id="scroll-hint" style="opacity: 0;">
-        <span>SCROLL TO EXPLORE</span>
-        <div class="arrow"></div>
+    <!-- CUSTOM CURSOR -->
+    <div id="cursor-sys">
+        <div class="cursor-dot" id="c-dot"></div>
+        <div class="cursor-ring" id="c-ring"></div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="scroll-container">
+    <!-- 1. ENTRANCE: SINGULARITY -->
+    <div id="singularity-gate">
+        <div class="singularity-point" id="btn-bang"></div>
+        <div class="click-hint">Initialize Reality</div>
+    </div>
+
+    <!-- 2. BACKEND: THE UNIVERSE -->
+    <canvas id="universe-canvas"></canvas>
+
+    <!-- 3. UI OVERLAY -->
+    <div class="hud">
+        <div class="sys-info">
+            <span>SYS.DIVIJA // V.FINAL</span>
+            <span id="coord-disp">X:000 Y:000</span>
+        </div>
+        <div class="entropy-display">
+            <div class="entropy-label">CURRENT ENTROPY</div>
+            <div class="entropy-val" id="entropy-num">100.0%</div>
+        </div>
+    </div>
+    <div class="timeline-track"><div class="timeline-thumb" id="progress-thumb"></div></div>
+
+    <!-- 4. CONTENT SCROLL -->
+    <main id="main-viewport">
         
-        <!-- INTRO -->
-        <section id="sec-origin">
-            <div class="section-marker">&lt;Origin_Point /&gt;</div>
-            <h1 class="reveal-text"><span>The Chaos</span></h1>
-            <div class="narrative">
-                <p>
-                    When our functions first collided, the result was 
-                    <span class="math-term" data-tooltip="NaN - Not a Number">undefined</span>.
-                    I was angry. I saw a "tough cookie" with a firewall so aggressive 
-                    it rejected every packet I sent.
-                    I labeled you: <strong>Rude. Immaturity disguised as strength.</strong>
-                </p>
-                <p>
-                    I prepared to terminate the connection.
-                </p>
-            </div>
-        </section>
-
-        <!-- THE PROOF (Memories) -->
-        <section id="sec-memories">
-            <div class="section-marker" style="color: var(--divine-gold);">&lt;Data_Recovery /&gt;</div>
-            <h2 class="reveal-text"><span>Stabilizing Memories...</span></h2>
-            <p style="font-size: 0.8rem; font-family: var(--font-ui); color: var(--signal); opacity: 0.7; margin-bottom: 2rem;">
-                [INSTRUCTION]: <span style="color: var(--math-cyan);">CLICK</span> on corrupted memories to restore them.
+        <!-- SEC 1: ORIGIN -->
+        <section id="origin">
+            <span class="subtitle">&lt;Origin_Point /&gt;</span>
+            <h1>The Chaos Equation</h1>
+            <p>
+                When our variables first interacted, the output was <span class="highlight">NaN</span> (Not a Number).
+                I saw a "tough cookie" with a firewall so advanced it dropped every packet I sent.
+                I labeled the system: <strong>Rude. Immaturity masked as strength.</strong>
             </p>
-
-            <div class="memory-grid">
-                <!-- K1: Portrait -->
-                <div class="memory-unit mem-portrait lazy-anim" data-index="0">
-                    <div class="scanline-overlay"></div>
-                    <div class="corruption-overlay"></div>
-                    <div class="noise-overlay"></div>
-                    <img data-src="K1.png" alt="Portrait" class="lazy-load">
-                    <div class="memory-label">VAR: RESILIENCE // STATUS: CORRUPTED</div>
-                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
-                </div>
-                <!-- K2: Landscape -->
-                <div class="memory-unit lazy-anim" data-index="1">
-                    <div class="scanline-overlay"></div>
-                    <div class="corruption-overlay"></div>
-                    <div class="noise-overlay"></div>
-                    <img data-src="K2.png" alt="Brilliance" class="lazy-load">
-                    <div class="memory-label">VAR: BRILLIANCE // STATUS: CORRUPTED</div>
-                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
-                </div>
-                <!-- K3: Landscape -->
-                <div class="memory-unit lazy-anim" data-index="2">
-                    <div class="scanline-overlay"></div>
-                    <div class="corruption-overlay"></div>
-                    <div class="noise-overlay"></div>
-                    <img data-src="K3.png" alt="Us" class="lazy-load">
-                    <div class="memory-label">VAR: US // STATUS: CORRUPTED</div>
-                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- THE TRUTH (Letter) -->
-        <section id="sec-analysis">
-            <div class="section-marker">&lt;Analysis_Result /&gt;</div>
-            <div class="narrative">
-                <p>
-                    But mathematics teaches us to solve for 
-                    <span class="math-term" data-tooltip="The unknown variable">X</span>.
-                    I stayed. I debugged the friction. And I found the source code.
-                </p>
-                <p>
-                    Beneath the "rude" exterior lies a mind that weaves mathematics like divine tapestry.
-                    Beneath the "toughness" lies a heart so valuable you had to lock it in a vault.
-                    I found a work ethic that burns brighter than a supernova.
-                </p>
-                <p>
-                    You look down at yourself, calculating errors that don't exist.
-                    But I see the <span class="highlight">Golden Ratio</span> in your soul.
-                </p>
-                <p>
-                    <strong style="color: var(--divine-gold);">Milestone Reached:</strong> Maturity.
-                    You have evolved. You are no longer just the girl with the sharp tongue.
-                    You are the woman who brings peace to my chaos. 
-                    <em>You have changed for the good.</em>
-                </p>
-            </div>
-        </section>
-
-        <!-- THE END (Punchline) -->
-        <section id="sec-conclusion" style="text-align: center;">
-            <div class="sys-out">
-                <p style="opacity: 0.7;">SYSTEM MESSAGE:</p>
-                <p>As much as you may hate to hear this:</p>
-                <span class="daddy-bold">I will always be DADDY</span>
-            </div>
-            <p class="birthday-message">
-                Happy Birthday, Divija.
-            </p>
-            <p style="margin-top: 2rem; font-family: var(--font-ui); font-size: 0.8rem; color: var(--math-cyan); opacity: 0.6;">
-                // With love, from your personal chaos engine
+            <p>
+                I prepared to execute <code>connection.terminate()</code>.
             </p>
         </section>
 
-        <div style="height: 100px;"></div>
-    </div>
+        <!-- SEC 2: EVIDENCE (BENTO GRID) -->
+        <section id="evidence">
+            <span class="subtitle">&lt;Visual_Reconstruction /&gt;</span>
+            <h2>Stabilizing Memories</h2>
+            <p style="font-size: 0.9rem; font-family: var(--f-code); margin-bottom: 2rem; color: var(--red-shift);">
+                [WARNING]: Data corruption detected. Click shards to fuse.
+            </p>
 
-    <!-- SPRITE CURSOR -->
-    <div id="sprite-core"></div>
-    <div id="sprite-field"></div>
-    <div id="cursor-trail-container"></div>
+            <div class="holo-grid">
+                <!-- Image 1: Portrait (Takes tall slot) -->
+                <div class="holo-card portrait" data-status="chaos">
+                    <div class="scan-bar"></div>
+                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
+                    <!-- Main Img -->
+                    <div class="holo-content">
+                        <img src="K1.png" alt="Resilience" class="holo-img lazy">
+                    </div>
+                    <!-- CSS Shards for Effect -->
+                    <div class="shard" style="background-image: url('K1.png')"></div>
+                    <div class="shard" style="background-image: url('K1.png')"></div>
+                    <div class="shard" style="background-image: url('K1.png')"></div>
+                </div>
+
+                <!-- Image 2: Landscape (Wide) -->
+                <div class="holo-card landscape" data-status="chaos">
+                    <div class="scan-bar"></div>
+                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
+                    <div class="holo-content">
+                        <img src="K2.png" alt="Brilliance" class="holo-img lazy">
+                    </div>
+                    <div class="shard" style="background-image: url('K2.png')"></div>
+                    <div class="shard" style="background-image: url('K2.png')"></div>
+                    <div class="shard" style="background-image: url('K2.png')"></div>
+                </div>
+
+                <!-- Image 3: Landscape (Wide) -->
+                <div class="holo-card wide" data-status="chaos">
+                    <div class="scan-bar"></div>
+                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
+                    <div class="holo-content">
+                        <img src="K3.png" alt="The Bond" class="holo-img lazy">
+                    </div>
+                    <div class="shard" style="background-image: url('K3.png')"></div>
+                    <div class="shard" style="background-image: url('K3.png')"></div>
+                    <div class="shard" style="background-image: url('K3.png')"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEC 3: ANALYSIS -->
+        <section id="analysis">
+            <span class="subtitle">&lt;Deep_Learning_Results /&gt;</span>
+            <h2>The Constant</h2>
+            <p>
+                But I ran the calculation again. I solved for <span class="highlight">X</span>.
+                Beneath the "rude" encryption was a mind of geometric perfection.
+                Beneath the "toughness" was a heart so rare it needed a vault.
+            </p>
+            <p>
+                You analyze your reflection and see errors. I see the <span class="highlight">Golden Ratio</span>.
+            </p>
+            <div class="sys-log">
+                <p style="margin:0; font-size: 0.9rem; color: var(--cyan-ether);">>> SYSTEM NOTIFICATION</p>
+                <p style="margin-top: 0.5rem;">Milestone Reached: <strong>MATURITY</strong></p>
+                <p>You have evolved. You are the peace to my chaos.</p>
+            </div>
+        </section>
+
+        <!-- SEC 4: CONCLUSION -->
+        <section id="conclusion" style="text-align: center; align-items: center;">
+            <p style="font-family: var(--f-code); color: var(--red-shift);">[ FINAL MESSAGE ]</p>
+            <p>As much as you might try to rewrite the variable...</p>
+            <span class="final-msg">I will always be DADDY</span>
+            
+            <div style="margin-top: 4rem; position: relative;">
+                <h2 style="color: var(--gold-horizon); text-shadow: 0 0 30px var(--gold-horizon);">Happy Birthday, Divija</h2>
+                <div style="font-family: var(--f-code); font-size: 0.8rem; opacity: 0.5;">End of Line.</div>
+            </div>
+        </section>
+        
+        <div style="height: 20vh;"></div>
+    </main>
 
     <script>
-    /**
-     * ARCHITECTURE: "THE ENTROPY ENGINE V2.0"
-     * ==========================================
-     * 1. Physics Engine - Particle Flow Field + Digital Rain
-     * 2. State Manager - Entropy/Progress tracking
-     * 3. Asset Manager - Lazy loading with SVG fallbacks
-     * 4. Animation Engine - Scroll reveals, parallax
-     * 5. Audio Visualizer - Reactive bars
-     * 6. Input Manager - Enhanced cursor with trails
-     * 7. Memory System - CLICK to stabilize (FIXED)
-     */
-    (function() {
-        'use strict';
+        /**
+         * THE ENTROPY ENGINE V3.0 (Optimized for 60fps)
+         * - Uses TypedArrays for particle data (Zero GC overhead)
+         * - Single Canvas rendering
+         * - Interactive Hologram Logic
+         */
+        (function() {
+            'use strict';
 
-        // === UTILITIES ===
-        const Utils = {
-            lerp: (a, b, t) => a + (b - a) * t,
-            clamp: (val, min, max) => Math.min(Math.max(val, min), max),
-            map: (v, iMin, iMax, oMin, oMax) => (v - iMin) * (oMax - oMin) / (iMax - iMin) + oMin,
-            random: (min, max) => Math.random() * (max - min) + min,
-            noise: (x, y) => {
-                const val = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
-                return val - Math.floor(val);
-            },
-            debounce: (fn, delay) => {
-                let timeout;
-                return (...args) => {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => fn(...args), delay);
-                };
-            },
-            throttle: (fn, limit) => {
-                let inThrottle;
-                return (...args) => {
-                    if (!inThrottle) {
-                        fn(...args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                };
-            }
-        };
-
-        // === GLOBAL STATE ===
-        const State = {
-            entropy: 1.0,
-            progress: 0,
-            width: window.innerWidth,
-            height: window.innerHeight,
-            mouseX: window.innerWidth / 2,
-            mouseY: window.innerHeight / 2,
-            isGateOpen: false,
-            stabilizedMemories: 0,
-            totalMemories: 3,
-            audioContext: null,
-            analyser: null
-        };
-
-        // === DOM CACHE ===
-        const DOM = {
-            loader: document.getElementById('loader'),
-            gate: document.getElementById('gate'),
-            btnStart: document.getElementById('btn-start'),
-            container: document.getElementById('scroll-container'),
-            flowField: document.getElementById('flow-field'),
-            digitalRain: document.getElementById('digital-rain'),
-            entropyFill: document.getElementById('entropy-val'),
-            entropyText: document.getElementById('entropy-text'),
-            progressBar: document.getElementById('progress-bar'),
-            scrollHint: document.getElementById('scroll-hint'),
-            spriteCore: document.getElementById('sprite-core'),
-            spriteField: document.getElementById('sprite-field'),
-            trailContainer: document.getElementById('cursor-trail-container'),
-            audioViz: document.getElementById('audio-viz'),
-            parallaxSymbols: document.getElementById('parallax-symbols'),
-            memoryUnits: null // Will be set after DOM ready
-        };
-
-        // === 1. DIGITAL RAIN ENGINE ===
-        const DigitalRain = (() => {
-            const canvas = DOM.digitalRain;
-            const ctx = canvas.getContext('2d');
-            const chars = 'DIVIJA01∞∑∫√πφΔΩ♡✧⟨⟩';
-            let columns = [];
-            let fontSize = 14;
-
-            const init = () => {
-                resize();
-                window.addEventListener('resize', Utils.debounce(resize, 200));
-                loop();
+            // --- CONFIG ---
+            const CONFIG = {
+                particleCount: 1500, // High density possible due to optimization
+                baseSpeed: 0.5,
+                connectionRadius: 100,
+                colors: ['#00F0FF', '#FF0055', '#FFD700', '#FFFFFF']
             };
 
-            const resize = () => {
-                canvas.width = State.width = window.innerWidth;
-                canvas.height = State.height = window.innerHeight;
-                const columnCount = Math.floor(canvas.width / fontSize);
-                columns = new Array(columnCount).fill(0).map(() => Utils.random(0, canvas.height));
+            // --- STATE ---
+            const state = {
+                entropy: 1.0, // 1 = chaos, 0 = order
+                mx: window.innerWidth / 2,
+                my: window.innerHeight / 2,
+                scrollProg: 0,
+                width: window.innerWidth,
+                height: window.innerHeight,
+                active: false
             };
 
-            const loop = () => {
-                // Fade effect - darker when more entropy
-                const alpha = Utils.map(State.entropy, 0, 1, 0.03, 0.08);
-                ctx.fillStyle = `rgba(5, 5, 5, ${alpha})`;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Color based on entropy
-                const hue = Utils.map(State.entropy, 0, 1, 180, 340); // Cyan to Red
-                ctx.fillStyle = `hsla(${hue}, 100%, 60%, 0.8)`;
-                ctx.font = `${fontSize}px monospace`;
-
-                for (let i = 0; i < columns.length; i++) {
-                    const char = chars[Math.floor(Math.random() * chars.length)];
-                    const x = i * fontSize;
-                    const y = columns[i];
-
-                    ctx.fillText(char, x, y);
-
-                    // Reset column randomly or when off screen
-                    if (y > canvas.height && Math.random() > 0.98) {
-                        columns[i] = 0;
-                    }
-                    columns[i] += fontSize * (0.5 + State.entropy * 0.5);
-                }
-
-                requestAnimationFrame(loop);
+            // --- DOM ---
+            const dom = {
+                canvas: document.getElementById('universe-canvas'),
+                ctx: document.getElementById('universe-canvas').getContext('2d', { alpha: false }),
+                bangBtn: document.getElementById('btn-bang'),
+                audio: document.getElementById('bg-audio'),
+                entropyNum: document.getElementById('entropy-num'),
+                coord: document.getElementById('coord-disp'),
+                cards: document.querySelectorAll('.holo-card'),
+                cursor: {
+                    dot: document.getElementById('c-dot'),
+                    ring: document.getElementById('c-ring')
+                },
+                progress: document.getElementById('progress-thumb')
             };
 
-            return { init };
-        })();
+            // --- PARTICLE SYSTEM (Optimized) ---
+            // Structure: [x, y, vx, vy, size, colorIndex, life]
+            const STRIDE = 7;
+            const particles = new Float32Array(CONFIG.particleCount * STRIDE);
 
-        // === 2. FLOW FIELD ENGINE ===
-        const FlowField = (() => {
-            const canvas = DOM.flowField;
-            const ctx = canvas.getContext('2d', { alpha: false });
-            const PARTICLE_COUNT = Math.min(800, Math.floor(window.innerWidth * window.innerHeight / 2500));
-            
-            // Optimized typed arrays
-            const positions = new Float32Array(PARTICLE_COUNT * 2);
-            const velocities = new Float32Array(PARTICLE_COUNT * 2);
-            const speeds = new Float32Array(PARTICLE_COUNT);
-
-            const init = () => {
-                resize();
-                window.addEventListener('resize', Utils.debounce(resize, 200));
+            function initParticles() {
+                dom.canvas.width = state.width;
+                dom.canvas.height = state.height;
                 
-                // Initialize particles
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    resetParticle(i);
+                for(let i = 0; i < CONFIG.particleCount; i++) {
+                    const idx = i * STRIDE;
+                    resetParticle(idx, true);
                 }
-                loop();
-            };
+            }
 
-            const resize = () => {
-                canvas.width = State.width = window.innerWidth;
-                canvas.height = State.height = window.innerHeight;
-            };
+            function resetParticle(idx, randomStart = false) {
+                // Spawn from center if not random start (Big Bang effect)
+                if (!randomStart) {
+                    particles[idx] = state.width / 2;
+                    particles[idx + 1] = state.height / 2;
+                } else {
+                    particles[idx] = Math.random() * state.width;
+                    particles[idx + 1] = Math.random() * state.height;
+                }
+                
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * CONFIG.baseSpeed + 0.2;
+                
+                particles[idx + 2] = Math.cos(angle) * speed; // vx
+                particles[idx + 3] = Math.sin(angle) * speed; // vy
+                particles[idx + 4] = Math.random() * 2; // size
+                particles[idx + 5] = Math.floor(Math.random() * CONFIG.colors.length); // color
+                particles[idx + 6] = Math.random(); // life phase
+            }
 
-            const resetParticle = (i) => {
-                positions[i * 2] = Math.random() * State.width;
-                positions[i * 2 + 1] = Math.random() * State.height;
-                speeds[i] = Utils.random(0.5, 2);
-            };
+            function render() {
+                // Clear with trails
+                dom.ctx.fillStyle = `rgba(3, 3, 3, ${0.1 + state.entropy * 0.2})`;
+                dom.ctx.fillRect(0, 0, state.width, state.height);
 
-            const loop = () => {
-                // Trail effect
-                const alpha = Utils.map(State.entropy, 0, 1, 0.02, 0.15);
-                ctx.fillStyle = `rgba(5, 5, 5, ${alpha})`;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Dynamic color
-                const r = Math.floor(Utils.map(State.entropy, 0, 1, 0, 255));
-                const g = Math.floor(Utils.map(State.entropy, 0, 1, 243, 42));
-                const b = Math.floor(Utils.map(State.entropy, 0, 1, 255, 109));
-                ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
-
-                const noiseScale = Utils.map(State.entropy, 0, 1, 0.001, 0.008);
-                const time = performance.now() * 0.0001;
-
-                for (let i = 0; i < PARTICLE_COUNT; i++) {
-                    const idx = i * 2;
-                    let x = positions[idx];
-                    let y = positions[idx + 1];
-                    const speed = speeds[i];
-
-                    // Noise-based angle
-                    const angle = Utils.noise(x * noiseScale + time, y * noiseScale) * Math.PI * 4;
-
-                    // Mouse influence
-                    const dx = x - State.mouseX;
-                    const dy = y - State.mouseY;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
+                const time = Date.now() * 0.001;
+                
+                for(let i = 0; i < CONFIG.particleCount; i++) {
+                    const idx = i * STRIDE;
                     
-                    if (dist < 150 && dist > 0) {
-                        const force = (150 - dist) / 150;
-                        positions[idx] += (dx / dist) * force * 3;
-                        positions[idx + 1] += (dy / dist) * force * 3;
+                    // Update
+                    let vx = particles[idx + 2];
+                    let vy = particles[idx + 3];
+                    
+                    // Noise/Flow field approximation
+                    const noise = Math.sin(particles[idx] * 0.002 + time) * Math.cos(particles[idx + 1] * 0.002);
+                    
+                    // Entropy influence: High entropy = erratic, Low entropy = aligned
+                    if (state.entropy > 0.5) {
+                        vx += noise * 0.05;
+                        vy += noise * 0.05;
+                    } else {
+                        // Order: Circular gentle motion
+                        vx += (state.mx - particles[idx]) * 0.0001;
+                        vy += (state.my - particles[idx + 1]) * 0.0001;
                     }
 
-                    // Update position
-                    const entropy_speed = 1 + State.entropy * 2;
-                    positions[idx] += Math.cos(angle) * speed * entropy_speed;
-                    positions[idx + 1] += Math.sin(angle) * speed * entropy_speed;
+                    particles[idx] += vx * (1 + state.entropy * 2);
+                    particles[idx + 1] += vy * (1 + state.entropy * 2);
 
-                    // Wrap around
-                    if (positions[idx] > State.width) positions[idx] = 0;
-                    if (positions[idx] < 0) positions[idx] = State.width;
-                    if (positions[idx + 1] > State.height) positions[idx + 1] = 0;
-                    if (positions[idx + 1] < 0) positions[idx + 1] = State.height;
+                    // Bounds wrap
+                    if(particles[idx] < 0 || particles[idx] > state.width || 
+                       particles[idx+1] < 0 || particles[idx+1] > state.height) {
+                        resetParticle(idx, true);
+                    }
 
                     // Draw
-                    const size = Utils.map(State.entropy, 0, 1, 2, 1);
-                    ctx.fillRect(positions[idx], positions[idx + 1], size, size);
+                    const colorHex = CONFIG.colors[particles[idx+5]];
+                    dom.ctx.fillStyle = colorHex;
+                    dom.ctx.beginPath();
+                    dom.ctx.arc(particles[idx], particles[idx+1], particles[idx+4], 0, Math.PI*2);
+                    dom.ctx.fill();
                 }
 
-                requestAnimationFrame(loop);
-            };
-
-            return { init };
-        })();
-
-        // === 3. PARALLAX SYMBOLS ===
-        const Parallax = (() => {
-            const symbols = ['∞', '∑', '∫', '√', 'π', 'φ', 'Δ', 'Ω', '♡', '⟨⟩', '∂', '∇'];
-            const elements = [];
-
-            const init = () => {
-                const count = Math.floor(State.width / 100);
-                
-                for (let i = 0; i < count; i++) {
-                    const el = document.createElement('div');
-                    el.className = 'floating-symbol';
-                    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-                    el.style.left = `${Math.random() * 100}%`;
-                    el.style.top = `${Math.random() * 100}%`;
-                    el.style.animationDelay = `${Math.random() * 10}s`;
-                    el.style.fontSize = `${Utils.random(1, 3)}rem`;
-                    el.dataset.speed = Utils.random(0.02, 0.08);
-                    
-                    DOM.parallaxSymbols.appendChild(el);
-                    elements.push(el);
-                }
-            };
-
-            const update = (scrollY) => {
-                elements.forEach(el => {
-                    const speed = parseFloat(el.dataset.speed);
-                    el.style.transform = `translateY(${scrollY * speed}px) rotate(${scrollY * 0.02}deg)`;
-                });
-            };
-
-            return { init, update };
-        })();
-
-        // === 4. CURSOR SYSTEM ===
-        const Cursor = (() => {
-            const TRAIL_COUNT = 8;
-            const trails = [];
-            let mx = State.mouseX;
-            let my = State.mouseY;
-            let cx = mx;
-            let cy = my;
-
-            const init = () => {
-                // Create trail elements
-                for (let i = 0; i < TRAIL_COUNT; i++) {
-                    const trail = document.createElement('div');
-                    trail.className = 'cursor-trail';
-                    trail.style.opacity = 1 - (i / TRAIL_COUNT);
-                    trail.style.width = `${6 - (i * 0.5)}px`;
-                    trail.style.height = `${6 - (i * 0.5)}px`;
-                    DOM.trailContainer.appendChild(trail);
-                    trails.push({ el: trail, x: mx, y: my });
-                }
-
-                // Mouse move
-                window.addEventListener('mousemove', (e) => {
-                    mx = e.clientX;
-                    my = e.clientY;
-                    State.mouseX = mx;
-                    State.mouseY = my;
-                });
-
-                // Hover states for interactive elements
-                document.addEventListener('mouseover', (e) => {
-                    if (e.target.matches('.init-btn, .memory-unit, a, button, .math-term')) {
-                        document.body.classList.add('hovering-interactive');
-                    }
-                });
-                document.addEventListener('mouseout', (e) => {
-                    if (e.target.matches('.init-btn, .memory-unit, a, button, .math-term')) {
-                        document.body.classList.remove('hovering-interactive');
-                    }
-                });
-
-                loop();
-            };
-
-            const loop = () => {
-                // Core follows instantly
-                DOM.spriteCore.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
-
-                // Field lags behind
-                cx += (mx - cx) * 0.12;
-                cy += (my - cy) * 0.12;
-                DOM.spriteField.style.transform = `translate(${cx - 30}px, ${cy - 30}px)`;
-
-                // Update trails
-                for (let i = trails.length - 1; i >= 0; i--) {
-                    const trail = trails[i];
-                    const target = i === 0 ? { x: mx, y: my } : trails[i - 1];
-                    trail.x += (target.x - trail.x) * (0.3 - i * 0.02);
-                    trail.y += (target.y - trail.y) * (0.3 - i * 0.02);
-                    trail.el.style.transform = `translate(${trail.x - 3}px, ${trail.y - 3}px)`;
-                    
-                    // Color based on entropy
-                    const hue = Utils.map(State.entropy, 0, 1, 180, 340);
-                    trail.el.style.background = `hsl(${hue}, 100%, 60%)`;
-                }
-
-                requestAnimationFrame(loop);
-            };
-
-            return { init };
-        })();
-
-        // === 5. ENTROPY MANAGER ===
-        const EntropyManager = (() => {
-            let docHeight = 0;
-
-            const init = () => {
-                calcHeight();
-                window.addEventListener('scroll', Utils.throttle(update, 16));
-                window.addEventListener('resize', calcHeight);
-            };
-
-            const calcHeight = () => {
-                docHeight = document.body.scrollHeight - window.innerHeight;
-            };
-
-            const update = () => {
-                const scrollY = window.scrollY;
-                State.progress = Utils.clamp(scrollY / docHeight, 0, 1);
-                
-                // Entropy decreases as you scroll (chaos to order)
-                State.entropy = 1.0 - (State.progress * 0.85);
-                
-                // Factor in stabilized memories
-                const memoryBonus = (State.stabilizedMemories / State.totalMemories) * 0.15;
-                State.entropy = Math.max(0.05, State.entropy - memoryBonus);
-
-                // Update UI
-                DOM.entropyFill.style.transform = `scaleX(${State.entropy})`;
-                DOM.entropyText.textContent = `${Math.round(State.entropy * 100)}%`;
-                DOM.progressBar.style.transform = `scaleX(${State.progress})`;
-
-                // CSS custom property
-                document.documentElement.style.setProperty('--entropy', State.entropy);
-
-                // Body state classes
-                if (State.entropy > 0.6) {
-                    document.body.classList.add('corrupted');
-                    document.body.classList.remove('stabilizing');
-                    DOM.entropyFill.style.background = 'linear-gradient(90deg, var(--math-cyan), var(--warn-red))';
-                } else {
-                    document.body.classList.remove('corrupted');
-                    document.body.classList.add('stabilizing');
-                    DOM.entropyFill.style.background = 'linear-gradient(90deg, var(--divine-gold), var(--math-cyan))';
-                }
-
-                // Parallax update
-                Parallax.update(scrollY);
-
-                // Hide scroll hint after scrolling
-                if (scrollY > 100) {
-                    DOM.scrollHint.style.opacity = '0';
-                }
-            };
-
-            return { init, update };
-        })();
-
-        // === 6. MEMORY SYSTEM (CLICK TO FIX) ===
-        const MemorySystem = (() => {
-            const init = () => {
-                DOM.memoryUnits = document.querySelectorAll('.memory-unit');
-                
-                DOM.memoryUnits.forEach((unit, index) => {
-                    // CLICK to stabilize
-                    unit.addEventListener('click', (e) => {
-                        if (unit.classList.contains('stabilized')) return;
-                        
-                        // Create ripple effect
-                        const rect = unit.getBoundingClientRect();
-                        const ripple = document.createElement('div');
-                        ripple.className = 'click-ripple';
-                        ripple.style.left = `${e.clientX - rect.left}px`;
-                        ripple.style.top = `${e.clientY - rect.top}px`;
-                        ripple.style.width = '50px';
-                        ripple.style.height = '50px';
-                        unit.appendChild(ripple);
-                        
-                        // Remove ripple after animation
-                        setTimeout(() => ripple.remove(), 800);
-                        
-                        // Stabilize the memory
-                        unit.classList.add('stabilized');
-                        
-                        // Update label
-                        const label = unit.querySelector('.memory-label');
-                        if (label) {
-                            const varName = label.textContent.split('//')[0].trim();
-                            label.textContent = `${varName} // STATUS: STABILIZED ✓`;
-                        }
-                        
-                        // Track progress
-                        State.stabilizedMemories++;
-                        EntropyManager.update();
-                        
-                        // Play sound feedback (if available)
-                        playStabilizeSound();
-                        
-                        // Check if all memories stabilized
-                        if (State.stabilizedMemories >= State.totalMemories) {
-                            celebrateAllStabilized();
-                        }
-                    });
-                });
-            };
-
-            const playStabilizeSound = () => {
-                if (State.audioContext) {
-                    const osc = State.audioContext.createOscillator();
-                    const gain = State.audioContext.createGain();
-                    osc.connect(gain);
-                    gain.connect(State.audioContext.destination);
-                    osc.frequency.setValueAtTime(800, State.audioContext.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1200, State.audioContext.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, State.audioContext.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, State.audioContext.currentTime + 0.3);
-                    osc.start(State.audioContext.currentTime);
-                    osc.stop(State.audioContext.currentTime + 0.3);
-                }
-            };
-
-            const celebrateAllStabilized = () => {
-                // Create celebration particles
-                for (let i = 0; i < 30; i++) {
-                    setTimeout(() => {
-                        createCelebrationParticle();
-                    }, i * 50);
-                }
-            };
-
-            const createCelebrationParticle = () => {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: fixed;
-                    width: 10px;
-                    height: 10px;
-                    background: ${['var(--divine-gold)', 'var(--math-cyan)', 'var(--warn-red)'][Math.floor(Math.random() * 3)]};
-                    border-radius: 50%;
-                    pointer-events: none;
-                    z-index: 9999;
-                    left: ${Math.random() * 100}vw;
-                    top: 100vh;
-                    animation: celebrate-rise 2s ease-out forwards;
-                `;
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 2000);
-            };
-
-            return { init };
-        })();
-
-        // === 7. ASSET LOADER ===
-        const AssetLoader = (() => {
-            const getFallbackSVG = (text) => {
-                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`
-                    <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="100%" height="100%" fill="#0a0a0a"/>
-                        <line x1="0" y1="0" x2="100%" y2="100%" stroke="#FF2A6D" stroke-width="2"/>
-                        <line x1="100%" y1="0" x2="0" y2="100%" stroke="#FF2A6D" stroke-width="2"/>
-                        <text x="50%" y="50%" fill="#E0E0E0" font-family="monospace" font-size="14" text-anchor="middle">
-                            [MEM_ERR: ${text}]
-                        </text>
-                    </svg>
-                `)}`;
-            };
-
-            const loadImages = () => {
-                const images = document.querySelectorAll('.lazy-load');
-                
-                images.forEach(img => {
-                    const src = img.dataset.src;
-                    const temp = new Image();
-                    
-                    temp.onload = () => {
-                        img.src = src;
-                        img.style.opacity = '1';
-                    };
-                    
-                    temp.onerror = () => {
-                        console.warn(`Asset ${src} failed. Using fallback.`);
-                        img.src = getFallbackSVG(img.alt);
-                        img.style.objectFit = 'contain';
-                    };
-                    
-                    temp.src = src;
-                });
-            };
-
-            return { loadImages };
-        })();
-
-        // === 8. AUDIO ENGINE ===
-        const AudioEngine = (() => {
-            const bars = [];
-            const BAR_COUNT = 20;
-
-            const init = () => {
-                // Create bars
-                for (let i = 0; i < BAR_COUNT; i++) {
-                    const bar = document.createElement('div');
-                    bar.className = 'bar';
-                    DOM.audioViz.appendChild(bar);
-                    bars.push(bar);
-                }
-            };
-
-            const start = async () => {
-                const audio = document.getElementById('bg-music');
-                
-                try {
-                    const AC = window.AudioContext || window.webkitAudioContext;
-                    State.audioContext = new AC();
-                    const src = State.audioContext.createMediaElementSource(audio);
-                    State.analyser = State.audioContext.createAnalyser();
-                    State.analyser.fftSize = 64;
-                    
-                    src.connect(State.analyser);
-                    State.analyser.connect(State.audioContext.destination);
-                    
-                    await audio.play();
-                    visualize();
-                } catch (e) {
-                    console.log('Audio autoplay blocked. Using fallback animation.');
-                    fallbackVisualize();
-                }
-            };
-
-            const visualize = () => {
-                const buffer = new Uint8Array(State.analyser.frequencyBinCount);
-                
-                const loop = () => {
-                    State.analyser.getByteFrequencyData(buffer);
-                    
-                    bars.forEach((bar, i) => {
-                        const val = buffer[i] || 0;
-                        const jitter = (Math.random() - 0.5) * 5 * State.entropy;
-                        const height = Math.max(2, (val / 255) * 40 + jitter);
-                        bar.style.height = `${height}px`;
-                        
-                        // Color based on entropy
-                        const hue = Utils.map(State.entropy, 0, 1, 180, 340);
-                        bar.style.background = `hsl(${hue}, 100%, 60%)`;
-                    });
-                    
-                    requestAnimationFrame(loop);
-                };
-                
-                loop();
-            };
-
-            const fallbackVisualize = () => {
-                bars.forEach((bar, i) => {
-                    bar.style.animation = `pulse 1s infinite ${i * 0.05}s`;
-                });
-            };
-
-            return { init, start };
-        })();
-
-        // === 9. SCROLL REVEAL ===
-        const ScrollReveal = (() => {
-            const init = () => {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                            
-                            // Stagger children if present
-                            const children = entry.target.querySelectorAll('span, p');
-                            children.forEach((child, i) => {
-                                child.style.transitionDelay = `${i * 0.1}s`;
-                                setTimeout(() => child.classList.add('visible'), 50);
-                            });
-                        }
-                    });
-                }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-
-                document.querySelectorAll('.lazy-anim, .reveal-text, .narrative p').forEach(el => {
-                    observer.observe(el);
-                });
-            };
-
-            return { init };
-        })();
-
-        // === INITIALIZATION ===
-        const init = () => {
-            // Hide loader after a short delay
-            setTimeout(() => {
-                DOM.loader.classList.add('hidden');
-            }, 1500);
-
-            // Initialize all systems
-            DigitalRain.init();
-            FlowField.init();
-            Parallax.init();
-            Cursor.init();
-            AudioEngine.init();
-
-            // Gate button click
-            DOM.btnStart.addEventListener('click', () => {
-                DOM.gate.classList.add('closing');
-                
-                setTimeout(() => {
-                    DOM.gate.style.display = 'none';
-                    DOM.container.style.opacity = '1';
-                    DOM.flowField.style.opacity = '1';
-                    DOM.scrollHint.style.opacity = '1';
-                    
-                    State.isGateOpen = true;
-                    
-                    // Initialize post-gate systems
-                    EntropyManager.init();
-                    AssetLoader.loadImages();
-                    MemorySystem.init();
-                    ScrollReveal.init();
-                    AudioEngine.start();
-                    
-                }, 1000);
-            });
-        };
-
-        // Add celebration animation keyframe
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes celebrate-rise {
-                0% { transform: translateY(0) scale(1); opacity: 1; }
-                100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+                requestAnimationFrame(render);
             }
-        `;
-        document.head.appendChild(style);
 
-        // Start when DOM ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
-    })();
+            // --- INTERACTION ---
+            function handleScroll() {
+                const total = document.documentElement.scrollHeight - window.innerHeight;
+                state.scrollProg = window.scrollY / total;
+                
+                // Entropy decreases as we scroll down (Chaos -> Order)
+                // But increases slightly at the end for the "Big Bang" of emotion
+                state.entropy = 1 - (state.scrollProg * 0.9);
+                
+                // Update UI
+                dom.entropyNum.innerText = (state.entropy * 100).toFixed(1) + "%";
+                dom.entropyNum.style.color = state.entropy > 0.5 ? '#FF0055' : '#00F0FF';
+                
+                // Progress Bar
+                dom.progress.style.top = (state.scrollProg * 100) + "%";
+                
+                // CSS Variable for global effects
+                document.documentElement.style.setProperty('--entropy', state.entropy);
+            }
+
+            function handleCursor(e) {
+                state.mx = e.clientX;
+                state.my = e.clientY;
+                
+                // Laggy Follower
+                dom.cursor.dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                
+                // Slight delay for ring handled by CSS transition, just update pos
+                setTimeout(() => {
+                    dom.cursor.ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+                }, 50);
+
+                // Update coord display
+                dom.coord.innerText = `X:${Math.round(e.clientX)} Y:${Math.round(e.clientY)}`;
+            }
+
+            // --- HOLOGRAPHIC LOGIC ---
+            function initHolograms() {
+                dom.cards.forEach(card => {
+                    // Hover Effect
+                    card.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                    card.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+                    
+                    // Click to Stabilize
+                    card.addEventListener('click', () => {
+                        if (card.dataset.status === 'stable') return;
+                        
+                        // Play sound
+                        playClickSound();
+                        
+                        // Change state
+                        card.dataset.status = 'stable';
+                        card.classList.add('stabilized');
+                        
+                        // Update text prompt
+                        const prompt = card.querySelector('.interact-prompt');
+                        prompt.innerText = "RECONSTRUCTION COMPLETE";
+                        
+                        // reduce global entropy slightly
+                        state.entropy -= 0.1;
+                    });
+                });
+            }
+
+            function playClickSound() {
+                // Simple synthesized blip to avoid external dependencies failing
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            }
+
+            // --- THE BIG BANG (Initialization) ---
+            dom.bangBtn.addEventListener('click', () => {
+                state.active = true;
+                document.body.classList.add('bang');
+                
+                // Start Audio
+                dom.audio.volume = 0.5;
+                dom.audio.play().catch(e => console.log("Audio requires interaction"));
+                
+                // Init systems
+                initParticles();
+                render();
+                window.addEventListener('scroll', handleScroll);
+                window.addEventListener('mousemove', handleCursor);
+                initHolograms();
+                
+                // Fallback for asset loading
+                document.querySelectorAll('.lazy').forEach(img => {
+                    // Fallback generator if image fails
+                    img.onerror = () => {
+                        img.style.display = 'none';
+                        img.parentElement.style.background = 'linear-gradient(45deg, #111, #222)';
+                        img.parentElement.innerHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#333;font-family:monospace;">[IMG_MISSING]</div>';
+                    };
+                });
+            });
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                state.width = window.innerWidth;
+                state.height = window.innerHeight;
+                dom.canvas.width = state.width;
+                dom.canvas.height = state.height;
+            });
+
+        })();
     </script>
 </body>
 </html>
