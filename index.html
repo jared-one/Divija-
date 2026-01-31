@@ -895,7 +895,7 @@
 
     <!-- AUDIO -->
     <audio id="audio" loop crossorigin="anonymous">
-        <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
+        <source src="Undertale OST - MEMORY (Build Up Ver.) (Piano & Orchestra Cover).mp3" type="audio/mpeg">
     </audio>
     <div id="audio-viz"></div>
 
@@ -1431,6 +1431,9 @@
                     analyser.connect(ctx.destination);
                     
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    
+                    // Set the start time to 00:00:09
+                    DOM.audio.currentTime = 9;
                     
                     await DOM.audio.play();
                 } catch (e) {
