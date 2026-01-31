@@ -4,796 +4,1614 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Divija | The Entropy of Love</title>
-    <meta name="description" content="From Chaos to Order.">
+    <meta name="description" content="Solving the equation from chaos to the divine.">
     
-    <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@200;400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --void: #030303;
-            --starlight: #F0F0F0;
-            --cyan-ether: #00F0FF;
-            --red-shift: #FF0055;
-            --gold-horizon: #FFD700;
-            --matrix-green: #0F0;
-            --entropy: 1; /* 1 = Chaos, 0 = Order */
+            --void: #050505;
+            --void-light: #0a0a0a;
+            --signal: #E0E0E0;
+            --math-cyan: #00F3FF;
+            --warn-red: #FF2A6D;
+            --divine-gold: #FFD700;
+            --purple-glow: #9D00FF;
+            --entropy: 1;
             
-            --f-display: 'Cinzel', serif;
-            --f-code: 'JetBrains Mono', monospace;
-            --f-body: 'Montserrat', sans-serif;
-            
-            --grid-gap: 2rem;
+            --font-display: 'Cinzel', serif;
+            --font-ui: 'JetBrains Mono', monospace;
+            --font-body: 'Montserrat', sans-serif;
         }
 
-        /* --- CORE RESET & BASICS --- */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        html, body {
-            width: 100%;
-            height: 100%;
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
             background-color: var(--void);
-            color: var(--starlight);
-            font-family: var(--f-body);
+            color: var(--signal);
+            font-family: var(--font-body);
             overflow-x: hidden;
-            cursor: none; /* Custom cursor is mandatory */
+            min-height: 100vh;
+            cursor: none;
+            -webkit-font-smoothing: antialiased;
         }
-        
-        /* Smooth scrolling with inertia feel handled by JS, but native as fallback */
-        html { scroll-behavior: smooth; }
 
-        /* --- 1. THE SINGULARITY (Entrance) --- */
-        #singularity-gate {
+        /* === PERFORMANCE: GPU Layers === */
+        .gpu-layer {
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        /* === LOADING SCREEN === */
+        #loader {
             position: fixed;
             inset: 0;
-            z-index: 9999;
+            z-index: 10001;
             background: var(--void);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
-        
-        .singularity-point {
-            width: 8px;
-            height: 8px;
-            background: var(--starlight);
-            border-radius: 50%;
-            box-shadow: 0 0 20px var(--starlight), 0 0 50px var(--cyan-ether);
-            cursor: none;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: breathe 3s infinite ease-in-out;
-            position: relative;
-        }
-        
-        .singularity-point::after {
-            content: '';
-            position: absolute;
-            inset: -20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 50%;
-            animation: spin-slow 10s linear infinite;
-        }
-        
-        .click-hint {
-            margin-top: 40px;
-            font-family: var(--f-code);
-            font-size: 0.8rem;
-            letter-spacing: 0.3em;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-            animation: flicker 2s infinite;
-        }
-        
-        /* Explosion Animation Class */
-        body.bang #singularity-gate {
+        #loader.hidden {
             opacity: 0;
+            visibility: hidden;
             pointer-events: none;
         }
-        
-        /* --- 2. BACKEND VISUALS --- */
-        #universe-canvas {
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            position: relative;
+        }
+        .loader-spinner::before,
+        .loader-spinner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 2px solid transparent;
+            border-radius: 50%;
+        }
+        .loader-spinner::before {
+            border-top-color: var(--math-cyan);
+            animation: spin 1s linear infinite;
+        }
+        .loader-spinner::after {
+            inset: 6px;
+            border-right-color: var(--warn-red);
+            animation: spin 0.6s linear infinite reverse;
+        }
+        .loader-text {
+            margin-top: 1.5rem;
+            font-family: var(--font-ui);
+            font-size: 0.75rem;
+            color: var(--math-cyan);
+            letter-spacing: 0.1em;
+        }
+        .loader-text::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+
+        /* === CURSOR SYSTEM === */
+        #cursor-core {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: var(--math-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 0 10px var(--math-cyan), 0 0 20px rgba(0, 243, 255, 0.4);
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s, height 0.2s, background 0.3s;
+        }
+        #cursor-field {
+            position: fixed;
+            width: 50px;
+            height: 50px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s;
+        }
+
+        /* Cursor States */
+        body.corrupted #cursor-core {
+            background: var(--warn-red);
+            box-shadow: 0 0 10px var(--warn-red), 0 0 25px var(--warn-red);
+        }
+        body.corrupted #cursor-field {
+            border-color: var(--warn-red);
+        }
+        body.stabilizing #cursor-field {
+            border-color: var(--divine-gold);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 215, 0, 0.03);
+        }
+        body.hovering #cursor-core {
+            width: 12px;
+            height: 12px;
+        }
+        body.hovering #cursor-field {
+            width: 70px;
+            height: 70px;
+            border-color: var(--divine-gold);
+        }
+
+        /* Cursor Trail */
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--math-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.5;
+            transform: translate(-50%, -50%);
+        }
+
+        /* === CANVAS LAYERS === */
+        #canvas-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        #flow-field {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        /* === HUD OVERLAY === */
+        .hud {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0; /* Hidden until Big Bang */
-            transition: opacity 2s ease-in;
-        }
-        body.bang #universe-canvas { opacity: 1; }
-
-        /* --- 3. UI OVERLAY --- */
-        .hud {
-            position: fixed;
-            top: 2rem;
-            left: 2rem;
-            right: 2rem;
+            right: 0;
+            padding: 1.5rem 2rem;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            color: var(--math-cyan);
+            z-index: 500;
             pointer-events: none;
-            z-index: 100;
             mix-blend-mode: difference;
-            opacity: 0;
-            transition: opacity 1s 1s;
         }
-        body.bang .hud { opacity: 1; }
-
-        .sys-info {
-            font-family: var(--f-code);
-            font-size: 0.75rem;
-            color: var(--cyan-ether);
+        .hud-left {
             display: flex;
-            flex-direction: column;
-            gap: 5px;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .entropy-display {
+        .hud-left::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--math-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .hud-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .entropy-bar {
+            width: 120px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .entropy-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--math-cyan), var(--warn-red));
+            transform-origin: left;
+            transition: transform 0.15s ease-out;
+            border-radius: 2px;
+        }
+        .entropy-value {
+            min-width: 3ch;
             text-align: right;
-            font-family: var(--f-code);
         }
-        .entropy-label { font-size: 0.7rem; color: var(--red-shift); }
-        .entropy-val { font-size: 1.5rem; font-weight: 700; color: var(--starlight); }
 
-        /* Progress Line */
-        .timeline-track {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* === PROGRESS BAR === */
+        #progress {
             position: fixed;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 200px;
-            width: 2px;
-            background: rgba(255,255,255,0.05);
-            z-index: 90;
-        }
-        .timeline-thumb {
-            position: absolute;
             top: 0;
-            left: -1px;
-            width: 4px;
-            height: 20px;
-            background: var(--cyan-ether);
-            box-shadow: 0 0 10px var(--cyan-ether);
-            transition: top 0.1s linear;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--math-cyan), var(--divine-gold));
+            z-index: 1000;
+            transform-origin: left;
+            transform: scaleX(0);
         }
 
-        /* --- 4. SCROLL CONTENT --- */
-        #main-viewport {
-            opacity: 0;
-            transition: opacity 1s 0.5s;
-        }
-        body.bang #main-viewport { opacity: 1; }
-
-        section {
-            min-height: 100vh;
-            padding: 6rem 2rem;
+        /* === ENTRANCE GATE === */
+        #gate {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: var(--void);
             display: flex;
             flex-direction: column;
             justify-content: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            position: relative;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #gate.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
-        /* Typography */
-        h1, h2 {
-            font-family: var(--f-display);
-            color: var(--starlight);
-            line-height: 1.1;
+        .gate-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            letter-spacing: 0.2em;
+            margin-bottom: 0.5rem;
+            position: relative;
+            text-align: center;
+        }
+        
+        /* Glitch layers */
+        .gate-title::before,
+        .gate-title::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            background: var(--void);
+        }
+        .gate-title::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--warn-red);
+            animation: glitch-1 3s infinite linear alternate-reverse;
+        }
+        .gate-title::after {
+            left: -2px;
+            text-shadow: 2px 0 var(--math-cyan);
+            animation: glitch-2 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { clip-path: inset(40% 0 61% 0); }
+            20% { clip-path: inset(92% 0 1% 0); }
+            40% { clip-path: inset(43% 0 1% 0); }
+            60% { clip-path: inset(25% 0 58% 0); }
+            80% { clip-path: inset(54% 0 7% 0); }
+        }
+        @keyframes glitch-2 {
+            0%, 100% { clip-path: inset(65% 0 5% 0); }
+            20% { clip-path: inset(10% 0 75% 0); }
+            40% { clip-path: inset(82% 0 5% 0); }
+            60% { clip-path: inset(15% 0 62% 0); }
+            80% { clip-path: inset(38% 0 45% 0); }
+        }
+
+        .gate-warning {
+            font-family: var(--font-ui);
+            font-size: 0.8rem;
+            color: var(--warn-red);
             margin-bottom: 2rem;
-        }
-        h1 { font-size: clamp(3rem, 8vw, 6rem); }
-        h2 { font-size: clamp(2rem, 5vw, 4rem); }
-        
-        .subtitle {
-            font-family: var(--f-code);
-            color: var(--cyan-ether);
-            margin-bottom: 1rem;
-            display: block;
-        }
-        
-        p {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            color: rgba(255,255,255,0.8);
-            max-width: 65ch;
-            margin-bottom: 1.5rem;
+            animation: flicker 4s infinite;
         }
 
-        /* Highlight Logic */
-        .highlight {
-            position: relative;
-            display: inline-block;
-            color: var(--gold-horizon);
-            font-weight: 600;
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.3; }
+            94% { opacity: 1; }
+            96% { opacity: 0.5; }
+            97% { opacity: 1; }
         }
-        .highlight::after {
+
+        .gate-btn {
+            background: transparent;
+            border: 1px solid var(--math-cyan);
+            color: var(--math-cyan);
+            padding: 1rem 2.5rem;
+            font-family: var(--font-ui);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            cursor: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .gate-btn::before {
             content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: var(--gold-horizon);
+            inset: 0;
+            background: var(--math-cyan);
             transform: scaleX(0);
             transform-origin: right;
-            transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: transform 0.4s ease;
+            z-index: -1;
         }
-        .highlight:hover::after {
+        .gate-btn:hover {
+            color: var(--void);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
+        }
+        .gate-btn:hover::before {
             transform: scaleX(1);
             transform-origin: left;
         }
 
-        /* --- 5. HOLOGRAPHIC IMAGE GRID (Bento Box) --- */
-        .holo-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-auto-rows: 300px;
-            gap: 2rem;
-            margin: 4rem 0;
-            perspective: 1000px;
+        /* Scan line on gate */
+        .gate-scan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--math-cyan), transparent);
+            animation: scan 4s linear infinite;
+            opacity: 0.4;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
         }
 
-        .holo-card {
+        /* === MAIN CONTENT === */
+        #content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease 0.3s, visibility 1s ease 0.3s;
+        }
+        #content.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 0;
+        }
+
+        /* Section Tags */
+        .tag {
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            color: var(--math-cyan);
+            margin-bottom: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .tag::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, var(--math-cyan), transparent);
+        }
+        .tag.gold { color: var(--divine-gold); }
+        .tag.gold::after { background: linear-gradient(90deg, var(--divine-gold), transparent); }
+
+        /* Headers */
+        h1, h2 {
+            font-family: var(--font-display);
+            font-weight: 400;
+            color: var(--signal);
+            margin-bottom: 2rem;
+        }
+        h1 {
+            font-size: clamp(2.5rem, 7vw, 4rem);
+        }
+        h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+        }
+
+        /* Narrative Text */
+        .narrative {
+            max-width: 600px;
+        }
+        .narrative p {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.75rem;
+            opacity: 0;
+            transform: translateY(25px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .narrative p.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .math-term {
+            color: var(--math-cyan);
+            font-family: var(--font-ui);
+            font-size: 0.95em;
+            border-bottom: 1px dashed var(--math-cyan);
+        }
+        .highlight {
+            color: var(--divine-gold);
+            font-weight: 600;
+        }
+
+        /* === MEMORY GRID === */
+        .memory-instruction {
+            font-family: var(--font-ui);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 2rem;
+        }
+        .memory-instruction span {
+            color: var(--math-cyan);
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* === MEMORY UNIT (The Star) === */
+        .memory-unit {
             position: relative;
-            grid-column: span 12;
-            background: rgba(10,10,10,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
+            aspect-ratio: 3/4;
+            background: var(--void-light);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
             cursor: none;
-            transition: transform 0.3s, border-color 0.3s;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease, border-color 0.4s ease;
+        }
+        .memory-unit.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .memory-unit:hover {
+            border-color: rgba(255, 215, 0, 0.3);
         }
 
-        /* Desktop Layout Logic */
-        @media (min-width: 900px) {
-            .holo-card.portrait { grid-column: span 4; grid-row: span 2; }
-            .holo-card.landscape { grid-column: span 8; grid-row: span 1; }
-            .holo-card.wide { grid-column: span 8; grid-row: span 1; }
-        }
-
-        /* The Image Shard Logic */
-        .holo-content {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            /* Chaos State */
-            filter: grayscale(100%) contrast(1.2) brightness(0.7);
-            transform: scale(1.1);
-            transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        /* Shards (Clip Path overlays) */
-        .shard {
+        /* Image Container */
+        .memory-img-wrap {
             position: absolute;
             inset: 0;
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            opacity: 0.5;
-            transition: transform 0.5s ease-out;
-            pointer-events: none;
-            mix-blend-mode: hard-light;
+            overflow: hidden;
         }
-        
-        .holo-card:not(.stabilized) .shard:nth-child(1) { clip-path: polygon(0 0, 40% 0, 60% 100%, 0% 100%); transform: translate(-5px, 2px); }
-        .holo-card:not(.stabilized) .shard:nth-child(2) { clip-path: polygon(40% 0, 100% 0, 100% 40%, 60% 100%); transform: translate(5px, -2px); }
-        .holo-card:not(.stabilized) .shard:nth-child(3) { clip-path: polygon(100% 40%, 100% 100%, 60% 100%); transform: translate(2px, 5px); }
-        
-        /* Scanline */
-        .scan-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .memory-unit img {
             width: 100%;
-            height: 4px;
-            background: var(--red-shift);
-            box-shadow: 0 0 15px var(--red-shift);
-            opacity: 0;
-            z-index: 10;
-            pointer-events: none;
+            height: 100%;
+            object-fit: cover;
+            object-position: center top;
+            transition: transform 0.6s ease, filter 0.6s ease;
         }
 
-        /* STABILIZED STATE */
-        .holo-card.stabilized {
-            border-color: var(--gold-horizon);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.1);
+        /* === CORRUPTION STATES === */
+        
+        /* State: Corrupted (Default) */
+        .memory-unit:not(.stabilized) img {
+            filter: grayscale(1) contrast(1.1) brightness(0.7);
+            transform: scale(1.05);
         }
-        .holo-card.stabilized .holo-content {
-            filter: grayscale(0%) contrast(1) brightness(1);
+        .memory-unit:not(.stabilized):hover img {
+            filter: grayscale(0.5) contrast(1.05) brightness(0.85);
+            transform: scale(1.02);
+        }
+
+        /* State: Stabilized */
+        .memory-unit.stabilized img {
+            filter: grayscale(0) contrast(1) brightness(1);
             transform: scale(1);
         }
-        .holo-card.stabilized .shard {
-            transform: translate(0, 0);
-            opacity: 0; /* Hide shards, reveal main image */
-        }
-        .holo-card.stabilized .scan-bar {
-            background: var(--gold-horizon);
-            box-shadow: 0 0 15px var(--gold-horizon);
-            animation: scan-success 1s forwards;
-            opacity: 1;
-        }
-        
-        /* Interactive Prompt */
-        .interact-prompt {
+
+        /* RGB Split Overlay */
+        .rgb-split {
             position: absolute;
-            bottom: 1rem;
-            left: 1rem;
-            font-family: var(--f-code);
-            font-size: 0.7rem;
-            background: black;
-            color: var(--red-shift);
-            padding: 0.2rem 0.5rem;
-            border: 1px solid var(--red-shift);
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            mix-blend-mode: screen;
+            opacity: 0.7;
+            transition: opacity 0.5s ease;
+        }
+        .rgb-split::before,
+        .rgb-split::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit;
+        }
+        .rgb-split::before {
+            background: rgba(255, 0, 0, 0.1);
+            transform: translateX(-3px);
+            animation: rgb-shift-r 0.1s steps(2) infinite;
+        }
+        .rgb-split::after {
+            background: rgba(0, 255, 255, 0.1);
+            transform: translateX(3px);
+            animation: rgb-shift-b 0.15s steps(2) infinite;
+        }
+        .memory-unit.stabilized .rgb-split {
+            opacity: 0;
+        }
+
+        @keyframes rgb-shift-r {
+            0% { transform: translateX(-2px) translateY(1px); }
+            100% { transform: translateX(-4px) translateY(-1px); }
+        }
+        @keyframes rgb-shift-b {
+            0% { transform: translateX(2px) translateY(-1px); }
+            100% { transform: translateX(4px) translateY(1px); }
+        }
+
+        /* Scanline Overlay */
+        .scanlines {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.3) 2px,
+                rgba(0, 0, 0, 0.3) 4px
+            );
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.5;
+            transition: opacity 0.5s ease;
+        }
+        .memory-unit.stabilized .scanlines {
+            opacity: 0;
+        }
+
+        /* Noise Overlay */
+        .noise {
+            position: absolute;
+            inset: -50%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.06;
+            pointer-events: none;
+            z-index: 4;
+            animation: noise-move 0.5s steps(5) infinite;
+            transition: opacity 0.5s ease;
+        }
+        .memory-unit.stabilized .noise {
+            opacity: 0;
+        }
+
+        @keyframes noise-move {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(10%, 10%); }
+        }
+
+        /* Glitch Lines */
+        .glitch-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
             z-index: 5;
-            transition: all 0.3s;
+            overflow: hidden;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
         }
-        .holo-card.stabilized .interact-prompt {
-            color: var(--gold-horizon);
-            border-color: var(--gold-horizon);
-            content: "STABLE";
+        .glitch-lines::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--math-cyan);
+            box-shadow: 0 0 10px var(--math-cyan);
+            animation: glitch-line 3s infinite;
+            opacity: 0.5;
+        }
+        .memory-unit.stabilized .glitch-lines {
+            opacity: 0;
         }
 
-        .holo-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Crucial: Ensures images fill the bento box */
-            display: block;
+        @keyframes glitch-line {
+            0%, 100% { top: 20%; opacity: 0; }
+            10% { opacity: 0.5; }
+            15% { top: 20%; opacity: 0; }
+            30% { top: 50%; opacity: 0.3; }
+            35% { opacity: 0; }
+            50% { top: 80%; opacity: 0.4; }
+            55% { opacity: 0; }
+            70% { top: 35%; opacity: 0.2; }
+            75% { opacity: 0; }
         }
 
-        /* --- 6. ADVANCED CURSOR --- */
-        #cursor-sys {
-            position: fixed;
+        /* Stabilize Prompt */
+        .stabilize-prompt {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            color: var(--math-cyan);
+            background: rgba(0, 0, 0, 0.85);
+            padding: 0.75rem 1.25rem;
+            border: 1px solid var(--math-cyan);
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            white-space: nowrap;
+        }
+        .memory-unit:not(.stabilized):hover .stabilize-prompt {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Memory Label */
+        .memory-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            font-family: var(--font-ui);
+            font-size: 0.65rem;
+            color: var(--warn-red);
+            z-index: 8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.5s ease;
+        }
+        .memory-unit.stabilized .memory-label {
+            color: var(--divine-gold);
+        }
+        .memory-status::before {
+            content: '◯ ';
+            color: var(--warn-red);
+        }
+        .memory-unit.stabilized .memory-status::before {
+            content: '◉ ';
+            color: var(--divine-gold);
+        }
+
+        /* Click Ripple */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--divine-gold), transparent 70%);
+            transform: scale(0);
+            animation: ripple-expand 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 20;
+        }
+        @keyframes ripple-expand {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* Stabilize Flash */
+        .stabilize-flash {
+            position: absolute;
+            inset: 0;
+            background: var(--divine-gold);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 15;
+        }
+        .memory-unit.flash .stabilize-flash {
+            animation: flash 0.4s ease-out;
+        }
+        @keyframes flash {
+            0% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
+        /* === SYSTEM OUTPUT === */
+        .sys-output {
+            background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.04));
+            border-left: 3px solid var(--math-cyan);
+            padding: 2rem;
+            margin-top: 3rem;
+            font-family: var(--font-ui);
+            position: relative;
+            overflow: hidden;
+        }
+        .sys-output::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 99999;
-            mix-blend-mode: difference;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, var(--math-cyan), var(--divine-gold), var(--warn-red));
         }
-        
-        .cursor-dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: var(--cyan-ether);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.2s, height 0.2s, background 0.2s;
+        .sys-output p {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 0.5rem;
         }
-        
-        .cursor-ring {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.1s ease-out;
-        }
-        
-        /* Cursor Interaction States */
-        body.hovering .cursor-dot { width: 10px; height: 10px; background: var(--gold-horizon); }
-        body.hovering .cursor-ring { width: 60px; height: 60px; border-color: var(--gold-horizon); border-style: dashed; animation: rotate-cursor 4s linear infinite; }
-        
-        /* --- 7. FOOTER PUNCHLINE --- */
-        .sys-log {
-            background: rgba(255,255,255,0.03);
-            border-left: 2px solid var(--cyan-ether);
-            padding: 2rem;
-            font-family: var(--f-code);
-            margin-top: 2rem;
-        }
-        .final-msg {
-            font-size: 2.5rem;
+        .daddy-text {
+            font-size: clamp(1.5rem, 4vw, 2rem);
             font-weight: 700;
-            color: var(--starlight);
-            text-shadow: 0 0 20px var(--cyan-ether);
-            margin-top: 1rem;
+            color: var(--math-cyan);
             display: block;
+            margin-top: 1rem;
+            text-shadow: 2px 2px var(--warn-red), -1px -1px var(--purple-glow);
         }
 
-        /* --- KEYFRAMES --- */
-        @keyframes breathe { 0%,100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } }
-        @keyframes spin-slow { 100% { transform: rotate(360deg); } }
-        @keyframes flicker { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.8; } 10%, 90% { opacity: 0.1; } }
-        @keyframes rotate-cursor { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes scan-success { 0% { top: 0; opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        .birthday {
+            margin-top: 3rem;
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 3vw, 1.6rem);
+            color: var(--divine-gold);
+            text-align: center;
+        }
+        .birthday::before,
+        .birthday::after {
+            content: ' ✧ ';
+            animation: sparkle 1.5s ease-in-out infinite;
+        }
+        .birthday::after {
+            animation-delay: 0.75s;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
 
-        /* Mobile Adjustments */
+        .signature {
+            margin-top: 2rem;
+            font-family: var(--font-ui);
+            font-size: 0.7rem;
+            color: rgba(0, 243, 255, 0.5);
+            text-align: center;
+        }
+
+        /* === AUDIO VISUALIZER === */
+        #audio-viz {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 35px;
+            z-index: 500;
+            pointer-events: none;
+        }
+        .viz-bar {
+            width: 3px;
+            background: var(--math-cyan);
+            border-radius: 1px;
+            min-height: 2px;
+            transition: background 0.3s ease;
+        }
+
+        /* === RESPONSIVE === */
         @media (max-width: 768px) {
-            #cursor-sys { display: none; }
             body { cursor: auto; }
-            .holo-card { grid-column: span 12 !important; height: 250px; }
-            h1 { font-size: 3rem; }
+            #cursor-core, #cursor-field, .cursor-trail { display: none !important; }
+            
+            .hud {
+                padding: 1rem;
+                font-size: 0.6rem;
+            }
+            .entropy-bar { width: 80px; }
+            
+            section { padding: 4rem 0; min-height: auto; }
+            
+            .memory-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .memory-unit {
+                aspect-ratio: 4/5;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gate-title { font-size: 2rem; }
+            h1 { font-size: 2rem; }
+            h2 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+    <!-- LOADER -->
+    <div id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">INITIALIZING</div>
+    </div>
 
-    <!-- AUDIO SYSTEM -->
-    <audio id="bg-audio" loop preload="auto">
+    <!-- PROGRESS BAR -->
+    <div id="progress"></div>
+
+    <!-- CANVAS CONTAINER -->
+    <div id="canvas-container">
+        <canvas id="flow-field"></canvas>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <div class="hud-left">SYS.DIVIJA // V.2.0</div>
+        <div class="hud-right">
+            <span>ENTROPY</span>
+            <div class="entropy-bar">
+                <div class="entropy-fill" id="entropy-fill"></div>
+            </div>
+            <span class="entropy-value" id="entropy-value">100</span>
+        </div>
+    </div>
+
+    <!-- GATE -->
+    <div id="gate">
+        <div class="gate-scan"></div>
+        <h1 class="gate-title" data-text="DIVIJA">DIVIJA</h1>
+        <p class="gate-warning">[WARNING]: High Entropy Detected</p>
+        <button class="gate-btn" id="start-btn">Stabilize System</button>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="audio" loop crossorigin="anonymous">
         <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
     </audio>
+    <div id="audio-viz"></div>
 
-    <!-- CUSTOM CURSOR -->
-    <div id="cursor-sys">
-        <div class="cursor-dot" id="c-dot"></div>
-        <div class="cursor-ring" id="c-ring"></div>
-    </div>
-
-    <!-- 1. ENTRANCE: SINGULARITY -->
-    <div id="singularity-gate">
-        <div class="singularity-point" id="btn-bang"></div>
-        <div class="click-hint">Initialize Reality</div>
-    </div>
-
-    <!-- 2. BACKEND: THE UNIVERSE -->
-    <canvas id="universe-canvas"></canvas>
-
-    <!-- 3. UI OVERLAY -->
-    <div class="hud">
-        <div class="sys-info">
-            <span>SYS.DIVIJA // V.FINAL</span>
-            <span id="coord-disp">X:000 Y:000</span>
-        </div>
-        <div class="entropy-display">
-            <div class="entropy-label">CURRENT ENTROPY</div>
-            <div class="entropy-val" id="entropy-num">100.0%</div>
-        </div>
-    </div>
-    <div class="timeline-track"><div class="timeline-thumb" id="progress-thumb"></div></div>
-
-    <!-- 4. CONTENT SCROLL -->
-    <main id="main-viewport">
+    <!-- MAIN CONTENT -->
+    <div id="content">
         
-        <!-- SEC 1: ORIGIN -->
-        <section id="origin">
-            <span class="subtitle">&lt;Origin_Point /&gt;</span>
-            <h1>The Chaos Equation</h1>
-            <p>
-                When our variables first interacted, the output was <span class="highlight">NaN</span> (Not a Number).
-                I saw a "tough cookie" with a firewall so advanced it dropped every packet I sent.
-                I labeled the system: <strong>Rude. Immaturity masked as strength.</strong>
-            </p>
-            <p>
-                I prepared to execute <code>connection.terminate()</code>.
-            </p>
+        <!-- SECTION: ORIGIN -->
+        <section id="sec-origin">
+            <div class="tag">&lt;Origin_Point&gt;</div>
+            <h1>The Chaos</h1>
+            <div class="narrative">
+                <p>
+                    When our functions first collided, the result was <span class="math-term">undefined</span>.
+                    I was angry. I saw a "tough cookie" with a firewall so aggressive it rejected every packet I sent.
+                    I labeled you: <strong>Rude. Immaturity disguised as strength.</strong>
+                </p>
+                <p>
+                    I prepared to terminate the connection.
+                </p>
+            </div>
         </section>
 
-        <!-- SEC 2: EVIDENCE (BENTO GRID) -->
-        <section id="evidence">
-            <span class="subtitle">&lt;Visual_Reconstruction /&gt;</span>
-            <h2>Stabilizing Memories</h2>
-            <p style="font-size: 0.9rem; font-family: var(--f-code); margin-bottom: 2rem; color: var(--red-shift);">
-                [WARNING]: Data corruption detected. Click shards to fuse.
-            </p>
+        <!-- SECTION: MEMORIES -->
+        <section id="sec-memories">
+            <div class="tag gold">&lt;Data_Recovery&gt;</div>
+            <h2>Stabilizing Memories...</h2>
+            <p class="memory-instruction">[INSTRUCTION]: <span>CLICK</span> on corrupted memories to restore them</p>
 
-            <div class="holo-grid">
-                <!-- Image 1: Portrait (Takes tall slot) -->
-                <div class="holo-card portrait" data-status="chaos">
-                    <div class="scan-bar"></div>
-                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
-                    <!-- Main Img -->
-                    <div class="holo-content">
-                        <img src="K1.png" alt="Resilience" class="holo-img lazy">
+            <div class="memory-grid" id="memory-grid">
+                <!-- Memory 1 -->
+                <div class="memory-unit" data-label="RESILIENCE">
+                    <div class="memory-img-wrap">
+                        <img src="" data-src="K1.png" alt="Memory 1">
                     </div>
-                    <!-- CSS Shards for Effect -->
-                    <div class="shard" style="background-image: url('K1.png')"></div>
-                    <div class="shard" style="background-image: url('K1.png')"></div>
-                    <div class="shard" style="background-image: url('K1.png')"></div>
+                    <div class="rgb-split"></div>
+                    <div class="scanlines"></div>
+                    <div class="noise"></div>
+                    <div class="glitch-lines"></div>
+                    <div class="stabilize-flash"></div>
+                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
+                    <div class="memory-label">
+                        <span>VAR: RESILIENCE</span>
+                        <span class="memory-status">CORRUPTED</span>
+                    </div>
                 </div>
 
-                <!-- Image 2: Landscape (Wide) -->
-                <div class="holo-card landscape" data-status="chaos">
-                    <div class="scan-bar"></div>
-                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
-                    <div class="holo-content">
-                        <img src="K2.png" alt="Brilliance" class="holo-img lazy">
+                <!-- Memory 2 -->
+                <div class="memory-unit" data-label="BRILLIANCE">
+                    <div class="memory-img-wrap">
+                        <img src="" data-src="K2.png" alt="Memory 2">
                     </div>
-                    <div class="shard" style="background-image: url('K2.png')"></div>
-                    <div class="shard" style="background-image: url('K2.png')"></div>
-                    <div class="shard" style="background-image: url('K2.png')"></div>
+                    <div class="rgb-split"></div>
+                    <div class="scanlines"></div>
+                    <div class="noise"></div>
+                    <div class="glitch-lines"></div>
+                    <div class="stabilize-flash"></div>
+                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
+                    <div class="memory-label">
+                        <span>VAR: BRILLIANCE</span>
+                        <span class="memory-status">CORRUPTED</span>
+                    </div>
                 </div>
 
-                <!-- Image 3: Landscape (Wide) -->
-                <div class="holo-card wide" data-status="chaos">
-                    <div class="scan-bar"></div>
-                    <div class="interact-prompt">[ FIX CORRUPTION ]</div>
-                    <div class="holo-content">
-                        <img src="K3.png" alt="The Bond" class="holo-img lazy">
+                <!-- Memory 3 -->
+                <div class="memory-unit" data-label="US">
+                    <div class="memory-img-wrap">
+                        <img src="" data-src="K3.png" alt="Memory 3">
                     </div>
-                    <div class="shard" style="background-image: url('K3.png')"></div>
-                    <div class="shard" style="background-image: url('K3.png')"></div>
-                    <div class="shard" style="background-image: url('K3.png')"></div>
+                    <div class="rgb-split"></div>
+                    <div class="scanlines"></div>
+                    <div class="noise"></div>
+                    <div class="glitch-lines"></div>
+                    <div class="stabilize-flash"></div>
+                    <div class="stabilize-prompt">[ CLICK TO STABILIZE ]</div>
+                    <div class="memory-label">
+                        <span>VAR: US</span>
+                        <span class="memory-status">CORRUPTED</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- SEC 3: ANALYSIS -->
-        <section id="analysis">
-            <span class="subtitle">&lt;Deep_Learning_Results /&gt;</span>
-            <h2>The Constant</h2>
-            <p>
-                But I ran the calculation again. I solved for <span class="highlight">X</span>.
-                Beneath the "rude" encryption was a mind of geometric perfection.
-                Beneath the "toughness" was a heart so rare it needed a vault.
-            </p>
-            <p>
-                You analyze your reflection and see errors. I see the <span class="highlight">Golden Ratio</span>.
-            </p>
-            <div class="sys-log">
-                <p style="margin:0; font-size: 0.9rem; color: var(--cyan-ether);">>> SYSTEM NOTIFICATION</p>
-                <p style="margin-top: 0.5rem;">Milestone Reached: <strong>MATURITY</strong></p>
-                <p>You have evolved. You are the peace to my chaos.</p>
+        <!-- SECTION: ANALYSIS -->
+        <section id="sec-analysis">
+            <div class="tag">&lt;Analysis_Result&gt;</div>
+            <div class="narrative">
+                <p>
+                    But mathematics teaches us to solve for <span class="math-term">X</span>.
+                    I stayed. I debugged the friction. And I found the source code.
+                </p>
+                <p>
+                    Beneath the "rude" exterior lies a mind that weaves mathematics like divine tapestry.
+                    Beneath the "toughness" lies a heart so valuable you had to lock it in a vault.
+                    I found a work ethic that burns brighter than a supernova.
+                </p>
+                <p>
+                    You look down at yourself, calculating errors that don't exist.
+                    But I see the <span class="highlight">Golden Ratio</span> in your soul.
+                </p>
+                <p>
+                    <strong style="color: var(--divine-gold);">Milestone Reached:</strong> Maturity.
+                    You have evolved. You are no longer just the girl with the sharp tongue.
+                    You are the woman who brings peace to my chaos. You have changed for the good.
+                </p>
             </div>
         </section>
 
-        <!-- SEC 4: CONCLUSION -->
-        <section id="conclusion" style="text-align: center; align-items: center;">
-            <p style="font-family: var(--f-code); color: var(--red-shift);">[ FINAL MESSAGE ]</p>
-            <p>As much as you might try to rewrite the variable...</p>
-            <span class="final-msg">I will always be DADDY</span>
-            
-            <div style="margin-top: 4rem; position: relative;">
-                <h2 style="color: var(--gold-horizon); text-shadow: 0 0 30px var(--gold-horizon);">Happy Birthday, Divija</h2>
-                <div style="font-family: var(--f-code); font-size: 0.8rem; opacity: 0.5;">End of Line.</div>
+        <!-- SECTION: FINALE -->
+        <section id="sec-finale" style="text-align: center;">
+            <div class="sys-output">
+                <p>SYSTEM MESSAGE:</p>
+                <p>As much as you may hate to hear this:</p>
+                <span class="daddy-text">I will always be DADDY</span>
             </div>
+            <p class="birthday">Happy Birthday, Divija.</p>
+            <p class="signature">// With love, from your chaos engine</p>
         </section>
-        
-        <div style="height: 20vh;"></div>
-    </main>
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <!-- CURSOR -->
+    <div id="cursor-core" class="gpu-layer"></div>
+    <div id="cursor-field" class="gpu-layer"></div>
+    <div id="cursor-trails"></div>
 
     <script>
-        /**
-         * THE ENTROPY ENGINE V3.0 (Optimized for 60fps)
-         * - Uses TypedArrays for particle data (Zero GC overhead)
-         * - Single Canvas rendering
-         * - Interactive Hologram Logic
-         */
-        (function() {
-            'use strict';
+    /**
+     * ═══════════════════════════════════════════════════════════════
+     * THE ENTROPY ENGINE V2.0 - OPTIMIZED ARCHITECTURE
+     * ═══════════════════════════════════════════════════════════════
+     * 
+     * Design Principles:
+     * 1. Single RAF loop for all animations
+     * 2. Object pooling for particles
+     * 3. Cached DOM references
+     * 4. Event delegation where possible
+     * 5. Passive event listeners
+     * 6. TypedArrays for numerical data
+     * 7. RequestIdleCallback for non-critical tasks
+     */
 
-            // --- CONFIG ---
-            const CONFIG = {
-                particleCount: 1500, // High density possible due to optimization
-                baseSpeed: 0.5,
-                connectionRadius: 100,
-                colors: ['#00F0FF', '#FF0055', '#FFD700', '#FFFFFF']
-            };
+    (function() {
+        'use strict';
 
-            // --- STATE ---
-            const state = {
-                entropy: 1.0, // 1 = chaos, 0 = order
-                mx: window.innerWidth / 2,
-                my: window.innerHeight / 2,
-                scrollProg: 0,
-                width: window.innerWidth,
-                height: window.innerHeight,
-                active: false
-            };
-
-            // --- DOM ---
-            const dom = {
-                canvas: document.getElementById('universe-canvas'),
-                ctx: document.getElementById('universe-canvas').getContext('2d', { alpha: false }),
-                bangBtn: document.getElementById('btn-bang'),
-                audio: document.getElementById('bg-audio'),
-                entropyNum: document.getElementById('entropy-num'),
-                coord: document.getElementById('coord-disp'),
-                cards: document.querySelectorAll('.holo-card'),
-                cursor: {
-                    dot: document.getElementById('c-dot'),
-                    ring: document.getElementById('c-ring')
-                },
-                progress: document.getElementById('progress-thumb')
-            };
-
-            // --- PARTICLE SYSTEM (Optimized) ---
-            // Structure: [x, y, vx, vy, size, colorIndex, life]
-            const STRIDE = 7;
-            const particles = new Float32Array(CONFIG.particleCount * STRIDE);
-
-            function initParticles() {
-                dom.canvas.width = state.width;
-                dom.canvas.height = state.height;
-                
-                for(let i = 0; i < CONFIG.particleCount; i++) {
-                    const idx = i * STRIDE;
-                    resetParticle(idx, true);
-                }
+        // ═══════════════════════════════════════════════════════════
+        // CONFIGURATION
+        // ═══════════════════════════════════════════════════════════
+        const CONFIG = {
+            particles: {
+                count: Math.min(600, Math.floor((window.innerWidth * window.innerHeight) / 3000)),
+                minSpeed: 0.3,
+                maxSpeed: 1.5
+            },
+            cursor: {
+                trailCount: 6,
+                smoothing: 0.12
+            },
+            audio: {
+                barCount: 16,
+                fftSize: 64
             }
+        };
 
-            function resetParticle(idx, randomStart = false) {
-                // Spawn from center if not random start (Big Bang effect)
-                if (!randomStart) {
-                    particles[idx] = state.width / 2;
-                    particles[idx + 1] = state.height / 2;
-                } else {
-                    particles[idx] = Math.random() * state.width;
-                    particles[idx + 1] = Math.random() * state.height;
-                }
-                
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * CONFIG.baseSpeed + 0.2;
-                
-                particles[idx + 2] = Math.cos(angle) * speed; // vx
-                particles[idx + 3] = Math.sin(angle) * speed; // vy
-                particles[idx + 4] = Math.random() * 2; // size
-                particles[idx + 5] = Math.floor(Math.random() * CONFIG.colors.length); // color
-                particles[idx + 6] = Math.random(); // life phase
+        // ═══════════════════════════════════════════════════════════
+        // UTILITIES
+        // ═══════════════════════════════════════════════════════════
+        const Utils = {
+            lerp: (a, b, t) => a + (b - a) * t,
+            clamp: (v, min, max) => Math.min(Math.max(v, min), max),
+            map: (v, inMin, inMax, outMin, outMax) => 
+                (v - inMin) * (outMax - outMin) / (inMax - inMin) + outMin,
+            noise: (x, y) => {
+                const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+                return n - Math.floor(n);
+            },
+            random: (min, max) => Math.random() * (max - min) + min,
+            debounce: (fn, ms) => {
+                let timeout;
+                return (...args) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => fn(...args), ms);
+                };
             }
+        };
 
-            function render() {
-                // Clear with trails
-                dom.ctx.fillStyle = `rgba(3, 3, 3, ${0.1 + state.entropy * 0.2})`;
-                dom.ctx.fillRect(0, 0, state.width, state.height);
+        // ═══════════════════════════════════════════════════════════
+        // DOM CACHE (Single query, reuse everywhere)
+        // ═══════════════════════════════════════════════════════════
+        const DOM = {};
+        const cacheDOM = () => {
+            DOM.loader = document.getElementById('loader');
+            DOM.gate = document.getElementById('gate');
+            DOM.startBtn = document.getElementById('start-btn');
+            DOM.content = document.getElementById('content');
+            DOM.canvas = document.getElementById('flow-field');
+            DOM.entropyFill = document.getElementById('entropy-fill');
+            DOM.entropyValue = document.getElementById('entropy-value');
+            DOM.progress = document.getElementById('progress');
+            DOM.cursorCore = document.getElementById('cursor-core');
+            DOM.cursorField = document.getElementById('cursor-field');
+            DOM.cursorTrails = document.getElementById('cursor-trails');
+            DOM.audioViz = document.getElementById('audio-viz');
+            DOM.audio = document.getElementById('audio');
+            DOM.memoryGrid = document.getElementById('memory-grid');
+            DOM.memoryUnits = document.querySelectorAll('.memory-unit');
+            DOM.narrativePs = document.querySelectorAll('.narrative p');
+        };
 
-                const time = Date.now() * 0.001;
+        // ═══════════════════════════════════════════════════════════
+        // STATE
+        // ═══════════════════════════════════════════════════════════
+        const State = {
+            entropy: 1.0,
+            scrollProgress: 0,
+            isRunning: false,
+            isGateOpen: false,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            mouse: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+            cursor: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+            stabilizedCount: 0,
+            totalMemories: 3,
+            docHeight: 0
+        };
+
+        // ═══════════════════════════════════════════════════════════
+        // PARTICLE SYSTEM (Optimized with TypedArrays & Pooling)
+        // ═══════════════════════════════════════════════════════════
+        const ParticleSystem = (() => {
+            let ctx;
+            const count = CONFIG.particles.count;
+            
+            // TypedArrays for maximum performance
+            const posX = new Float32Array(count);
+            const posY = new Float32Array(count);
+            const speed = new Float32Array(count);
+            
+            const init = () => {
+                ctx = DOM.canvas.getContext('2d', { alpha: false });
+                resize();
                 
-                for(let i = 0; i < CONFIG.particleCount; i++) {
-                    const idx = i * STRIDE;
+                // Initialize particles
+                for (let i = 0; i < count; i++) {
+                    reset(i);
+                }
+            };
+
+            const resize = () => {
+                State.width = DOM.canvas.width = window.innerWidth;
+                State.height = DOM.canvas.height = window.innerHeight;
+            };
+
+            const reset = (i) => {
+                posX[i] = Math.random() * State.width;
+                posY[i] = Math.random() * State.height;
+                speed[i] = Utils.random(CONFIG.particles.minSpeed, CONFIG.particles.maxSpeed);
+            };
+
+            const update = () => {
+                // Trail fade based on entropy
+                const alpha = Utils.map(State.entropy, 0, 1, 0.03, 0.15);
+                ctx.fillStyle = `rgba(5, 5, 5, ${alpha})`;
+                ctx.fillRect(0, 0, State.width, State.height);
+
+                // Color morphs with entropy: Low = Cyan, High = Red
+                const r = Math.floor(Utils.map(State.entropy, 0, 1, 0, 255));
+                const g = Math.floor(Utils.map(State.entropy, 0, 1, 243, 42));
+                const b = Math.floor(Utils.map(State.entropy, 0, 1, 255, 109));
+                ctx.fillStyle = `rgb(${r},${g},${b})`;
+
+                // Noise scale: Low entropy = smooth, High = chaotic
+                const noiseScale = Utils.map(State.entropy, 0, 1, 0.001, 0.008);
+                const time = performance.now() * 0.00008;
+                const entropySpeed = 1 + State.entropy * 1.5;
+
+                for (let i = 0; i < count; i++) {
+                    let x = posX[i];
+                    let y = posY[i];
+                    const s = speed[i];
+
+                    // Flow angle from noise
+                    const angle = Utils.noise(x * noiseScale + time, y * noiseScale) * Math.PI * 4;
+
+                    // Mouse repulsion
+                    const dx = x - State.mouse.x;
+                    const dy = y - State.mouse.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
                     
-                    // Update
-                    let vx = particles[idx + 2];
-                    let vy = particles[idx + 3];
-                    
-                    // Noise/Flow field approximation
-                    const noise = Math.sin(particles[idx] * 0.002 + time) * Math.cos(particles[idx + 1] * 0.002);
-                    
-                    // Entropy influence: High entropy = erratic, Low entropy = aligned
-                    if (state.entropy > 0.5) {
-                        vx += noise * 0.05;
-                        vy += noise * 0.05;
-                    } else {
-                        // Order: Circular gentle motion
-                        vx += (state.mx - particles[idx]) * 0.0001;
-                        vy += (state.my - particles[idx + 1]) * 0.0001;
+                    if (dist < 120 && dist > 0) {
+                        const force = (120 - dist) / 120;
+                        posX[i] += (dx / dist) * force * 2;
+                        posY[i] += (dy / dist) * force * 2;
                     }
 
-                    particles[idx] += vx * (1 + state.entropy * 2);
-                    particles[idx + 1] += vy * (1 + state.entropy * 2);
+                    // Update position
+                    posX[i] += Math.cos(angle) * s * entropySpeed;
+                    posY[i] += Math.sin(angle) * s * entropySpeed;
 
-                    // Bounds wrap
-                    if(particles[idx] < 0 || particles[idx] > state.width || 
-                       particles[idx+1] < 0 || particles[idx+1] > state.height) {
-                        resetParticle(idx, true);
-                    }
+                    // Wrap
+                    if (posX[i] > State.width) posX[i] = 0;
+                    else if (posX[i] < 0) posX[i] = State.width;
+                    if (posY[i] > State.height) posY[i] = 0;
+                    else if (posY[i] < 0) posY[i] = State.height;
 
                     // Draw
-                    const colorHex = CONFIG.colors[particles[idx+5]];
-                    dom.ctx.fillStyle = colorHex;
-                    dom.ctx.beginPath();
-                    dom.ctx.arc(particles[idx], particles[idx+1], particles[idx+4], 0, Math.PI*2);
-                    dom.ctx.fill();
+                    ctx.fillRect(posX[i], posY[i], 1.5, 1.5);
                 }
+            };
 
-                requestAnimationFrame(render);
-            }
-
-            // --- INTERACTION ---
-            function handleScroll() {
-                const total = document.documentElement.scrollHeight - window.innerHeight;
-                state.scrollProg = window.scrollY / total;
-                
-                // Entropy decreases as we scroll down (Chaos -> Order)
-                // But increases slightly at the end for the "Big Bang" of emotion
-                state.entropy = 1 - (state.scrollProg * 0.9);
-                
-                // Update UI
-                dom.entropyNum.innerText = (state.entropy * 100).toFixed(1) + "%";
-                dom.entropyNum.style.color = state.entropy > 0.5 ? '#FF0055' : '#00F0FF';
-                
-                // Progress Bar
-                dom.progress.style.top = (state.scrollProg * 100) + "%";
-                
-                // CSS Variable for global effects
-                document.documentElement.style.setProperty('--entropy', state.entropy);
-            }
-
-            function handleCursor(e) {
-                state.mx = e.clientX;
-                state.my = e.clientY;
-                
-                // Laggy Follower
-                dom.cursor.dot.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                
-                // Slight delay for ring handled by CSS transition, just update pos
-                setTimeout(() => {
-                    dom.cursor.ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-                }, 50);
-
-                // Update coord display
-                dom.coord.innerText = `X:${Math.round(e.clientX)} Y:${Math.round(e.clientY)}`;
-            }
-
-            // --- HOLOGRAPHIC LOGIC ---
-            function initHolograms() {
-                dom.cards.forEach(card => {
-                    // Hover Effect
-                    card.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-                    card.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-                    
-                    // Click to Stabilize
-                    card.addEventListener('click', () => {
-                        if (card.dataset.status === 'stable') return;
-                        
-                        // Play sound
-                        playClickSound();
-                        
-                        // Change state
-                        card.dataset.status = 'stable';
-                        card.classList.add('stabilized');
-                        
-                        // Update text prompt
-                        const prompt = card.querySelector('.interact-prompt');
-                        prompt.innerText = "RECONSTRUCTION COMPLETE";
-                        
-                        // reduce global entropy slightly
-                        state.entropy -= 0.1;
-                    });
-                });
-            }
-
-            function playClickSound() {
-                // Simple synthesized blip to avoid external dependencies failing
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
-                
-                gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
-                
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.2);
-            }
-
-            // --- THE BIG BANG (Initialization) ---
-            dom.bangBtn.addEventListener('click', () => {
-                state.active = true;
-                document.body.classList.add('bang');
-                
-                // Start Audio
-                dom.audio.volume = 0.5;
-                dom.audio.play().catch(e => console.log("Audio requires interaction"));
-                
-                // Init systems
-                initParticles();
-                render();
-                window.addEventListener('scroll', handleScroll);
-                window.addEventListener('mousemove', handleCursor);
-                initHolograms();
-                
-                // Fallback for asset loading
-                document.querySelectorAll('.lazy').forEach(img => {
-                    // Fallback generator if image fails
-                    img.onerror = () => {
-                        img.style.display = 'none';
-                        img.parentElement.style.background = 'linear-gradient(45deg, #111, #222)';
-                        img.parentElement.innerHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#333;font-family:monospace;">[IMG_MISSING]</div>';
-                    };
-                });
-            });
-
-            // Resize handler
-            window.addEventListener('resize', () => {
-                state.width = window.innerWidth;
-                state.height = window.innerHeight;
-                dom.canvas.width = state.width;
-                dom.canvas.height = state.height;
-            });
-
+            return { init, resize, update };
         })();
+
+        // ═══════════════════════════════════════════════════════════
+        // CURSOR SYSTEM
+        // ═══════════════════════════════════════════════════════════
+        const CursorSystem = (() => {
+            const trails = [];
+
+            const init = () => {
+                // Create trail elements
+                for (let i = 0; i < CONFIG.cursor.trailCount; i++) {
+                    const trail = document.createElement('div');
+                    trail.className = 'cursor-trail gpu-layer';
+                    trail.style.opacity = 1 - (i / CONFIG.cursor.trailCount);
+                    trail.style.width = trail.style.height = `${4 - i * 0.4}px`;
+                    DOM.cursorTrails.appendChild(trail);
+                    trails.push({ el: trail, x: State.mouse.x, y: State.mouse.y });
+                }
+            };
+
+            const update = () => {
+                // Smooth cursor follow
+                State.cursor.x += (State.mouse.x - State.cursor.x) * CONFIG.cursor.smoothing;
+                State.cursor.y += (State.mouse.y - State.cursor.y) * CONFIG.cursor.smoothing;
+
+                // Update core (instant)
+                DOM.cursorCore.style.transform = `translate3d(${State.mouse.x}px, ${State.mouse.y}px, 0)`;
+                
+                // Update field (smooth)
+                DOM.cursorField.style.transform = `translate3d(${State.cursor.x}px, ${State.cursor.y}px, 0)`;
+
+                // Update trails
+                for (let i = 0; i < trails.length; i++) {
+                    const trail = trails[i];
+                    const target = i === 0 ? State.mouse : trails[i - 1];
+                    trail.x += (target.x - trail.x) * (0.25 - i * 0.025);
+                    trail.y += (target.y - trail.y) * (0.25 - i * 0.025);
+                    trail.el.style.transform = `translate3d(${trail.x}px, ${trail.y}px, 0)`;
+                    
+                    // Color based on entropy
+                    trail.el.style.background = State.entropy > 0.5 ? 'var(--warn-red)' : 'var(--math-cyan)';
+                }
+            };
+
+            return { init, update };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // ENTROPY MANAGER
+        // ═══════════════════════════════════════════════════════════
+        const EntropyManager = (() => {
+            const calculate = () => {
+                State.docHeight = document.body.scrollHeight - window.innerHeight;
+            };
+
+            const update = () => {
+                const scrollY = window.scrollY;
+                State.scrollProgress = Utils.clamp(scrollY / State.docHeight, 0, 1);
+                
+                // Base entropy from scroll (1 = chaos, 0 = order)
+                let entropy = 1.0 - (State.scrollProgress * 0.8);
+                
+                // Bonus from stabilized memories
+                const memoryBonus = (State.stabilizedCount / State.totalMemories) * 0.15;
+                entropy = Math.max(0.05, entropy - memoryBonus);
+                
+                State.entropy = entropy;
+
+                // Update UI
+                DOM.entropyFill.style.transform = `scaleX(${State.entropy})`;
+                DOM.entropyValue.textContent = Math.round(State.entropy * 100);
+                DOM.progress.style.transform = `scaleX(${State.scrollProgress})`;
+
+                // Body state
+                document.body.classList.toggle('corrupted', State.entropy > 0.5);
+                document.body.classList.toggle('stabilizing', State.entropy <= 0.5);
+            };
+
+            return { calculate, update };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // MEMORY SYSTEM (Click to stabilize)
+        // ═══════════════════════════════════════════════════════════
+        const MemorySystem = (() => {
+            const stabilize = (unit, e) => {
+                if (unit.classList.contains('stabilized')) return;
+
+                // Create ripple at click position
+                const rect = unit.getBoundingClientRect();
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                ripple.style.left = `${e.clientX - rect.left}px`;
+                ripple.style.top = `${e.clientY - rect.top}px`;
+                ripple.style.width = ripple.style.height = '100px';
+                unit.appendChild(ripple);
+
+                // Flash effect
+                unit.classList.add('flash');
+
+                // Stabilize
+                unit.classList.add('stabilized');
+                
+                // Update label
+                const status = unit.querySelector('.memory-status');
+                if (status) status.textContent = 'STABILIZED';
+
+                // Track progress
+                State.stabilizedCount++;
+                EntropyManager.update();
+
+                // Cleanup
+                setTimeout(() => {
+                    ripple.remove();
+                    unit.classList.remove('flash');
+                }, 800);
+
+                // Play sound
+                playStabilizeSound();
+            };
+
+            const playStabilizeSound = () => {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.frequency.setValueAtTime(600, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+                    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.2);
+                    
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                    
+                    osc.start(ctx.currentTime);
+                    osc.stop(ctx.currentTime + 0.3);
+                } catch (e) {
+                    // Silent fail
+                }
+            };
+
+            const init = () => {
+                // Event delegation on grid
+                DOM.memoryGrid.addEventListener('click', (e) => {
+                    const unit = e.target.closest('.memory-unit');
+                    if (unit) stabilize(unit, e);
+                });
+            };
+
+            return { init };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // ASSET LOADER
+        // ═══════════════════════════════════════════════════════════
+        const AssetLoader = (() => {
+            const createFallback = (alt) => {
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400">
+                    <rect fill="#0a0a0a" width="300" height="400"/>
+                    <line x1="0" y1="0" x2="300" y2="400" stroke="#FF2A6D" stroke-width="1"/>
+                    <line x1="300" y1="0" x2="0" y2="400" stroke="#FF2A6D" stroke-width="1"/>
+                    <text x="150" y="200" fill="#888" font-family="monospace" font-size="12" text-anchor="middle">
+                        [CORRUPTED: ${alt}]
+                    </text>
+                </svg>`;
+                return 'data:image/svg+xml,' + encodeURIComponent(svg);
+            };
+
+            const load = () => {
+                const images = document.querySelectorAll('img[data-src]');
+                
+                images.forEach(img => {
+                    const src = img.dataset.src;
+                    const temp = new Image();
+                    
+                    temp.onload = () => {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    };
+                    
+                    temp.onerror = () => {
+                        img.src = createFallback(img.alt);
+                        img.removeAttribute('data-src');
+                    };
+                    
+                    temp.src = src;
+                });
+            };
+
+            return { load };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // AUDIO VISUALIZER
+        // ═══════════════════════════════════════════════════════════
+        const AudioViz = (() => {
+            const bars = [];
+            let analyser = null;
+            let dataArray = null;
+
+            const init = () => {
+                for (let i = 0; i < CONFIG.audio.barCount; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'viz-bar';
+                    DOM.audioViz.appendChild(bar);
+                    bars.push(bar);
+                }
+            };
+
+            const start = async () => {
+                try {
+                    const AC = window.AudioContext || window.webkitAudioContext;
+                    const ctx = new AC();
+                    const source = ctx.createMediaElementSource(DOM.audio);
+                    analyser = ctx.createAnalyser();
+                    analyser.fftSize = CONFIG.audio.fftSize;
+                    
+                    source.connect(analyser);
+                    analyser.connect(ctx.destination);
+                    
+                    dataArray = new Uint8Array(analyser.frequencyBinCount);
+                    
+                    await DOM.audio.play();
+                } catch (e) {
+                    console.log('Audio autoplay blocked');
+                    fallback();
+                }
+            };
+
+            const update = () => {
+                if (!analyser) return;
+                
+                analyser.getByteFrequencyData(dataArray);
+                
+                bars.forEach((bar, i) => {
+                    const val = dataArray[i] || 0;
+                    const height = Math.max(2, (val / 255) * 35);
+                    bar.style.height = `${height}px`;
+                    bar.style.background = State.entropy > 0.5 ? 'var(--warn-red)' : 'var(--math-cyan)';
+                });
+            };
+
+            const fallback = () => {
+                bars.forEach((bar, i) => {
+                    bar.style.animation = `pulse 1s ease-in-out infinite ${i * 0.05}s`;
+                });
+            };
+
+            return { init, start, update };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // SCROLL REVEAL
+        // ═══════════════════════════════════════════════════════════
+        const ScrollReveal = (() => {
+            let observer;
+
+            const init = () => {
+                observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+                DOM.memoryUnits.forEach(el => observer.observe(el));
+                DOM.narrativePs.forEach(el => observer.observe(el));
+            };
+
+            return { init };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // MAIN LOOP (Single RAF for all animations)
+        // ═══════════════════════════════════════════════════════════
+        const MainLoop = (() => {
+            let lastTime = 0;
+
+            const tick = (timestamp) => {
+                if (!State.isRunning) return;
+
+                // Throttle to ~60fps
+                if (timestamp - lastTime < 16) {
+                    requestAnimationFrame(tick);
+                    return;
+                }
+                lastTime = timestamp;
+
+                // Update all systems
+                ParticleSystem.update();
+                CursorSystem.update();
+                AudioViz.update();
+
+                requestAnimationFrame(tick);
+            };
+
+            const start = () => {
+                State.isRunning = true;
+                requestAnimationFrame(tick);
+            };
+
+            const stop = () => {
+                State.isRunning = false;
+            };
+
+            return { start, stop };
+        })();
+
+        // ═══════════════════════════════════════════════════════════
+        // EVENT HANDLERS
+        // ═══════════════════════════════════════════════════════════
+        const setupEvents = () => {
+            // Mouse move (passive for performance)
+            window.addEventListener('mousemove', (e) => {
+                State.mouse.x = e.clientX;
+                State.mouse.y = e.clientY;
+            }, { passive: true });
+
+            // Scroll
+            window.addEventListener('scroll', () => {
+                if (State.isGateOpen) {
+                    EntropyManager.update();
+                }
+            }, { passive: true });
+
+            // Resize (debounced)
+            window.addEventListener('resize', Utils.debounce(() => {
+                State.width = window.innerWidth;
+                State.height = window.innerHeight;
+                ParticleSystem.resize();
+                EntropyManager.calculate();
+            }, 200));
+
+            // Hover detection for cursor
+            document.addEventListener('mouseover', (e) => {
+                if (e.target.matches('.gate-btn, .memory-unit, a, button')) {
+                    document.body.classList.add('hovering');
+                }
+            });
+            document.addEventListener('mouseout', (e) => {
+                if (e.target.matches('.gate-btn, .memory-unit, a, button')) {
+                    document.body.classList.remove('hovering');
+                }
+            });
+
+            // Start button
+            DOM.startBtn.addEventListener('click', openGate);
+        };
+
+        // ═══════════════════════════════════════════════════════════
+        // GATE TRANSITION
+        // ═══════════════════════════════════════════════════════════
+        const openGate = () => {
+            State.isGateOpen = true;
+            
+            DOM.gate.classList.add('hidden');
+            DOM.canvas.style.opacity = '1';
+            DOM.content.classList.add('visible');
+
+            // Initialize post-gate systems
+            setTimeout(() => {
+                AssetLoader.load();
+                MemorySystem.init();
+                ScrollReveal.init();
+                AudioViz.start();
+                EntropyManager.calculate();
+                EntropyManager.update();
+            }, 300);
+        };
+
+        // ═══════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ═══════════════════════════════════════════════════════════
+        const init = () => {
+            cacheDOM();
+            
+            // Initialize core systems
+            ParticleSystem.init();
+            CursorSystem.init();
+            AudioViz.init();
+            
+            // Setup events
+            setupEvents();
+            
+            // Start main loop
+            MainLoop.start();
+            
+            // Hide loader
+            setTimeout(() => {
+                DOM.loader.classList.add('hidden');
+            }, 1200);
+        };
+
+        // Boot
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+    })();
     </script>
 </body>
 </html>
