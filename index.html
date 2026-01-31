@@ -895,7 +895,7 @@
 
     <!-- AUDIO -->
     <audio id="audio" loop crossorigin="anonymous">
-        <source src="Undertale OST - MEMORY (Build Up Ver.) (Piano & Orchestra Cover).mp3" type="audio/mpeg">
+        <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
     </audio>
     <div id="audio-viz"></div>
 
@@ -1011,7 +1011,7 @@
                 <span class="daddy-text">I will always be DADDY</span>
             </div>
             <p class="birthday">Happy Birthday, Divija.</p>
-            <p class="signature">// With love, from your Daddy ~Jared</p>
+            <p class="signature">// With love, from your chaos engine</p>
         </section>
 
         <div style="height: 80px;"></div>
@@ -1431,9 +1431,6 @@
                     analyser.connect(ctx.destination);
                     
                     dataArray = new Uint8Array(analyser.frequencyBinCount);
-                    
-                    // Set the start time to 00:00:09
-                    DOM.audio.currentTime = 9;
                     
                     await DOM.audio.play();
                 } catch (e) {
