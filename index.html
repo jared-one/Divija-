@@ -3,487 +3,548 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Divija | The Convergence</title>
-    <meta name="description" content="A trajectory from chaos to the divine.">
+    <title>Divija | The Entropy of Love</title>
+    <meta name="description" content="Solving the equation from chaos to the divine.">
     
-    <!-- 
-        PhD Design Philosophy:
-        1. Typography: 'Playfair Display' (Human/Emotional) vs 'JetBrains Mono' (Logic/Math).
-           The tension between these fonts mirrors her personality (Tough/Soft).
-        2. Color Theory: Deep Void (#050505) preserves OLED blacks. 
-           Accents in 'Math Cyan' and 'Divine Gold'.
-    -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@200;400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --void: #020203;
-            --starlight: #EAEAEA;
-            --math-cyan: #00F0FF;
-            --divine-gold: #D4AF37;
-            --accent-error: #FF2A6D;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.08);
+            --void: #050505;
+            --signal: #E0E0E0;
+            --math-cyan: #00F3FF;
+            --warn-red: #FF2A6D;
+            --divine-gold: #FFD700;
+            --glitch-offset: 2px;
             
-            --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --ease-smooth: cubic-bezier(0.19, 1, 0.22, 1);
+            --font-display: 'Cinzel', serif;
+            --font-ui: 'JetBrains Mono', monospace;
+            --font-body: 'Montserrat', sans-serif;
         }
 
-        /* --- 1. RESET & BASE --- */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
             background-color: var(--void);
-            color: var(--starlight);
-            font-family: 'Playfair Display', serif;
+            color: var(--signal);
+            font-family: var(--font-body);
             overflow-x: hidden;
             height: 100vh;
             width: 100vw;
-            cursor: none; /* Custom cursor required for immersion */
+            cursor: none; /* Custom cursor essential for the "Sprite" feel */
         }
 
-        /* --- 2. CUSTOM CURSOR (Mathematical Precision) --- */
-        #cursor-dot {
-            position: fixed; width: 4px; height: 4px; background: var(--math-cyan);
+        /* --- 1. THE SPRITE (Cursor) --- */
+        #sprite-core {
+            position: fixed; width: 8px; height: 8px; background: var(--math-cyan);
+            border-radius: 50%; pointer-events: none; z-index: 10000;
+            box-shadow: 0 0 10px var(--math-cyan);
+            transition: transform 0.1s;
+        }
+        #sprite-field {
+            position: fixed; width: 60px; height: 60px;
+            border: 1px dashed rgba(255,255,255,0.2);
             border-radius: 50%; pointer-events: none; z-index: 9999;
-            transition: opacity 0.3s;
+            transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
         }
-        #cursor-ring {
-            position: fixed; width: 40px; height: 40px; 
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%; pointer-events: none; z-index: 9998;
-            transition: transform 0.15s var(--ease-smooth), width 0.3s, height 0.3s, border-color 0.3s;
+        /* State: Stabilizing */
+        body.stabilizing #sprite-field {
+            border-color: var(--divine-gold);
+            transform: scale(1.5);
+            background: rgba(255, 215, 0, 0.05);
         }
-        body:hover #cursor-ring { transform: scale(1); }
-        body:active #cursor-ring { transform: scale(0.8); border-color: var(--math-cyan); }
+        /* State: Corrupted */
+        body.corrupted #sprite-core { background: var(--warn-red); box-shadow: 0 0 15px var(--warn-red); }
+        body.corrupted #sprite-field { border-color: var(--warn-red); border-style: solid; }
 
-        /* --- 3. CANVAS ENGINE --- */
-        #entropy-engine {
+        /* --- 2. THE UNIVERSE (Canvas) --- */
+        #flow-field {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1; opacity: 0; transition: opacity 2s ease;
         }
 
-        /* --- 4. ENTRANCE GATE (The "Decrypt" Metaphor) --- */
+        /* --- 3. UI OVERLAY (The HUD) --- */
+        .hud-overlay {
+            position: fixed; top: 2rem; left: 2rem; right: 2rem;
+            display: flex; justify-content: space-between;
+            font-family: var(--font-ui); font-size: 0.7rem; color: var(--math-cyan);
+            z-index: 500; pointer-events: none;
+            mix-blend-mode: exclusion;
+        }
+        .entropy-meter {
+            display: flex; gap: 10px; align-items: center;
+        }
+        .entropy-bar {
+            width: 100px; height: 4px; background: rgba(255,255,255,0.1);
+            position: relative; overflow: hidden;
+        }
+        .entropy-fill {
+            position: absolute; top:0; left:0; height: 100%; width: 100%;
+            background: var(--warn-red); transform-origin: left; transform: scaleX(1);
+            transition: transform 0.1s linear, background 0.5s;
+        }
+
+        /* --- 4. ENTRANCE GATE --- */
         #gate {
-            position: fixed; inset: 0; z-index: 1000;
+            position: fixed; inset: 0; z-index: 2000;
             background: var(--void);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 1s var(--ease-smooth), visibility 1s;
+            transition: opacity 1s ease;
         }
-
-        .terminal-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem; color: var(--math-cyan);
-            margin-bottom: 2rem; letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        .decrypt-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: var(--starlight);
-            font-family: 'JetBrains Mono', monospace;
-            padding: 1.2rem 3rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            cursor: none;
+        .gate-title {
+            font-family: var(--font-display); font-size: 4rem; margin-bottom: 1rem;
             position: relative;
-            overflow: hidden;
-            transition: all 0.5s var(--ease-smooth);
+        }
+        .gate-title::before {
+            content: attr(data-text); position: absolute; left: 2px; text-shadow: -1px 0 var(--warn-red);
+            top: 0; color: var(--signal); background: var(--void); overflow: hidden; clip: rect(0, 900px, 0, 0); 
+            animation: noise-anim-2 3s infinite linear alternate-reverse;
         }
         
-        .decrypt-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.2), transparent);
-            transition: left 0.5s;
+        .init-btn {
+            background: transparent; border: 1px solid var(--math-cyan); color: var(--math-cyan);
+            padding: 1rem 3rem; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.2em;
+            cursor: none; transition: all 0.3s;
         }
-        .decrypt-btn:hover { border-color: var(--math-cyan); box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
-        .decrypt-btn:hover::before { left: 100%; }
+        .init-btn:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 20px var(--math-cyan); }
 
-        /* --- 5. MAIN CONTENT LAYOUT --- */
-        #viewport {
-            opacity: 0; transition: opacity 1.5s ease;
+        /* --- 5. MAIN CONTENT --- */
+        #scroll-container {
             max-width: 1000px; margin: 0 auto; padding: 0 2rem;
+            opacity: 0; transition: opacity 1s ease;
         }
 
         section {
-            min-height: 90vh; /* Breathing space */
-            display: flex; flex-direction: column; justify-content: center;
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
             position: relative;
         }
 
-        /* Typography */
-        h1 { font-size: clamp(3rem, 10vw, 6rem); line-height: 0.9; margin-bottom: 1rem; }
-        h2 { font-family: 'JetBrains Mono'; font-size: 0.9rem; color: var(--math-cyan); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 2rem; }
+        /* Glitch Text Effect for Headers */
+        h1 {
+            font-family: var(--font-display); font-size: clamp(3rem, 8vw, 6rem);
+            position: relative; color: var(--signal);
+        }
         
+        /* THE MEMORY GRID (Interactive) */
+        .memory-grid {
+            display: grid; grid-template-columns: 1fr; gap: 4rem;
+            margin: 4rem 0;
+        }
+        @media(min-width: 768px) {
+            .memory-grid { grid-template-columns: repeat(2, 1fr); }
+            .mem-portrait { grid-row: span 2; }
+        }
+
+        .memory-unit {
+            position: relative; border: 1px solid var(--border);
+            overflow: hidden; opacity: 0; transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+        
+        .memory-unit.visible { opacity: 1; transform: translateY(0); }
+
+        .memory-unit img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block;
+            /* Start in "Corrupted" state */
+            filter: grayscale(100%) contrast(1.2) brightness(0.8);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+            transition: all 0.5s ease;
+        }
+
+        /* The Meta-Game: Hovering "Stabilizes" the image */
+        .memory-unit:hover img {
+            filter: grayscale(0%) contrast(1.0) brightness(1.0);
+            transform: scale(1.05);
+        }
+        
+        /* Corruption overlay */
+        .scanline {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.5) 51%);
+            background-size: 100% 4px; pointer-events: none; z-index: 2;
+            opacity: 0.5; transition: opacity 0.5s;
+        }
+        .memory-unit:hover .scanline { opacity: 0; }
+
+        .memory-label {
+            position: absolute; bottom: 10px; left: 10px;
+            font-family: var(--font-ui); font-size: 0.7rem; color: var(--math-cyan);
+            background: rgba(0,0,0,0.8); padding: 5px 10px; z-index: 3;
+        }
+
+        /* TEXT STYLES */
         .narrative {
-            font-size: 1.25rem; line-height: 1.8; color: rgba(255,255,255,0.8);
-            max-width: 650px; margin-left: auto; margin-right: auto;
+            font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.8);
+            max-width: 600px;
         }
         .narrative p { margin-bottom: 2rem; }
         
-        .highlight { color: var(--divine-gold); font-style: italic; }
-        .code-highlight { font-family: 'JetBrains Mono'; color: var(--math-cyan); font-size: 0.9em; }
+        .highlight { color: var(--divine-gold); font-weight: 600; text-shadow: 0 0 10px rgba(255,215,0,0.3); }
+        .math-term { color: var(--math-cyan); font-family: var(--font-ui); border-bottom: 1px dashed var(--math-cyan); }
 
-        /* --- 6. THE IMAGE GRID (Scale Fix) --- */
-        .grid-system {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            margin: 4rem 0;
+        /* THE PUNCHLINE (System Output) */
+        .sys-out {
+            background: rgba(255,255,255,0.05); border-left: 3px solid var(--math-cyan);
+            padding: 2rem; margin-top: 3rem; font-family: var(--font-ui);
+        }
+        .daddy-bold {
+            font-size: 2rem; color: var(--math-cyan); font-weight: 700;
+            display: block; margin-top: 1rem; text-shadow: 2px 2px var(--warn-red);
         }
 
-        @media(min-width: 768px) {
-            .grid-system {
-                grid-template-columns: 300px 1fr; 
-                grid-template-rows: 300px 300px;
-            }
-            .cell-portrait { grid-row: 1 / 3; grid-column: 1; }
-            .cell-landscape-1 { grid-row: 1; grid-column: 2; }
-            .cell-landscape-2 { grid-row: 2; grid-column: 2; }
+        /* SVG Fallback Container */
+        .fallback-svg {
+            width: 100%; height: 100%; min-height: 300px;
+            display: flex; align-items: center; justify-content: center;
+            background: #0a0a0a; color: var(--math-cyan);
+            font-family: var(--font-ui);
         }
 
-        .memory-frame {
-            position: relative;
-            background: var(--glass);
-            border: 1px solid var(--border);
-            overflow: hidden;
-            opacity: 0; transform: translateY(20px); /* Scroll Reveal State */
-            transition: all 1s var(--ease-smooth);
-        }
-        .memory-frame.visible { opacity: 1; transform: translateY(0); }
-
-        .memory-frame img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 1.5s ease;
-            display: block; /* Remove inline gap */
-        }
-        .memory-frame:hover img { transform: scale(1.05); }
-
-        /* SVG Fallback (Procedural Generation) */
-        .fallback-container {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: #08080a; color: var(--border);
-            font-family: 'JetBrains Mono'; font-size: 0.8rem;
-        }
-
-        /* --- 7. THE POEM (Depth) --- */
-        .poem-container {
-            border-left: 2px solid var(--math-cyan);
-            padding-left: 3rem;
-            margin: 4rem 0;
-            background: linear-gradient(90deg, rgba(0, 240, 255, 0.02), transparent);
-        }
-
-        /* --- 8. AUDIO VISUALIZER --- */
-        .audio-hud {
+        /* AUDIO */
+        #audio-viz {
             position: fixed; bottom: 2rem; right: 2rem;
-            display: flex; gap: 4px; align-items: flex-end;
-            height: 30px; z-index: 500;
-            mix-blend-mode: exclusion;
+            display: flex; gap: 3px; align-items: flex-end;
+            height: 30px; pointer-events: none;
         }
-        .bar { width: 3px; background: var(--math-cyan); min-height: 2px; }
+        .bar { width: 4px; background: var(--math-cyan); height: 2px; }
 
-        /* --- 9. THE PUNCHLINE --- */
-        .punchline-wrapper {
-            text-align: center; margin-top: 4rem; padding: 3rem;
-            border: 1px dashed var(--border);
-        }
-        .daddy-glitch {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 900; font-size: 2rem;
-            color: var(--starlight);
-            text-transform: uppercase;
-            position: relative;
-            display: inline-block;
-        }
-        /* Subtle glow, not aggressive */
-        .daddy-glitch::after {
-            content: 'DADDY'; position: absolute; top: 0; left: 2px;
-            color: var(--math-cyan); opacity: 0.5; mix-blend-mode: screen;
-            animation: glitch 2s infinite steps(2);
-            z-index: -1;
-        }
-        @keyframes glitch { 
-            0% { transform: translate(0,0); } 20% { transform: translate(-2px,2px); } 
-            40% { transform: translate(-2px,-2px); } 60% { transform: translate(2px,2px); } 
-            80% { transform: translate(2px,-2px); } 100% { transform: translate(0,0); } 
+        /* KEYFRAMES */
+        @keyframes noise-anim-2 {
+            0% { clip: rect(12px, 9999px, 15px, 0); }
+            20% { clip: rect(80px, 9999px, 10px, 0); }
+            40% { clip: rect(30px, 9999px, 80px, 0); }
+            60% { clip: rect(10px, 9999px, 50px, 0); }
+            80% { clip: rect(60px, 9999px, 20px, 0); }
+            100% { clip: rect(40px, 9999px, 90px, 0); }
         }
 
+        @media(max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .gate-title { font-size: 2.5rem; }
+            #sprite-core, #sprite-field { display: none; }
+            body { cursor: auto; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. BACKEND: PARTICLE ENGINE -->
-    <canvas id="entropy-engine"></canvas>
+    <!-- 1. BACKEND: FLOW FIELD (The Universe) -->
+    <canvas id="flow-field"></canvas>
 
-    <!-- 2. FRONTEND: ASSET GATE -->
-    <div id="gate">
-        <div class="terminal-text" id="status-line">System: Locked</div>
-        <button id="btn-decrypt" class="decrypt-btn">Decrypt Sequence</button>
+    <!-- 2. HUD: SYSTEM STATUS -->
+    <div class="hud-overlay">
+        <div>SYS.DIVIJA // V.1.0</div>
+        <div class="entropy-meter">
+            <span>ENTROPY:</span>
+            <div class="entropy-bar"><div class="entropy-fill" id="entropy-val"></div></div>
+        </div>
     </div>
 
-    <!-- 3. AUDIO SYSTEM (Lazy Load) -->
+    <!-- 3. GATE: THE FIRST INTERACTION -->
+    <div id="gate">
+        <h1 class="gate-title" data-text="DIVIJA">DIVIJA</h1>
+        <p style="font-family: var(--font-ui); color: var(--warn-red); margin-bottom: 2rem;">
+            [WARNING]: High Entropy Detected.
+        </p>
+        <button class="init-btn" id="btn-start">Stabilize System</button>
+    </div>
+
+    <!-- 4. AUDIO (Lazy Load) -->
     <audio id="bg-music" loop crossorigin="anonymous">
         <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
-        <!-- Fallback will be handled by JS Logic -->
     </audio>
-    <div class="audio-hud" id="visualizer"></div>
+    <div id="audio-viz"></div>
 
-    <!-- 4. NARRATIVE VIEWPORT -->
-    <div id="viewport">
+    <!-- 5. MAIN CONTENT (The Maze) -->
+    <div id="scroll-container">
         
         <!-- INTRO -->
         <section>
-            <h2>Analysis: Active</h2>
-            <h1>Divija</h1>
-            <p style="font-family: 'JetBrains Mono'; color: var(--divine-gold);">
-                [Var Name]: "Heavenly Born"<br>
-                [Status]: Divine Constant
+            <div style="font-family: var(--font-ui); color: var(--math-cyan); margin-bottom: 1rem;">
+                &lt;Origin_Point&gt;
+            </div>
+            <h1>The Chaos</h1>
+            <div class="narrative">
+                <p>
+                    When our functions first collided, the result was <span class="math-term">undefined</span>.
+                    I was angry. I saw a "tough cookie" with a firewall so aggressive it rejected every packet I sent.
+                    I labeled you: <strong>Rude. Immaturity disguised as strength.</strong>
+                </p>
+                <p>
+                    I prepared to terminate the connection.
+                </p>
+            </div>
+        </section>
+
+        <!-- THE PROOF (Memories) -->
+        <section>
+            <div style="font-family: var(--font-ui); color: var(--divine-gold); margin-bottom: 1rem;">
+                &lt;Data_Recovery&gt;
+            </div>
+            <h2>Stabilizing Memories...</h2>
+            <p style="font-size: 0.8rem; font-family: var(--font-ui); color: var(--signal); opacity: 0.7; margin-bottom: 2rem;">
+                [INSTRUCTION]: Hover over memories to fix corruption.
             </p>
+
+            <div class="memory-grid">
+                <!-- K1: Portrait -->
+                <div class="memory-unit mem-portrait lazy-anim">
+                    <div class="scanline"></div>
+                    <img data-src="K1.png" alt="Portrait" class="lazy-load">
+                    <div class="memory-label">VAR: RESILIENCE</div>
+                </div>
+                <!-- K2: Landscape -->
+                <div class="memory-unit lazy-anim">
+                    <div class="scanline"></div>
+                    <img data-src="K2.png" alt="Landscape 1" class="lazy-load">
+                    <div class="memory-label">VAR: BRILLIANCE</div>
+                </div>
+                <!-- K3: Landscape -->
+                <div class="memory-unit lazy-anim">
+                    <div class="scanline"></div>
+                    <img data-src="K3.png" alt="Landscape 2" class="lazy-load">
+                    <div class="memory-label">VAR: US</div>
+                </div>
+            </div>
         </section>
 
-        <!-- THE CONFLICT -->
+        <!-- THE TRUTH (Letter) -->
         <section>
+            <div style="font-family: var(--font-ui); color: var(--math-cyan); margin-bottom: 1rem;">
+                &lt;Analysis_Result&gt;
+            </div>
             <div class="narrative">
                 <p>
-                    I admit it. When our trajectories first intersected, the calculation was... <span class="code-highlight">undefined</span>.
-                    I saw a "tough cookie." A sharp tongue. A firewall so thick I thought no signal could pass through.
-                    I labeled you: <em>Rude. Impossible. Volatile.</em>
+                    But mathematics teaches us to solve for <span class="math-term">X</span>.
+                    I stayed. I debugged the friction. And I found the source code.
                 </p>
                 <p>
-                    I was ready to close the program. To walk away.
+                    Beneath the "rude" exterior lies a mind that weaves mathematics like divine tapestry.
+                    Beneath the "toughness" lies a heart so valuable you had to lock it in a vault.
+                    I found a work ethic that burns brighter than a supernova.
                 </p>
                 <p>
-                    But mathematics teaches us that the most beautiful curves often look like chaos at close range.
-                    I stayed. I zoomed out. I looked for the pattern.
+                    You look down at yourself, calculating errors that don't exist.
+                    But I see the <span class="highlight">Golden Ratio</span> in your soul.
+                </p>
+                <p>
+                    <strong>Milestone Reached:</strong> Maturity.
+                    You have evolved. You are no longer just the girl with the sharp tongue.
+                    You are the woman who brings peace to my chaos. You have changed for the good.
                 </p>
             </div>
         </section>
 
-        <!-- THE PROOF (GALLERY) -->
-        <section>
-            <h2>Evidence: The Hidden Gem</h2>
-            <div class="grid-system">
-                <!-- Portrait (K1) -->
-                <div class="memory-frame cell-portrait">
-                    <img data-src="K1.png" alt="Divija Portrait" class="lazy-load">
-                    <!-- JS injects SVG fallback here if needed -->
-                </div>
-                <!-- Landscape (K2) -->
-                <div class="memory-frame cell-landscape-1">
-                    <img data-src="K2.png" alt="Memory Landscape" class="lazy-load">
-                </div>
-                <!-- Landscape (K3) -->
-                <div class="memory-frame cell-landscape-2">
-                    <img data-src="K3.png" alt="Us" class="lazy-load">
-                </div>
+        <!-- THE END (Punchline) -->
+        <section style="text-align: center;">
+            <div class="sys-out">
+                <p>SYSTEM MESSAGE:</p>
+                <p>As much as you may hate to hear this:</p>
+                <span class="daddy-bold">I will always be DADDY</span>
             </div>
-        </section>
-
-        <!-- THE RESOLUTION (POEM) -->
-        <section>
-            <div class="narrative">
-                <p>
-                    I found it. Beneath the armor of independence, I found a mind that speaks the divine language of numbers.
-                    I found a work ethic that burns with the intensity of a supernova, yet you look in the mirror and see only a dim star.
-                </p>
-                <div class="poem-container">
-                    <p>
-                        You are not just the variable that changed.<br>
-                        You are the solution I never knew I needed.<br>
-                        From the friction of our first words to the silence of our understanding.<br>
-                        You have matured. You have grown.<br>
-                        <span class="highlight">You have become my home.</span>
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <!-- THE PUNCHLINE -->
-        <section style="min-height: 50vh;">
-            <div class="narrative" style="text-align: center;">
-                <p>One year. And I am still analyzing the data, finding new reasons to love you every day.</p>
-                
-                <div class="punchline-wrapper">
-                    <p style="font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-bottom: 1rem; color: var(--starlight);">SYSTEM NOTIFICATION:</p>
-                    As much as you may hate to hear this:<br>
-                    I will always be <span class="daddy-glitch">DADDY</span>
-                </div>
-                
-                <p style="margin-top: 4rem; font-family: 'Playfair Display'; font-style: italic; color: var(--divine-gold);">
-                    Happy Birthday, my Divine One.
-                </p>
-            </div>
+            <p style="margin-top: 3rem; font-family: var(--font-display); font-size: 1.5rem; color: var(--divine-gold);">
+                Happy Birthday, Divija.
+            </p>
         </section>
 
         <div style="height: 100px;"></div>
     </div>
 
-    <!-- UI: CURSOR -->
-    <div id="cursor-dot"></div>
-    <div id="cursor-ring"></div>
+    <!-- UI: SPRITE -->
+    <div id="sprite-core"></div>
+    <div id="sprite-field"></div>
 
 <script>
 /**
- * PHD ARCHITECTURE: FUNCTIONAL REACTIONAL
- * 1. Store: Immutable State Management
- * 2. ResourceLoader: Monadic Asset Handling (Success/Failure states)
- * 3. PhysicsEngine: Float32Array Particle System (Memory Optimized)
- * 4. DomReflector: Pure functions mapping State -> DOM
+ * ARCHITECTURE: "THE ENTROPY ENGINE"
+ * 1. Physics: Particle Flow Field (Noise-driven).
+ * 2. Logic: Entropy State Manager (Scroll/Interaction driven).
+ * 3. Robustness: SVG Fallbacks + Audio Safety.
  */
 
 (function() {
     'use strict';
 
-    // --- 1. CORE UTILITIES (Pure) ---
-    const Pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
-    const Clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-    const MapRange = (value, inMin, inMax, outMin, outMax) => 
-        (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
-
-    // --- 2. STATE MANAGEMENT ---
-    const State = {
-        scroll: 0,
-        audioContext: null,
-        analyser: null,
-        isPlaying: false,
-        width: window.innerWidth,
-        height: window.innerHeight
+    // --- 1. MATH & NOISE UTILS ---
+    const MathUtils = {
+        lerp: (a, b, t) => a + (b - a) * t,
+        map: (v, iMin, iMax, oMin, oMax) => (v - iMin) * (oMax - oMin) / (iMax - iMin) + oMin,
+        // Simple Pseudo-Random Noise (Deterministic)
+        noise: (x, y) => {
+            const val = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+            return val - Math.floor(val);
+        }
     };
 
-    // --- 3. ASSET LOADER (Robustness) ---
-    const AssetManager = (() => {
-        // Generates a Placeholder SVG programmatically (No external dependency)
-        const createPlaceholder = (width, height, text) => {
-            const svg = `
-            <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100%" height="100%" fill="#0a0a0a"/>
-                <line x1="0" y1="0" x2="100%" y2="100%" stroke="#1a1a1a" stroke-width="2"/>
-                <line x1="100%" y1="0" x2="0" y2="100%" stroke="#1a1a1a" stroke-width="2"/>
-                <text x="50%" y="50%" font-family="monospace" font-size="14" fill="#00F0FF" text-anchor="middle" dy=".3em">
-                    [ERR: ${text}]
-                </text>
-            </svg>`;
-            return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-        };
+    // --- 2. STATE ---
+    const State = {
+        entropy: 1.0, // 1.0 = Chaos, 0.0 = Order
+        width: window.innerWidth,
+        height: window.innerHeight,
+        mouseX: 0,
+        mouseY: 0
+    };
 
-        const loadImage = (imgEl) => {
-            const src = imgEl.dataset.src;
-            const img = new Image();
-            img.src = src;
-            img.onload = () => {
-                imgEl.src = src;
-                imgEl.parentElement.classList.add('visible');
-            };
-            img.onerror = () => {
-                // Fail gracefully to generated SVG
-                console.warn(`Asset Lost: ${src}. Generating Fallback.`);
-                imgEl.src = createPlaceholder(400, 300, src.split('.')[0]);
-                imgEl.parentElement.classList.add('visible');
-                imgEl.style.opacity = 0.5; // Dim fallbacks
-            };
-        };
-
-        return {
-            loadAll: () => document.querySelectorAll('.lazy-load').forEach(loadImage)
-        };
-    })();
-
-    // --- 4. PHYSICS ENGINE (The "Meta" Effect) ---
-    const CanvasSystem = (() => {
-        const canvas = document.getElementById('entropy-engine');
-        const ctx = canvas.getContext('2d', { alpha: false }); // Optimize
+    // --- 3. PHYSICS ENGINE (Flow Field) ---
+    const Physics = (() => {
+        const canvas = document.getElementById('flow-field');
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const COUNT = 800; // Optimized particle count
         
-        const COUNT = 1200; // Efficient particle count
-        // Struct: [x, y, vx, vy, size, originalX, originalY]
-        // Using TypedArray for contiguous memory access (Cache friendly)
-        const particles = new Float32Array(COUNT * 7);
+        // Data: x, y, speed, angle
+        const particles = new Float32Array(COUNT * 4);
         
-        let targetChaos = 1.0; // 1.0 = Chaos, 0.0 = Order
-
         const init = () => {
             resize();
             window.addEventListener('resize', resize);
-            
             for(let i=0; i<COUNT; i++) {
-                const idx = i * 7;
-                particles[idx] = Math.random() * State.width;     // x
-                particles[idx+1] = Math.random() * State.height;  // y
-                particles[idx+2] = (Math.random() - 0.5) * 0.5;   // vx
-                particles[idx+3] = (Math.random() - 0.5) * 0.5;   // vy
-                particles[idx+4] = Math.random() * 2;             // size
-                
-                // Form a Sine Wave Pattern (Order)
-                particles[idx+5] = (i / COUNT) * State.width;     // targetX
-                particles[idx+6] = (State.height/2) + Math.sin(i * 0.02) * 100; // targetY
+                resetParticle(i);
             }
             loop();
         };
 
         const resize = () => {
-            canvas.width = State.width = window.innerWidth;
-            canvas.height = State.height = window.innerHeight;
+            State.width = canvas.width = window.innerWidth;
+            State.height = canvas.height = window.innerHeight;
         };
 
-        const updatePhysics = () => {
-            // Scroll determines chaos level. Scroll down -> Order increases.
-            const scrollPct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-            // Ease logic: Start chaotic, become ordered as we read the story
-            targetChaos = Clamp(1 - (scrollPct * 1.2), 0, 1);
+        const resetParticle = (i) => {
+            const idx = i * 4;
+            particles[idx] = Math.random() * State.width;
+            particles[idx+1] = Math.random() * State.height;
+            particles[idx+2] = Math.random() * 2 + 0.5; // Speed
+            particles[idx+3] = 0; // Angle placeholder
+        };
 
-            ctx.fillStyle = '#020203'; // Clear with opaque color (faster than rgba clear)
+        const loop = () => {
+            // Chaos Mode: Dark trails. Order Mode: Clear, bright trails.
+            const alpha = MathUtils.map(State.entropy, 0, 1, 0.05, 0.2);
+            ctx.fillStyle = `rgba(5, 5, 5, ${alpha})`;
             ctx.fillRect(0, 0, State.width, State.height);
+
+            // Color shifts based on entropy: Red (Chaos) -> Cyan/Gold (Order)
+            const r = Math.floor(MathUtils.map(State.entropy, 0, 1, 0, 255)); // 0 -> 255 (Red)
+            const g = Math.floor(MathUtils.map(State.entropy, 0, 1, 240, 40)); // 240 -> 40
+            const b = Math.floor(MathUtils.map(State.entropy, 0, 1, 255, 100)); // 255 -> 100
             
-            ctx.fillStyle = '#EAEAEA';
+            ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
 
             for(let i=0; i<COUNT; i++) {
-                const idx = i * 7;
-                
-                // Chaos movement
-                const cx = particles[idx] + particles[idx+2];
-                const cy = particles[idx+1] + particles[idx+3];
-                
-                // Order position
-                const ox = particles[idx+5];
-                const oy = particles[idx+6];
+                const idx = i * 4;
+                let x = particles[idx];
+                let y = particles[idx+1];
+                let speed = particles[idx+2];
 
-                // Interpolate based on narrative progress
-                // If chaos is high, use random movement. If low, snap to grid/sine.
-                particles[idx] = (cx * targetChaos) + (ox * (1 - targetChaos));
-                particles[idx+1] = (cy * targetChaos) + (oy * (1 - targetChaos));
+                // NOISE CALCULATION
+                // High entropy = High noise frequency (Erratic)
+                // Low entropy = Low noise frequency (Smooth waves)
+                const noiseScale = MathUtils.map(State.entropy, 0, 1, 0.002, 0.01);
+                const angle = MathUtils.noise(x * noiseScale, y * noiseScale) * Math.PI * 4;
 
-                // Wrap around logic for chaos mode
-                if(targetChaos > 0.1) {
-                    if (particles[idx] < 0) particles[idx] = State.width;
-                    if (particles[idx] > State.width) particles[idx] = 0;
-                    if (particles[idx+1] < 0) particles[idx+1] = State.height;
-                    if (particles[idx+1] > State.height) particles[idx+1] = 0;
+                // Add "Sprite" influence (Mouse repels/attracts)
+                const dx = x - State.mouseX;
+                const dy = y - State.mouseY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // If near mouse, particles flow around it
+                if(dist < 200) {
+                    particles[idx] += (dx / dist) * 2;
+                    particles[idx+1] += (dy / dist) * 2;
                 }
 
-                // Draw
-                const size = particles[idx+4];
-                // Optimization: Rects are faster than Arcs
-                ctx.fillRect(particles[idx], particles[idx+1], size, size);
-            }
-            
-            requestAnimationFrame(updatePhysics);
-        };
+                // Update position
+                particles[idx] += Math.cos(angle) * speed * (1 + State.entropy * 2);
+                particles[idx+1] += Math.sin(angle) * speed * (1 + State.entropy * 2);
 
-        const loop = () => updatePhysics();
+                // Wrap around
+                if (particles[idx] > State.width) particles[idx] = 0;
+                if (particles[idx] < 0) particles[idx] = State.width;
+                if (particles[idx+1] > State.height) particles[idx+1] = 0;
+                if (particles[idx+1] < 0) particles[idx+1] = State.height;
+
+                ctx.fillRect(particles[idx], particles[idx+1], 1.5, 1.5);
+            }
+
+            requestAnimationFrame(loop);
+        };
 
         return { init };
     })();
 
-    // --- 5. AUDIO VISUALIZER (Web Audio API) ---
-    const AudioSys = (() => {
-        const container = document.getElementById('visualizer');
+    // --- 4. GAME LOGIC (Entropy System) ---
+    const Logic = (() => {
+        const entropyFill = document.getElementById('entropy-val');
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+
+        const updateEntropy = () => {
+            const scrollY = window.scrollY;
+            const progress = Math.min(scrollY / docHeight, 1);
+            
+            // Scroll down -> Entropy decreases (Chaos -> Order)
+            State.entropy = 1.0 - (progress * 0.9); // Never fully 0, keep some life
+            
+            // Visual Update
+            entropyFill.style.transform = `scaleX(${State.entropy})`;
+            
+            // CSS Variable injection for Glitch Intensity
+            document.documentElement.style.setProperty('--glitch-offset', `${State.entropy * 5}px`);
+            
+            // Body classes for cursor state
+            if(State.entropy > 0.7) {
+                document.body.classList.add('corrupted');
+                document.body.classList.remove('stabilizing');
+                entropyFill.style.background = '#FF2A6D';
+            } else {
+                document.body.classList.remove('corrupted');
+                document.body.classList.add('stabilizing');
+                entropyFill.style.background = '#00F3FF';
+            }
+        };
+
+        window.addEventListener('scroll', updateEntropy);
+        return { updateEntropy };
+    })();
+
+    // --- 5. ASSET LOADER (Robustness) ---
+    const Assets = (() => {
+        // SVG Fallback Generator
+        const getFallback = (text) => {
+            const svg = `
+            <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100%" height="100%" fill="#0a0a0a"/>
+                <line x1="0" y1="0" x2="100%" y2="100%" stroke="#FF2A6D" stroke-width="2"/>
+                <line x1="100%" y1="0" x2="0" y2="100%" stroke="#FF2A6D" stroke-width="2"/>
+                <text x="50%" y="50%" fill="#E0E0E0" font-family="monospace" text-anchor="middle">
+                    [MEM_ERR: ${text}]
+                </text>
+            </svg>`;
+            return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        };
+
+        const loadImages = () => {
+            const imgs = document.querySelectorAll('.lazy-load');
+            imgs.forEach(img => {
+                const temp = new Image();
+                temp.src = img.dataset.src;
+                temp.onload = () => img.src = img.dataset.src;
+                temp.onerror = () => {
+                    console.warn(`Asset ${img.dataset.src} failed. Fallback engaged.`);
+                    img.src = getFallback(img.alt);
+                    img.style.objectFit = 'contain';
+                };
+            });
+        };
+
+        return { loadImages };
+    })();
+
+    // --- 6. AUDIO & VIZ ---
+    const AudioEngine = (() => {
+        const container = document.getElementById('audio-viz');
         const bars = [];
-        
-        // Generate DOM Bars
-        for(let i=0; i<10; i++) {
+        for(let i=0; i<15; i++) {
             const d = document.createElement('div');
             d.className = 'bar';
             container.appendChild(d);
@@ -492,119 +553,100 @@
 
         const start = async () => {
             const audio = document.getElementById('bg-music');
-            
             try {
-                // Initialize Audio Context on Interaction (Browser Policy safe)
                 const AC = window.AudioContext || window.webkitAudioContext;
                 const ctx = new AC();
                 const src = ctx.createMediaElementSource(audio);
                 const analyser = ctx.createAnalyser();
-                
+                analyser.fftSize = 64;
                 src.connect(analyser);
                 analyser.connect(ctx.destination);
-                analyser.fftSize = 64;
                 
                 const buffer = new Uint8Array(analyser.frequencyBinCount);
                 
                 audio.play();
                 
-                const frame = () => {
+                const render = () => {
                     analyser.getByteFrequencyData(buffer);
-                    // Update DOM bars (Decoupled from Canvas for performance separation)
                     bars.forEach((b, i) => {
-                        // Map low frequency (bass) to height
+                        // Entropy affects visualization jitter
                         const val = buffer[i];
-                        const h = MapRange(val, 0, 255, 3, 25);
+                        const jitter = (Math.random() - 0.5) * 10 * State.entropy;
+                        const h = Math.max(2, (val / 255) * 30 + jitter);
                         b.style.height = `${h}px`;
+                        // Color shifts with entropy
+                        b.style.background = State.entropy > 0.5 ? '#FF2A6D' : '#00F3FF';
                     });
-                    requestAnimationFrame(frame);
+                    requestAnimationFrame(render);
                 };
-                frame();
-                
-            } catch (e) {
-                console.warn("Audio Context Failed (likely strict autoplay policy).", e);
-                // Fallback: CSS Animation for bars so UI isn't dead
-                bars.forEach((b, i) => {
-                    b.style.animation = `pulse 1s infinite ${i * 0.1}s`;
-                });
+                render();
+            } catch(e) {
+                console.log("Audio Autoplay restricted. Fallback animation.");
+                // CSS Fallback
+                bars.forEach((b,i) => b.style.animation = `pulse 1s infinite ${i*0.1}s`);
             }
         };
-
         return { start };
     })();
 
-    // --- 6. TEXT SCRAMBLE (The "Status" Line) ---
-    const Scramble = (el, text, cb) => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\-';
-        let iterations = 0;
-        
-        const interval = setInterval(() => {
-            el.innerText = text.split('').map((letter, index) => {
-                if(index < iterations) return text[index];
-                return chars[Math.floor(Math.random() * chars.length)];
-            }).join('');
+    // --- 7. INPUT (Sprite) ---
+    const Input = (() => {
+        const core = document.getElementById('sprite-core');
+        const field = document.getElementById('sprite-field');
+        let mx = 0, my = 0;
+        let cx = 0, cy = 0;
+
+        window.addEventListener('mousemove', e => {
+            mx = e.clientX;
+            my = e.clientY;
+            State.mouseX = mx;
+            State.mouseY = my;
             
-            if(iterations >= text.length) { 
-                clearInterval(interval);
-                if(cb) cb();
-            }
-            iterations += 1/3;
-        }, 30);
-    };
-
-    // --- 7. BOOTSTRAP ---
-    window.onload = () => {
-        CanvasSystem.init();
-        
-        const gate = document.getElementById('gate');
-        const btn = document.getElementById('btn-decrypt');
-        const status = document.getElementById('status-line');
-        const viewport = document.getElementById('viewport');
-        
-        // Initial Scramble
-        Scramble(status, "SYSTEM: READY FOR INPUT");
-
-        btn.addEventListener('click', () => {
-            Scramble(btn, "DECRYPTING...", () => {
-                // UI Transition
-                gate.style.opacity = 0;
-                setTimeout(() => {
-                    gate.style.display = 'none';
-                    viewport.style.opacity = 1;
-                    
-                    // Trigger Lazy Loads and Audio
-                    AssetManager.loadAll();
-                    AudioSys.start();
-                    
-                    // Reveal Physics Engine
-                    document.getElementById('entropy-engine').style.opacity = 1;
-                    
-                    // Initialize Observers for Scroll Reveals
-                    const obs = new IntersectionObserver((entries) => {
-                        entries.forEach(e => {
-                            if(e.isIntersecting) e.target.classList.add('visible');
-                        });
-                    }, { threshold: 0.1 });
-                    
-                    document.querySelectorAll('.memory-frame').forEach(el => obs.observe(el));
-                    
-                }, 1000);
-            });
+            // Core follows instantly
+            core.style.transform = `translate(${mx}px, ${my}px)`;
         });
 
-        // Custom Cursor Logic
-        const dot = document.getElementById('cursor-dot');
-        const ring = document.getElementById('cursor-ring');
+        const animate = () => {
+            // Field lags behind
+            cx += (mx - cx) * 0.15;
+            cy += (my - cy) * 0.15;
+            field.style.transform = `translate(${cx-30}px, ${cy-30}px)`; // Center
+            requestAnimationFrame(animate);
+        };
+        return { animate };
+    })();
+
+    // --- 8. INIT ---
+    window.onload = () => {
+        Physics.init();
+        Input.animate();
         
-        window.addEventListener('mousemove', (e) => {
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
-            
-            // Lag effect for ring
-            ring.animate({
-                left: (e.clientX - 20) + 'px',
-                top: (e.clientY - 20) + 'px'
-            }, { duration: 500, fill: "forwards" });
+        const gate = document.getElementById('gate');
+        const btn = document.getElementById('btn-start');
+        const container = document.getElementById('scroll-container');
+
+        btn.addEventListener('click', () => {
+            // UI Transition
+            gate.style.opacity = 0;
+            setTimeout(() => {
+                gate.style.display = 'none';
+                container.style.opacity = 1;
+                
+                // Start Systems
+                Assets.loadImages();
+                AudioEngine.start();
+                Logic.updateEntropy();
+                
+                // Intersection Observer for Reveal
+                const obs = new IntersectionObserver(entries => {
+                    entries.forEach(e => {
+                        if(e.isIntersecting) e.target.classList.add('visible');
+                    });
+                }, { threshold: 0.1 });
+                
+                document.querySelectorAll('.lazy-anim').forEach(el => obs.observe(el));
+                
+            }, 1000);
         });
     };
 
