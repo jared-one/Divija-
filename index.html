@@ -1,304 +1,1993 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Divija | A Birthday Celebration</title>
-    <meta name="description" content="A birthday celebration for someone divine">
-    <style>
-        :root {
-            --void: #030305;
-            --deep: #050510;
-            --starlight: #e8e8ff;
-            --celestial: #9d4edd;
-            --divine: #c77dff;
-            --cyan: #00d4ff;
-            --gold: #ffd700;
-            --text: rgba(255,255,255,0.92);
-            --text-dim: rgba(255,255,255,0.5);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>For Divija | A Birthday Memory</title>
+  <meta name="color-scheme" content="dark" />
+  <style>
+    :root{
+      --space-black:#050505;
+      --nebula-blue:#091728;
+      --starlight:#e7e7ff;
+      --cosmic-purple:#7b2cbf;
+      --gravity-cyan:#00f2ff;
+      --gold-accent:#ffd700;
 
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+      --glass: rgba(255,255,255,0.06);
+      --glass-2: rgba(255,255,255,0.04);
+      --stroke: rgba(255,255,255,0.10);
+      --stroke-2: rgba(0,242,255,0.18);
 
-        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+      --maxw: 980px;
+      --padX: clamp(18px, 4vw, 28px);
+      --padY: clamp(64px, 10vh, 120px);
+      --radius: 18px;
 
-        body {
-            background: var(--void);
-            color: var(--starlight);
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-            line-height: 1.7;
-        }
+      --shadow: 0 16px 44px rgba(0,0,0,0.55);
+      --shadow-soft: 0 10px 26px rgba(0,0,0,0.40);
+    }
 
-        /* === PRELOADER === */
-        #preloader {
-            position: fixed; inset: 0;
-            background: var(--void);
-            z-index: 3000;
-            display: grid; place-items: center;
-            transition: opacity 0.6s, visibility 0.6s;
-        }
-        #preloader.done { opacity: 0; visibility: hidden; pointer-events: none; }
-        .loader { width: 44px; height: 44px; border: 2px solid rgba(255,255,255,0.1); border-top-color: var(--divine); border-radius: 50%; animation: spin 0.9s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+    *{ box-sizing:border-box; margin:0; padding:0; }
+    html,body{ height:100%; }
+    body{
+      background: var(--space-black);
+      color: var(--starlight);
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      overflow-x:hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
 
-        /* === CANVAS === */
-        #cosmos { position: fixed; inset: 0; z-index: -1; background: radial-gradient(ellipse at 50% 100%, #0c0c18 0%, var(--void) 70%); }
+    /* Canvas background */
+    #universe{
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(circle at 40% 90%, #1a0b2e 0%, #000 56%, #000 100%);
+    }
 
-        /* === CURSOR === */
-        @media (hover: hover) and (pointer: fine) {
-            body { cursor: none; }
-            .cursor { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; border-radius: 50%; }
-            .cursor-dot { width: 5px; height: 5px; background: #fff; }
-            .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.4); margin: -13.5px 0 0 -13.5px; transition: transform 0.1s, border-color 0.2s; }
-            a:hover ~ .cursor-ring, button:hover ~ .cursor-ring { transform: scale(1.4); border-color: var(--divine); }
-        }
+    /* Subtle vignette for readability */
+    .vignette{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      z-index:-1;
+      background:
+        radial-gradient(1200px 800px at 50% 40%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.50) 100%),
+        linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.65));
+      opacity: 0.9;
+    }
 
-        /* === GATEWAY === */
-        #gateway {
-            position: fixed; inset: 0;
-            background: var(--void);
-            z-index: 1000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            text-align: center; padding: 24px;
-            transition: opacity 1.4s ease-out, visibility 1.4s;
-        }
-        #gateway.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    a,button{ color: inherit; }
+    button{
+      font: inherit;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.22);
+      padding: 14px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+      user-select:none;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,242,255,0.55);
+      box-shadow: 0 0 0 6px rgba(0,242,255,0.07), 0 16px 40px rgba(0,0,0,0.55);
+    }
+    button:active{ transform: translateY(0px) scale(0.99); }
+    button:disabled{
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    :focus-visible{ outline: 2px solid rgba(0,242,255,0.65); outline-offset: 3px; }
 
-        .g-date { font-size: 0.7rem; letter-spacing: 0.6em; color: var(--cyan); opacity: 0.5; text-transform: uppercase; margin-bottom: 2.5rem; animation: fadeUp 1s ease 0.3s both; }
-        .g-title { font-size: clamp(1.6rem, 4vw, 2.8rem); font-weight: 300; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 0.3rem; animation: fadeUp 1s ease 0.5s both; }
-        .g-name { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 400; background: linear-gradient(100deg, var(--divine), var(--cyan), var(--divine)); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fadeUp 1s ease 0.7s both, shimmer 5s linear infinite; }
-        .g-meaning { font-size: 0.85rem; font-style: italic; color: var(--text-dim); letter-spacing: 0.2em; margin-top: 0.4rem; margin-bottom: 3.5rem; animation: fadeUp 1s ease 0.9s both; }
+    /* Custom cursor (desktop only; disabled on touch/reduced motion) */
+    body.cursor-on{ cursor: none; }
+    .cursor-dot,.cursor-outline{
+      position: fixed;
+      top: 0; left: 0;
+      transform: translate(-50%,-50%);
+      border-radius: 50%;
+      z-index: 9999;
+      pointer-events: none;
+      will-change: transform, left, top;
+    }
+    .cursor-dot{ width: 6px; height: 6px; background: rgba(255,255,255,0.95); }
+    .cursor-outline{
+      width: 34px; height: 34px;
+      border: 1px solid rgba(255,255,255,0.35);
+      backdrop-filter: blur(4px);
+      transition: width .18s ease, height .18s ease, border-color .18s ease;
+    }
+    .cursor-outline.active{
+      width: 46px; height: 46px;
+      border-color: rgba(0,242,255,0.55);
+    }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes shimmer { to { background-position: 200% center; } }
+    /* Layout */
+    .shell{
+      min-height: 100vh;
+      display:flex;
+      justify-content:center;
+    }
+    .wrap{
+      width: 100%;
+      max-width: var(--maxw);
+      padding: 0 var(--padX);
+    }
 
-        .enter-btn {
-            padding: 1rem 3rem; background: transparent;
-            border: 1px solid rgba(255,255,255,0.12);
-            color: var(--starlight); font-family: inherit; font-size: 0.8rem;
-            letter-spacing: 0.3em; text-transform: uppercase; cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative; overflow: hidden;
-            animation: fadeUp 1s ease 1.2s both;
-        }
-        .enter-btn:hover { border-color: var(--divine); box-shadow: 0 0 50px rgba(157,78,221,0.2), inset 0 0 30px rgba(157,78,221,0.08); transform: translateY(-2px); letter-spacing: 0.35em; }
-        .enter-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: translateX(-100%); }
-        .enter-btn:hover::after { transform: translateX(100%); transition: transform 0.7s; }
+    /* Boot screen */
+    #boot{
+      position: fixed;
+      inset: 0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index: 1000;
+      background: rgba(0,0,0,0.82);
+      backdrop-filter: blur(10px);
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    #boot.hidden{
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .boot-card{
+      width: min(720px, calc(100vw - 2*var(--padX)));
+      border-radius: calc(var(--radius) + 8px);
+      padding: clamp(18px, 3.5vw, 28px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow);
+    }
+    .boot-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+    }
+    .boot-title{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    .boot-badge{
+      border: 1px solid rgba(0,242,255,0.22);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: rgba(0,242,255,0.9);
+      background: rgba(0,242,255,0.06);
+      white-space: nowrap;
+    }
+    .boot-main{
+      display:grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 18px;
+      align-items:center;
+    }
+    @media (max-width: 760px){
+      .boot-main{ grid-template-columns: 1fr; }
+    }
+    .boot-h1{
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 520;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .boot-sub{
+      color: rgba(231,231,255,0.82);
+      line-height: 1.7;
+      font-size: 14.5px;
+    }
+    .boot-progress{
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,0.24);
+      padding: 14px;
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,0.10);
+    }
+    .bar > i{
+      display:block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(123,44,191,0.85), rgba(0,242,255,0.85));
+      box-shadow: 0 0 18px rgba(0,242,255,0.12);
+      transition: width .22s ease;
+    }
+    .boot-meta{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      margin-top: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: rgba(231,231,255,0.70);
+    }
+    .boot-warn{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px dashed rgba(255,255,255,0.16);
+      color: rgba(231,231,255,0.72);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+    .boot-warn strong{ color: rgba(0,242,255,0.85); font-weight: 650; }
 
-        /* === MAIN CONTENT === */
-        #journey {
-            max-width: 820px; margin: 0 auto;
-            padding: 90px 28px 150px;
-            opacity: 0; transform: translateY(35px);
-            transition: opacity 1.6s ease, transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        #journey.visible { opacity: 1; transform: translateY(0); }
+    /* Entry overlay */
+    #entry{
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: opacity 1.0s ease, visibility 1.0s ease;
+      background: rgba(0,0,0,0.62);
+      backdrop-filter: blur(10px);
+    }
+    #entry.hidden{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .entry-card{
+      width: min(860px, calc(100vw - 2*var(--padX)));
+      border-radius: calc(var(--radius) + 10px);
+      padding: clamp(22px, 3.6vw, 34px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        radial-gradient(900px 260px at 50% 0%, rgba(0,242,255,0.08), rgba(0,0,0,0) 55%),
+        linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+    .scanline{
+      position:absolute;
+      inset:-30%;
+      background: linear-gradient(180deg, transparent, rgba(0,242,255,0.10), transparent);
+      transform: translateY(-120%);
+      animation: scan 4.2s linear infinite;
+      pointer-events:none;
+      opacity: 0.8;
+    }
+    @keyframes scan{
+      0%{ transform: translateY(-120%); }
+      100%{ transform: translateY(120%); }
+    }
+    .entry-kicker{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.34em;
+      font-size: 12px;
+      color: rgba(0,242,255,0.78);
+      margin-bottom: 10px;
+    }
+    .entry-title{
+      font-size: clamp(34px, 6vw, 56px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.08;
+      margin-bottom: 12px;
+    }
+    .entry-title .dud{ color: rgba(231,231,255,0.30); }
+    .entry-sub{
+      max-width: 56ch;
+      font-size: 15px;
+      color: rgba(231,231,255,0.82);
+      line-height: 1.8;
+      margin-bottom: 18px;
+    }
+    .entry-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .entry-hint{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: rgba(231,231,255,0.68);
+      line-height: 1.6;
+    }
 
-        /* Reveal animation */
-        .rv { opacity: 0; transform: translateY(25px); transition: opacity 0.9s ease, transform 0.9s ease; }
-        .rv.show { opacity: 1; transform: translateY(0); }
+    /* Main content */
+    main{
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+      padding-bottom: 70px;
+    }
+    main.visible{
+      opacity: 1;
+      transform: translateY(0px);
+    }
 
-        /* === HERO === */
-        .hero { text-align: center; padding: 30px 0 70px; }
-        .hero-pre { font-size: 0.75rem; letter-spacing: 0.5em; color: var(--cyan); opacity: 0.6; text-transform: uppercase; margin-bottom: 1.2rem; }
-        .hero-title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 300; line-height: 1.3; }
-        .hero-name { display: block; font-size: clamp(2.8rem, 8vw, 5.2rem); font-weight: 400; background: linear-gradient(120deg, var(--divine), var(--starlight), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.15; margin-top: 0.2rem; }
-        .hero-sub { font-size: 0.95rem; letter-spacing: 0.4em; color: var(--text-dim); font-style: italic; margin-top: 1.2rem; }
-        .divider { width: 70px; height: 1px; background: linear-gradient(90deg, transparent, var(--celestial), transparent); margin: 55px auto; }
+    .hero{
+      padding: var(--padY) 0 calc(var(--padY) - 24px);
+      text-align:center;
+    }
+    .hero h1{
+      font-size: clamp(34px, 6vw, 62px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      line-height: 1.08;
+      margin-bottom: 14px;
+    }
+    .hero p{
+      max-width: 72ch;
+      margin: 0 auto;
+      line-height: 1.9;
+      color: rgba(231,231,255,0.84);
+      font-size: 15.5px;
+    }
+    .accent{
+      color: rgba(0,242,255,0.92);
+      text-shadow: 0 0 18px rgba(0,242,255,0.12);
+      font-style: normal;
+      font-weight: 650;
+    }
+    .gold{
+      color: rgba(255,215,0,0.92);
+      text-shadow: 0 0 18px rgba(255,215,0,0.10);
+      font-weight: 650;
+    }
+    .section{
+      padding: 42px 0;
+    }
+    .card{
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+    }
+    .card-pad{
+      padding: clamp(18px, 3.2vw, 30px);
+    }
+    .h2{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      font-size: 12px;
+      color: rgba(231,231,255,0.72);
+      margin-bottom: 10px;
+    }
+    .headline{
+      font-size: clamp(18px, 2.1vw, 22px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .body{
+      color: rgba(231,231,255,0.86);
+      line-height: 1.9;
+      font-size: 15px;
+    }
 
-        /* === PLAYER === */
-        .player {
-            background: rgba(255,255,255,0.012); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border: 1px solid rgba(255,255,255,0.035); border-radius: 18px;
-            padding: 26px 28px; max-width: 340px; margin: 0 auto 90px; text-align: center;
-        }
-        .track-name { font-size: 1rem; color: var(--starlight); margin-bottom: 3px; }
-        .track-artist { font-size: 0.72rem; color: rgba(255,255,255,0.3); font-style: italic; margin-bottom: 18px; }
-        #visualizer { display: flex; align-items: flex-end; justify-content: center; gap: 3px; height: 50px; }
-        .vb { width: 3px; background: linear-gradient(to top, var(--celestial), var(--cyan)); border-radius: 2px; min-height: 3px; will-change: height; transition: height 0.07s linear; }
+    /* Chapter rail (right side) */
+    .rail{
+      position: fixed;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 40;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      padding: 10px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.26);
+      backdrop-filter: blur(8px);
+    }
+    .rail a{
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display:block;
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.08);
+      transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+    }
+    .rail a.active{
+      background: rgba(0,242,255,0.38);
+      border-color: rgba(0,242,255,0.7);
+      transform: scale(1.15);
+    }
+    @media (max-width: 980px){
+      .rail{ display:none; }
+    }
 
-        /* === GALLERY === */
-        .gallery { display: grid; gap: 14px; margin: 80px 0; }
-        @media (min-width: 580px) {
-            .gallery { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 18px; }
-            .gf-p { grid-row: 1 / 3; }
-        }
-        .gf {
-            position: relative; overflow: hidden; border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.015);
-            transition: transform 0.5s ease, box-shadow 0.5s ease, border-color 0.4s ease;
-        }
-        .gf:hover { transform: translateY(-5px) scale(1.008); box-shadow: 0 30px 60px rgba(0,0,0,0.45); border-color: rgba(157,78,221,0.2); }
-        .gf img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity 0.5s ease, transform 0.7s ease; }
-        .gf img.ld { opacity: 1; }
-        .gf:hover img { transform: scale(1.06); }
-        .gf::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.55) 100%); pointer-events: none; opacity: 0; transition: opacity 0.4s; }
-        .gf:hover::after { opacity: 1; }
-        .gf-p { aspect-ratio: 3 / 4.2; }
-        .gf-l { aspect-ratio: 16 / 10; }
-        @media (max-width: 579px) { .gf-p { aspect-ratio: 4 / 5; max-height: 420px; } }
-        .gf-ph { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.18); font-size: 0.75rem; letter-spacing: 0.1em; }
+    /* Music player */
+    .player{
+      display:grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 18px;
+      align-items:center;
+    }
+    @media (max-width: 820px){
+      .player{ grid-template-columns: 1fr; }
+    }
+    .track{
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.22);
+    }
+    .track .name{
+      display:block;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-size: 12px;
+      color: rgba(231,231,255,0.78);
+      margin-bottom: 6px;
+    }
+    .track .meta{
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: rgba(231,231,255,0.86);
+    }
+    .controls{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .pill{
+      border-radius: 999px;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: rgba(231,231,255,0.75);
+    }
+    .viz{
+      height: 88px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,242,255,0.16);
+      background:
+        radial-gradient(420px 120px at 50% 0%, rgba(0,242,255,0.10), rgba(0,0,0,0) 55%),
+        rgba(0,0,0,0.22);
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      gap: 4px;
+      padding: 14px 14px 12px;
+      overflow:hidden;
+    }
+    .barv{
+      width: 5px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(to top, rgba(123,44,191,0.95), rgba(0,242,255,0.95));
+      opacity: 0.92;
+      transform: translateZ(0);
+      will-change: height;
+    }
 
-        /* === LETTER === */
-        .letter-wrap { margin: 90px 0; }
-        .letter {
-            background: linear-gradient(160deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.032) 100%);
-            padding: clamp(28px, 6vw, 58px); padding-left: clamp(32px, 7vw, 65px);
-            border-left: 2px solid var(--celestial); position: relative;
-        }
-        .letter::before { content: '"'; position: absolute; top: 15px; left: 18px; font-size: 3.5rem; color: var(--celestial); opacity: 0.12; font-family: Georgia, serif; line-height: 1; }
-        .letter p { margin-bottom: 1.9rem; line-height: 2.05; font-size: clamp(0.98rem, 2.1vw, 1.1rem); color: var(--text); }
-        .letter p:last-child { margin-bottom: 0; }
+    /* Gallery */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .shot{
+      grid-column: span 6;
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      overflow:hidden;
+      position:relative;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+      min-height: 220px;
+    }
+    .shot:hover{
+      transform: translateY(-3px);
+      border-color: rgba(0,242,255,0.32);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.6);
+    }
+    .shot.portrait{ grid-column: span 5; aspect-ratio: 3 / 4; }
+    .shot.landscape{ grid-column: span 7; aspect-ratio: 16 / 9; }
+    @media (max-width: 860px){
+      .shot.portrait,.shot.landscape{ grid-column: span 12; }
+    }
+    .shot img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+      filter: saturate(0.98) contrast(1.02);
+    }
+    .shot .label{
+      position:absolute;
+      left: 14px;
+      bottom: 14px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.38);
+      backdrop-filter: blur(8px);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(231,231,255,0.82);
+    }
+    .shot .fallback{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      text-align:center;
+      color: rgba(231,231,255,0.72);
+      background:
+        radial-gradient(600px 240px at 50% 0%, rgba(0,242,255,0.10), rgba(0,0,0,0) 55%),
+        linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    }
+    .fallback .mini{
+      max-width: 44ch;
+      line-height: 1.7;
+      font-size: 13px;
+    }
 
-        /* Highlights */
-        .hl { color: var(--cyan); }
-        .hlg { color: var(--divine); text-shadow: 0 0 25px rgba(199,125,255,0.25); }
-        .hlw { color: var(--starlight); font-weight: 500; }
-        .hlgd { color: var(--gold); font-weight: 500; }
+    /* Constellation */
+    .constellation{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items:start;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px){
+      .constellation{ grid-template-columns: 1fr; }
+    }
+    .sky{
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(0,242,255,0.18);
+      background:
+        radial-gradient(700px 300px at 50% 0%, rgba(0,242,255,0.08), rgba(0,0,0,0) 60%),
+        rgba(0,0,0,0.22);
+      padding: 12px;
+      overflow:hidden;
+    }
+    .tip{
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+      padding: 14px;
+      color: rgba(231,231,255,0.82);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+    .tip strong{ color: rgba(0,242,255,0.9); font-weight: 700; }
 
-        /* === CLOSING === */
-        .closing { text-align: center; padding: 70px 0 30px; }
-        .sig { font-family: 'Dancing Script', cursive; font-size: clamp(1.8rem, 4.5vw, 2.8rem); background: linear-gradient(120deg, var(--cyan), var(--divine)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 2.5rem; }
-        .ms { margin-bottom: 2.5rem; }
-        .ms-num { display: block; font-size: 2.2rem; font-weight: 300; color: var(--divine); letter-spacing: 0.1em; margin-bottom: 0.3rem; }
-        .ms-txt { font-size: 0.78rem; letter-spacing: 0.4em; color: rgba(255,255,255,0.35); text-transform: uppercase; }
-        .punch { font-size: 0.95rem; color: rgba(255,255,255,0.65); line-height: 1.9; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.04); max-width: 460px; margin: 0 auto; }
-        .daddy { display: inline-block; color: var(--gold); font-weight: 600; text-shadow: 0 0 18px rgba(255,215,0,0.45); letter-spacing: 0.05em; animation: glow 2.5s ease-in-out infinite alternate; }
-        @keyframes glow { from { text-shadow: 0 0 18px rgba(255,215,0,0.45); } to { text-shadow: 0 0 28px rgba(255,215,0,0.7), 0 0 40px rgba(255,215,0,0.3); } }
+    /* Notes deck */
+    .deck{
+      display:grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 18px;
+      align-items:start;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px){
+      .deck{ grid-template-columns: 1fr; }
+    }
+    .note{
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(255,255,255,0.10);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px;
+      position: relative;
+      overflow:hidden;
+      min-height: 160px;
+    }
+    .note::before{
+      content:"";
+      position:absolute;
+      inset: -60px;
+      background: radial-gradient(280px 180px at 15% 0%, rgba(255,215,0,0.08), transparent 60%);
+      pointer-events:none;
+      opacity: 0.9;
+    }
+    .note .idx{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(0,242,255,0.75);
+      margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .note .txt{
+      position: relative;
+      z-index: 1;
+      font-size: 15px;
+      line-height: 1.9;
+      color: rgba(231,231,255,0.88);
+    }
+    .deck-controls{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .deck-controls .small{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: rgba(231,231,255,0.70);
+      line-height: 1.7;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.20);
+    }
 
-        /* === UTILITIES === */
-        .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet">
+    /* Letter */
+    .letter{
+      border-left: 2px solid rgba(123,44,191,0.65);
+      padding-left: clamp(16px, 3vw, 26px);
+    }
+    .letter p{
+      margin-bottom: 18px;
+      color: rgba(231,231,255,0.90);
+      line-height: 1.95;
+      font-size: 15.5px;
+    }
+    .poem{
+      margin-top: 18px;
+      padding: 16px 16px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(0,242,255,0.16);
+      background: rgba(0,0,0,0.22);
+    }
+    .poem .line{
+      margin: 0;
+      font-family: ui-serif, Georgia, "Times New Roman", serif;
+      letter-spacing: 0.02em;
+    }
+
+    /* Finale */
+    .signature{
+      text-align:center;
+      padding: 56px 0 20px;
+      font-family: "Georgia", serif;
+    }
+    .sig-name{
+      font-size: clamp(22px, 3.8vw, 36px);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, rgba(0,242,255,0.92), rgba(123,44,191,0.92));
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 10px;
+    }
+    .sig-sub{
+      color: rgba(231,231,255,0.78);
+      line-height: 1.85;
+      max-width: 70ch;
+      margin: 0 auto;
+      font-size: 14.8px;
+    }
+    .punch{
+      margin-top: 18px;
+      display:inline-block;
+      padding: 14px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.26);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+    .punch strong{
+      color: rgba(0,242,255,0.95);
+      text-shadow: 0 0 18px rgba(0,242,255,0.16);
+      font-weight: 850;
+    }
+
+    /* Reveal animation */
+    .reveal{
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+      will-change: opacity, transform;
+    }
+    .reveal.visible{
+      opacity: 1;
+      transform: translateY(0px);
+    }
+
+    /* Lightbox */
+    #lightbox{
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background: rgba(0,0,0,0.84);
+      backdrop-filter: blur(10px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events:none;
+      transition: opacity .25s ease, visibility .25s ease;
+    }
+    #lightbox.open{
+      opacity: 1;
+      visibility: visible;
+      pointer-events:auto;
+    }
+    .lightbox-card{
+      width: min(1100px, 96vw);
+      border-radius: calc(var(--radius) + 10px);
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(0,0,0,0.38);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+    }
+    .lightbox-top{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 12px 12px;
+      align-items:center;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+    }
+    .lightbox-title{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(231,231,255,0.78);
+      padding-left: 6px;
+    }
+    .lightbox-img{
+      width: 100%;
+      height: min(78vh, 720px);
+      object-fit: contain;
+      display:block;
+      background: rgba(0,0,0,0.35);
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      .scanline{ animation:none; }
+      .reveal, main, #entry, #boot{ transition:none !important; }
+      .cursor-dot,.cursor-outline{ display:none !important; }
+      body.cursor-on{ cursor:auto; }
+    }
+  </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <div id="preloader"><div class="loader"></div></div>
-    <div class="cursor cursor-dot"></div>
-    <div class="cursor cursor-ring"></div>
-    <canvas id="cosmos"></canvas>
+  <canvas id="universe" aria-hidden="true"></canvas>
+  <div class="vignette" aria-hidden="true"></div>
 
-    <section id="gateway">
-        <p class="g-date">A Special Day</p>
-        <h1 class="g-title">Happy Birthday</h1>
-        <p class="g-name">Divija</p>
-        <p class="g-meaning">"Born from Heaven"</p>
-        <button class="enter-btn" id="enterBtn">Begin Journey</button>
-    </section>
+  <!-- Desktop cursor -->
+  <div class="cursor-dot" data-cursor-dot aria-hidden="true"></div>
+  <div class="cursor-outline" data-cursor-outline aria-hidden="true"></div>
 
-    <main id="journey">
-        <header class="hero rv">
-            <p class="hero-pre">A Celebration of</p>
-            <h1 class="hero-title">My Beloved<span class="hero-name">Divija</span></h1>
-            <p class="hero-sub">The One Written in Stars</p>
-            <div class="divider"></div>
+  <!-- Boot (asset preload gate; no UI races) -->
+  <section id="boot" aria-label="Loading">
+    <div class="boot-card">
+      <div class="boot-top">
+        <div class="boot-title">ARCHIVE BOOTSTRAP</div>
+        <div class="boot-badge" id="bootBadge">phase: booting</div>
+      </div>
+
+      <div class="boot-main">
+        <div>
+          <div class="boot-h1" style="font-family: 'Cinzel', Georgia, serif;">A Birthday Memory</div>
+          <div class="boot-sub">
+            This page waits until its assets are accounted for.
+            If something is missing, the archive continues safely — and reports it in the console.
+          </div>
+        </div>
+
+        <div class="boot-progress">
+          <div class="bar" aria-label="Loading progress"><i id="bootBar"></i></div>
+          <div class="boot-meta">
+            <span id="bootPct">0%</span>
+            <span id="bootCount">0/0</span>
+          </div>
+          <div class="boot-warn" id="bootWarn" style="display:none;">
+            <strong>Notice:</strong> Some assets did not load. The site will still run with graceful fallbacks.
+            Open DevTools → Console for details.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Entry gate -->
+  <section id="entry" class="hidden" aria-label="Entry">
+    <div class="entry-card">
+      <div class="scanline" aria-hidden="true"></div>
+
+      <div class="entry-kicker">Memory Capsule / Birthday Edition</div>
+      <div class="entry-title" id="entryTitle" style="font-family: 'Cinzel', Georgia, serif;">FOR DIVIJA</div>
+
+      <div class="entry-sub">
+        A quiet archive made to feel like a journey — paced, intentional, and true.
+        No invented scenes. Just what I know, what I’ve learned, and what I’m grateful for.
+      </div>
+
+      <div class="entry-row">
+        <button id="startBtn" disabled>Open the memory</button>
+        <div class="entry-hint">
+          Audio starts only after your click (browser rule).<br>
+          Tip: scroll slowly — the chapters reveal themselves.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Chapter rail -->
+  <nav class="rail" aria-label="Chapters">
+    <a href="#prologue" data-rail="prologue" aria-label="Prologue"></a>
+    <a href="#soundtrack" data-rail="soundtrack" aria-label="Soundtrack"></a>
+    <a href="#memories" data-rail="memories" aria-label="Memories"></a>
+    <a href="#constellation" data-rail="constellation" aria-label="Constellation"></a>
+    <a href="#notes" data-rail="notes" aria-label="Notes"></a>
+    <a href="#letter" data-rail="letter" aria-label="Letter"></a>
+    <a href="#finale" data-rail="finale" aria-label="Finale"></a>
+  </nav>
+
+  <div class="shell">
+    <div class="wrap">
+      <main id="main" aria-label="Birthday site content">
+        <!-- PROLOGUE -->
+        <header id="prologue" class="hero reveal">
+          <h1 style="font-family:'Cinzel', Georgia, serif;">
+            Happy Birthday, <span class="accent">Divija</span>
+          </h1>
+          <p>
+            You’re the kind of person who tries to look unbreakable — a <span class="accent">tough cookie</span> with
+            a sharp edge and a mind that does not miss details.
+            This is not a loud celebration. It’s a clean, dark, honest space — like an archive — built to hold what I feel
+            with enough breathing room to be real.
+          </p>
         </header>
 
-        <section class="player rv">
-            <p class="track-name">Fallen Down</p>
-            <p class="track-artist">For you</p>
-            <div id="visualizer"></div>
-            <audio id="audio" loop preload="metadata"><source src="fallen-down.mp3" type="audio/mpeg"></audio>
+        <!-- SOUNDTRACK -->
+        <section id="soundtrack" class="section reveal">
+          <div class="card card-pad">
+            <div class="h2">Chapter I</div>
+            <div class="headline">Soundtrack (Fallen Down)</div>
+            <div class="player">
+              <div class="track">
+                <span class="name">Playback</span>
+                <div class="meta">
+                  A single loop — steady and calm — the kind of rhythm I associate with you when you finally let your guard rest.
+                </div>
+                <div class="controls">
+                  <button id="playBtn" disabled>Play</button>
+                  <button id="pauseBtn" disabled>Pause</button>
+                  <span class="pill" id="audioStatus">audio: waiting</span>
+                </div>
+              </div>
+
+              <div>
+                <div class="viz" id="viz" aria-label="Audio visualizer"></div>
+                <div class="body" style="margin-top:10px; opacity:0.9;">
+                  If audio fails to load, the page keeps going — the memory doesn’t.
+                </div>
+              </div>
+            </div>
+
+            <audio id="audio" loop preload="auto" crossorigin="anonymous">
+              <source src="fallen-down.mp3" type="audio/mpeg" />
+            </audio>
+          </div>
         </section>
 
-        <section class="gallery rv">
-            <figure class="gf gf-p" data-src="K1.png"><span class="gf-ph">Loading...</span></figure>
-            <figure class="gf gf-l" data-src="K2.png"><span class="gf-ph">Loading...</span></figure>
-            <figure class="gf gf-l" data-src="K3.png"><span class="gf-ph">Loading...</span></figure>
+        <!-- MEMORIES / GALLERY -->
+        <section id="memories" class="section reveal">
+          <div class="card card-pad">
+            <div class="h2">Chapter II</div>
+            <div class="headline">Memories (no captions that pretend)</div>
+            <div class="body">
+              Three frames. One portrait, two landscapes — each treated with the respect of its shape.
+              Click any frame to open it.
+            </div>
+
+            <div class="grid" role="list" aria-label="Image gallery">
+              <figure class="shot portrait" role="listitem" data-open="K1.png" data-title="Memory Frame — K1 (Portrait)">
+                <img src="K1.png" alt="Divija memory photo K1" loading="lazy" decoding="async" />
+                <figcaption class="label">K1 / Portrait</figcaption>
+                <div class="fallback" hidden>
+                  <div class="mini">
+                    Memory frame unavailable (K1.png).<br>
+                    The archive continues; check the console for details.
+                  </div>
+                </div>
+              </figure>
+
+              <figure class="shot landscape" role="listitem" data-open="K2.png" data-title="Memory Frame — K2 (Landscape)">
+                <img src="K2.png" alt="Divija memory photo K2" loading="lazy" decoding="async" />
+                <figcaption class="label">K2 / Landscape</figcaption>
+                <div class="fallback" hidden>
+                  <div class="mini">
+                    Memory frame unavailable (K2.png).<br>
+                    The archive continues; check the console for details.
+                  </div>
+                </div>
+              </figure>
+
+              <figure class="shot landscape" role="listitem" data-open="K3.png" data-title="Memory Frame — K3 (Landscape)">
+                <img src="K3.png" alt="Divija memory photo K3" loading="lazy" decoding="async" />
+                <figcaption class="label">K3 / Landscape</figcaption>
+                <div class="fallback" hidden>
+                  <div class="mini">
+                    Memory frame unavailable (K3.png).<br>
+                    The archive continues; check the console for details.
+                  </div>
+                </div>
+              </figure>
+            </div>
+          </div>
         </section>
 
-        <section class="letter-wrap rv">
-            <article class="letter">
-                <p><span class="hlg">Divija</span> — your name holds the whisper of the cosmos: <span class="hl">"born from heaven."</span> After everything we have been through, I finally understand why the universe chose that name for you. Not because you are untouchable, but because you carry a fire within that could only be <span class="hlw">celestial</span> in origin.</p>
-                
-                <p>When we first met, it was not gentle. You were <span class="hl">sharp</span>. Guarded. I looked at you and thought: impossible. This stubborn, fierce presence that seemed to test every boundary, every patience I had. You spoke with edges. You walked with walls. Honestly? I was ready to walk away.</p>
-                
-                <p>But something made me <span class="hlw">stay</span>.</p>
-                
-                <p>And staying was the best decision I ever made. Behind that fortress — behind the independence you wear like armor, behind the sharp tongue that keeps the world at arm's length — I discovered someone <span class="hlg">extraordinary</span>. A mind that dances with numbers like poetry. A work ethic that puts entire rooms to shame. A heart so fiercely protected because it feels more deeply than you will ever admit.</p>
-                
-                <p>You look in mirrors and count flaws. I look at you and see a <span class="hl">constellation</span> — each point of light a quality you dismiss too easily. Your <span class="hlw">brilliance</span> in mathematics is not just skill; it is art. Your strength is not stubbornness; it is <span class="hlg">resilience</span>. Your directness is not rudeness; it is honesty in a world drowning in pretense.</p>
-                
-                <p><span class="hlgd">One year.</span> 365 days of learning you. Of writing notes about you that you may never see. Of watching you fight battles with the world and yourself. Of seeing you evolve from someone who swung swords at everything into someone who has learned when to wield the blade and when to extend a hand.</p>
-                
-                <p>You have reached a <span class="hlg">milestone</span>, my love — not just in age, but in spirit. The maturity that has quietly blossomed in you allows me to rest my heart in yours with a trust I never knew I could give. You have changed. <span class="hlw">Beautifully. Powerfully. Intentionally.</span> And I have witnessed every step.</p>
-                
-                <p>So on this day — the day the universe chose to gift itself with you — I celebrate not just your birth, but your <span class="hl">becoming</span>. The becoming that continues to unfold. The becoming I am honored to witness.</p>
-                
-                <p>Happy Birthday, my <span class="hlg">divine</span> one. My tough cookie. My star.</p>
-            </article>
+        <!-- CONSTELLATION -->
+        <section id="constellation" class="section reveal">
+          <div class="card card-pad">
+            <div class="h2">Chapter III</div>
+            <div class="headline">A constellation of you</div>
+            <div class="body">
+              This is how I see the pattern: not perfect, not soft — just <span class="accent">real</span>.
+            </div>
+
+            <div class="constellation">
+              <div class="sky">
+                <svg id="skySvg" viewBox="0 0 740 420" width="100%" height="auto" role="img" aria-label="Constellation diagram">
+                  <defs>
+                    <linearGradient id="glowLine" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="rgba(123,44,191,0.85)"/>
+                      <stop offset="1" stop-color="rgba(0,242,255,0.75)"/>
+                    </linearGradient>
+                    <filter id="softGlow">
+                      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                      <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  <rect x="0" y="0" width="740" height="420" fill="rgba(0,0,0,0)" />
+                  <g id="skyLines" stroke="url(#glowLine)" stroke-width="2" opacity="0.55"></g>
+                  <g id="skyNodes" filter="url(#softGlow)"></g>
+                </svg>
+              </div>
+
+              <div class="tip" id="traitTip" aria-live="polite">
+                <strong>Hover a star</strong> (or tap) to read it.<br><br>
+                I see your toughness. I also see what it protects:
+                <span class="accent">depth</span>, <span class="accent">discipline</span>, and a mind built for <span class="accent">math</span>.
+              </div>
+            </div>
+          </div>
         </section>
 
-        <footer class="closing rv">
-            <p class="sig">Forever Yours</p>
-            <div class="ms"><span class="ms-num">1</span><span class="ms-txt">Year Together</span></div>
-            <p class="punch">As much as you may hate to hear this:<br>I will always be <span class="daddy">DADDY</span></p>
+        <!-- NOTES -->
+        <section id="notes" class="section reveal">
+          <div class="card card-pad">
+            <div class="h2">Chapter IV</div>
+            <div class="headline">Notes I wrote (and kept)</div>
+            <div class="body">
+              You became a constant thought — the kind that doesn’t shout, it just persists.
+              I wrote you down because I didn’t want time to blur the details.
+            </div>
+
+            <div class="deck">
+              <div class="note" aria-label="Note">
+                <div class="idx" id="noteIdx">Note 01</div>
+                <div class="txt" id="noteTxt"></div>
+              </div>
+
+              <div class="deck-controls">
+                <button id="prevNote">Previous</button>
+                <button id="nextNote">Next</button>
+                <div class="small" id="noteMeta">
+                  One year and counting together — and the archive is still growing.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- LETTER -->
+        <section id="letter" class="section reveal">
+          <div class="card card-pad">
+            <div class="h2">Chapter V</div>
+            <div class="headline">Letter</div>
+
+            <div class="letter">
+              <p>
+                <span class="accent">Divija</span> — happy birthday.
+                Your name is often interpreted as something like <span class="accent">divine</span>, <span class="accent">heavenly</span>,
+                or <span class="accent">born of the sky</span>… and it fits you more than you admit.
+                Not because you’re always gentle — but because you carry a kind of quiet brilliance that feels higher than noise.
+              </p>
+
+              <p>
+                When we met, I was <span class="accent">pissed</span>.
+                I read you as rude — immature, even hopeless.
+                And yes: you could be sharp.
+                But I stayed long enough to see what was underneath the armor.
+                I realized your edge wasn’t emptiness — it was <span class="accent">force</span>.
+              </p>
+
+              <p>
+                You’re a tough cookie, and you insist on being independent — not as a performance, but as a principle.
+                Your work ethic is real.
+                And your relationship with mathematics isn’t “good at math” the way people say it casually —
+                it’s talent, practice, and a mind that can hold structure when others reach for excuses.
+              </p>
+
+              <p>
+                What gets me is the way you sometimes look down at yourself —
+                like you can’t see your own value unless it’s proven again, and again, and again.
+                I wish you could borrow my eyes for one minute, just to watch how clearly you matter.
+              </p>
+
+              <p>
+                We share many memories together. We played, we learned each other, we built a rhythm.
+                And somewhere along the way, you reached a milestone that deserves to be said out loud:
+                you’ve grown into a steadier kind of maturity — not the quiet kind that fades,
+                but the earned kind that lets me rest my heart and say: <span class="accent">you’ve changed for the good</span>.
+              </p>
+
+              <div class="poem" aria-label="Poem">
+                <p class="line">
+                  If your name is sky-born, then let it be true —
+                </p>
+                <p class="line">
+                  not because you never fall,
+                </p>
+                <p class="line">
+                  but because you always rise with <span class="accent">discipline</span> in your hands.
+                </p>
+                <p class="line">
+                  You speak with a blade sometimes, yes —
+                </p>
+                <p class="line">
+                  but even blades have purpose:
+                </p>
+                <p class="line">
+                  they cut away what’s false,
+                </p>
+                <p class="line">
+                  and leave the <span class="gold">truth</span> shining.
+                </p>
+                <p class="line" style="margin-top:12px;">
+                  Divija, you are not “less” on your tired days.
+                </p>
+                <p class="line">
+                  You are still <span class="accent">rare</span>. Still <span class="accent">brilliant</span>.
+                </p>
+                <p class="line">
+                  Still the kind of person worth building a year — and counting — around.
+                </p>
+                <p class="line" style="margin-top:12px;">
+                  I love you.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FINALE -->
+        <footer id="finale" class="signature reveal">
+          <div class="sig-name">Always, Divija</div>
+          <div class="sig-sub">
+            This is a birthday page, but it’s also a promise: I will keep seeing what you forget to see,
+            and I will keep choosing you — not because you’re easy, but because you’re <span class="accent">worth it</span>.
+          </div>
+
+          <div class="punch" id="punchline" aria-label="Punchline">
+            As much as you may hate to hear this: I will always be <strong>DADDY</strong>
+          </div>
         </footer>
-    </main>
+      </main>
+    </div>
+  </div>
 
-    <script>
-    'use strict';
-    (()=>{
-    /* ═══════════════════════════════════════════════════════════
-       FINAL DRAFT: Optimized Functional Programming Architecture
-       - TypeScript-style JSDoc typing
-       - Immutable patterns where practical
-       - Lazy evaluation, memoization
-       - Robust error handling
-       - Optimal performance algorithms
-    ═══════════════════════════════════════════════════════════ */
+  <!-- Lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <div class="lightbox-card">
+      <div class="lightbox-top">
+        <div class="lightbox-title" id="lightboxTitle">Memory Frame</div>
+        <button id="closeLightbox">Close</button>
+      </div>
+      <img id="lightboxImg" class="lightbox-img" alt="Expanded memory" />
+    </div>
+  </div>
 
-    // ─── PURE UTILITIES ────────────────────────────────────────
-    const clamp = (min, max) => v => v < min ? min : v > max ? max : v;
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const rand = (a, b) => Math.random() * (b - a) + a;
-    const $ = s => document.querySelector(s);
-    const $$ = s => [...document.querySelectorAll(s)];
-    const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
-    const times = n => fn => { const r = []; for(let i = 0; i < n; i++) r.push(fn(i)); return r; };
+  <script type="module">
+    /* ===========================
+      Functional + TS-style core
+    ============================ */
 
-    // Safe promise wrapper (Result type pattern)
-    const tryCatch = async p => { try { return [await p, null]; } catch(e) { return [null, e]; } };
+    /**
+     * @template T
+     * @typedef {{ readonly ok: true, readonly value: T } | { readonly ok: false, readonly error: Error }} Result
+     */
 
-    // Throttle for resize events
-    const throttle = (fn, ms) => { let t = 0; return (...a) => { const n = Date.now(); if(n - t >= ms) { t = n; fn(...a); } }; };
+    /** @typedef {'booting'|'ready'|'running'} Phase */
 
-    // ─── COSMOS RENDERER ───────────────────────────────────────
-    const Cosmos = (() => {
-        const canvas = $('#cosmos');
-        if(!canvas) return { init:()=>{}, warp:()=>{} };
-        const ctx = canvas.getContext('2d');
-        let W = 0, H = 0, stars = [], speed = 1, target = 1, raf = 0;
+    /**
+     * @typedef {{
+     *   readonly phase: Phase;
+     *   readonly progress: { readonly done: number; readonly total: number; readonly pct: number; };
+     *   readonly assetErrors: ReadonlyArray<string>;
+     *   readonly readyToStart: boolean;
+     *   readonly audioAvailable: boolean;
+     * }} State
+     */
 
-        const resize = () => { W = canvas.width = innerWidth; H = canvas.height = innerHeight; };
-        
-        const makeStar = init => ({ x: (Math.random()-0.5)*W*2, y: (Math.random()-0.5)*H*2, z: init ? rand(1,2000) : 2000, s: rand(0.4,1.6), c: Math.random()>0.9?'#00d4ff':'#fff' });
-        
-        const draw = () => {
-            ctx.fillStyle = 'rgba(3,3,5,0.18)';
-            ctx.fillRect(0,0,W,H);
-            speed = lerp(speed, target, 0.012);
-            
-            for(let i = 0, l = stars.length; i < l; i++) {
-                const st = stars[i];
-                st.z -= speed;
-                if(st.z < 1) { st.x = (Math.random()-0.5)*W*2; st.y = (Math.random()-0.5)*H*2; st.z = 2000; }
-                const k = 550 / st.z;
-                const x = st.x * k + W/2;
-                const y = st.y * k + H/2;
-                if(x > -5 && x < W+5 && y > -5 && y < H+5) {
-                    ctx.globalAlpha = clamp(0,1)((2000-st.z)/1100);
-                    ctx.fillStyle = st.c;
-                    ctx.beginPath();
-                    ctx.arc(x, y, Math.max(0.4, k*st.s), 0, 6.2832);
-                    ctx.fill();
-                }
-            }
-            raf = requestAnimationFrame(draw);
+    /**
+     * @typedef {{
+     *  readonly type:
+     *    | 'BOOT_PROGRESS'
+     *    | 'BOOT_DONE'
+     *    | 'START'
+     *    | 'AUDIO_AVAILABLE';
+     *  readonly payload?: any;
+     * }} Action
+     */
+
+    const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+
+    /** @template T @param {() => T} fn */
+    const once = (fn) => {
+      /** @type {T | undefined} */ let v;
+      let done = false;
+      return () => (done ? v : (done = true, v = fn()));
+    };
+
+    /** @template T @param {Promise<T>} p */
+    const toResult = async (p) => {
+      try { return /** @type {Result<T>} */ ({ ok: true, value: await p }); }
+      catch (e) {
+        const err = e instanceof Error ? e : new Error(String(e));
+        return /** @type {Result<T>} */ ({ ok: false, error: err });
+      }
+    };
+
+    const byId = (id) => /** @type {HTMLElement} */ (document.getElementById(id));
+    const qs = (sel, root = document) => /** @type {HTMLElement} */ (root.querySelector(sel));
+    const qsa = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+    const prefersReducedMotion = () =>
+      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const isTouch = () =>
+      ('ontouchstart' in window) || (navigator.maxTouchPoints ?? 0) > 0;
+
+    /** @param {State} s @param {Action} a */
+    const reducer = (s, a) => {
+      switch (a.type) {
+        case 'BOOT_PROGRESS': {
+          const { done, total, errors } = a.payload;
+          const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+          return {
+            ...s,
+            phase: 'booting',
+            progress: { done, total, pct },
+            assetErrors: errors
+          };
+        }
+        case 'BOOT_DONE': {
+          const { errors, audioAvailable } = a.payload;
+          return {
+            ...s,
+            phase: 'ready',
+            readyToStart: true,
+            audioAvailable,
+            assetErrors: errors,
+            progress: { ...s.progress, pct: 100 }
+          };
+        }
+        case 'AUDIO_AVAILABLE': {
+          return { ...s, audioAvailable: Boolean(a.payload) };
+        }
+        case 'START':
+          return { ...s, phase: 'running' };
+        default:
+          return s;
+      }
+    };
+
+    /** @param {State} initial */
+    const createStore = (initial) => {
+      /** @type {State} */ let state = initial;
+      /** @type {Array<(s: State) => void>} */ const subs = [];
+      return {
+        get: () => state,
+        /** @param {Action} a */
+        dispatch: (a) => {
+          state = reducer(state, a);
+          subs.forEach((fn) => fn(state));
+        },
+        /** @param {(s: State) => void} fn */
+        subscribe: (fn) => (subs.push(fn), () => {
+          const i = subs.indexOf(fn);
+          if (i >= 0) subs.splice(i, 1);
+        })
+      };
+    };
+
+    /** ===========================
+      Asset loading (robust)
+    ============================ */
+
+    const ASSETS = /** @type {const} */ ({
+      audio: 'fallen-down.mp3',
+      images: ['K1.png', 'K2.png', 'K3.png']
+    });
+
+    /** @param {string} src */
+    const loadImage = (src) => new Promise((resolve, reject) => {
+      const img = new Image();
+      img.decoding = 'async';
+      img.onload = () => resolve(src);
+      img.onerror = () => reject(new Error(`Image failed to load: ${src}`));
+      img.src = src;
+    });
+
+    /** @param {string} src */
+    const loadAudioMeta = (src) => new Promise((resolve, reject) => {
+      const a = new Audio();
+      a.preload = 'auto';
+      a.onloadedmetadata = () => resolve(src);
+      a.onerror = () => reject(new Error(`Audio failed to load: ${src}`));
+      a.src = src;
+    });
+
+    /**
+     * Concurrent preload with allSettled.
+     * Returns: errors[], audioAvailable boolean
+     */
+    const preloadAll = async (onProgress) => {
+      const tasks = [
+        ...ASSETS.images.map((src) => ({ kind: 'image', src, run: () => toResult(loadImage(src)) })),
+        { kind: 'audio', src: ASSETS.audio, run: () => toResult(loadAudioMeta(ASSETS.audio)) }
+      ];
+
+      const total = tasks.length;
+      let done = 0;
+      /** @type {string[]} */ const errors = [];
+      let audioAvailable = true;
+
+      const settle = await Promise.allSettled(
+        tasks.map(async (t) => {
+          const r = await t.run();
+          done += 1;
+
+          if (!r.ok) {
+            const msg = `[${t.kind}] ${t.src} :: ${r.error.message}`;
+            errors.push(msg);
+            if (t.kind === 'audio') audioAvailable = false;
+          }
+
+          onProgress({ done, total, errors: [...errors] });
+          return r;
+        })
+      );
+
+      // settle is kept to emphasize concurrency; results already applied above.
+      void settle;
+
+      return { errors, audioAvailable };
+    };
+
+    const logAssetReport = (errors) => {
+      if (errors.length === 0) {
+        console.info('[Archive] All assets loaded.');
+        return;
+      }
+      console.groupCollapsed(`[Archive] Asset issues (${errors.length}) — non-fatal`);
+      errors.forEach((e) => console.warn(e));
+      console.groupEnd();
+    };
+
+    /** ===========================
+      Fast text scramble (time-based)
+    ============================ */
+
+    // small deterministic PRNG (fast, stable)
+    const mulberry32 = (seed) => () => {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    /**
+     * @param {HTMLElement} el
+     * @param {string} finalText
+     * @param {{durationMs:number, alphabet:string, seed:number}} opts
+     */
+    const scrambleTo = (el, finalText, opts) => new Promise((resolve) => {
+      const { durationMs, alphabet, seed } = opts;
+      const rnd = mulberry32(seed);
+      const from = (el.textContent ?? '').trim();
+      const L = Math.max(from.length, finalText.length);
+
+      const fromPadded = from.padEnd(L, ' ');
+      const toPadded = finalText.padEnd(L, ' ');
+
+      // per-character reveal thresholds for a pleasing “sweep”
+      const thresholds = Array.from({ length: L }, (_, i) => {
+        const base = i / Math.max(1, L - 1);
+        const jitter = (rnd() - 0.5) * 0.12;
+        return Math.min(1, Math.max(0, base + jitter));
+      });
+
+      const start = performance.now();
+
+      const frame = (now) => {
+        const t = Math.min(1, (now - start) / durationMs);
+        let out = '';
+
+        for (let i = 0; i < L; i++) {
+          if (t >= thresholds[i]) {
+            out += toPadded[i];
+          } else {
+            const ch = alphabet[(alphabet.length * rnd()) | 0];
+            out += `<span class="dud">${ch}</span>`;
+          }
+        }
+        el.innerHTML = out;
+
+        if (t >= 1) {
+          el.textContent = finalText;
+          resolve(undefined);
+        } else {
+          requestAnimationFrame(frame);
+        }
+      };
+
+      requestAnimationFrame(frame);
+    });
+
+    /** ===========================
+      Starfield (typed arrays, paused on hidden)
+    ============================ */
+
+    const createStarfield = () => {
+      const canvas = /** @type {HTMLCanvasElement} */ (byId('universe'));
+      const ctx = canvas.getContext('2d', { alpha: true });
+
+      if (!ctx) return { start: () => {}, warp: () => {}, stop: () => {} };
+
+      let w = 0, h = 0, cx = 0, cy = 0;
+      let running = false;
+      let last = 0;
+
+      // Performance knobs
+      const DPR = Math.min(2, window.devicePixelRatio || 1);
+      const depthMax = 2000;
+      const fov = 520;
+
+      /** @type {Float32Array} */ let xs;
+      /** @type {Float32Array} */ let ys;
+      /** @type {Float32Array} */ let zs;
+      /** @type {Float32Array} */ let ss;
+      /** @type {Uint8Array} */ let cs;
+
+      const colors = ['#ffffff', '#ffffff', '#ffffff', '#00f2ff', '#7b2cbf'];
+
+      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+      const resize = () => {
+        w = Math.max(1, window.innerWidth);
+        h = Math.max(1, window.innerHeight);
+        canvas.width = Math.floor(w * DPR);
+        canvas.height = Math.floor(h * DPR);
+        canvas.style.width = w + 'px';
+        canvas.style.height = h + 'px';
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+        cx = w / 2;
+        cy = h / 2;
+
+        // star count proportional to area, clamped (and reduced for reduced motion)
+        const base = Math.floor((w * h) / 1400);
+        const n = clamp(prefersReducedMotion() ? Math.floor(base * 0.55) : base, 420, 1200);
+
+        xs = new Float32Array(n);
+        ys = new Float32Array(n);
+        zs = new Float32Array(n);
+        ss = new Float32Array(n);
+        cs = new Uint8Array(n);
+
+        const rnd = mulberry32((w ^ h) >>> 0);
+        for (let i = 0; i < n; i++) {
+          xs[i] = (rnd() - 0.5) * w;
+          ys[i] = (rnd() - 0.5) * h;
+          zs[i] = rnd() * depthMax + 1;
+          ss[i] = rnd() * 1.8 + 0.2;
+          cs[i] = (rnd() > 0.86) ? ((rnd() > 0.5) ? 3 : 4) : 0;
+        }
+      };
+
+      window.addEventListener('resize', resize, { passive: true });
+
+      let speed = 2.1;
+      let warp = 0;
+
+      const step = (now) => {
+        if (!running) return;
+        const dt = Math.min(40, now - last) / 16.6667; // normalized
+        last = now;
+
+        const target = speed + warp;
+        warp = warp * 0.86; // decay warp smoothly
+
+        // Trail
+        ctx.fillStyle = 'rgba(5,5,5,0.26)';
+        ctx.fillRect(0, 0, w, h);
+
+        const n = xs.length;
+
+        for (let i = 0; i < n; i++) {
+          zs[i] -= target * dt * 6.2;
+          if (zs[i] <= 1) {
+            zs[i] = depthMax;
+            // reset x/y without allocating
+            xs[i] = (Math.random() - 0.5) * w;
+            ys[i] = (Math.random() - 0.5) * h;
+            ss[i] = Math.random() * 1.8 + 0.2;
+            cs[i] = (Math.random() > 0.86) ? ((Math.random() > 0.5) ? 3 : 4) : 0;
+          }
+
+          const x = (xs[i] / zs[i]) * fov + cx;
+          const y = (ys[i] / zs[i]) * fov + cy;
+          if (x < 0 || x > w || y < 0 || y > h) continue;
+
+          const size = (1000 / zs[i]) * ss[i];
+          const alpha = Math.min(1, (depthMax - zs[i]) / 900);
+
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = colors[cs[i]];
+          ctx.beginPath();
+          ctx.arc(x, y, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(step);
+      };
+
+      const start = () => {
+        resize();
+        running = true;
+        last = performance.now();
+        requestAnimationFrame(step);
+      };
+
+      const stop = () => { running = false; };
+
+      const warpNow = (amount = 40) => { warp = Math.max(warp, amount); };
+
+      // Pause on hidden (saves battery + keeps smooth)
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop();
+        else if (!running) start();
+      });
+
+      return { start, stop, warp: warpNow };
+    };
+
+    /** ===========================
+      UI features (reveals, rail, gallery, notes, constellation)
+    ============================ */
+
+    const initReveals = () => {
+      const els = qsa('.reveal');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.12 });
+
+      els.forEach((el) => io.observe(el));
+      return () => io.disconnect();
+    };
+
+    const initRail = () => {
+      const railLinks = qsa('.rail a');
+      const sections = railLinks
+        .map((a) => a.getAttribute('href'))
+        .filter(Boolean)
+        .map((h) => document.querySelector(h));
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          const id = e.target.getAttribute('id');
+          railLinks.forEach((a) => a.classList.toggle('active', a.dataset.rail === id));
+        });
+      }, { threshold: 0.45 });
+
+      sections.forEach((s) => s && io.observe(s));
+      return () => io.disconnect();
+    };
+
+    const initGallery = () => {
+      const lightbox = byId('lightbox');
+      const imgEl = /** @type {HTMLImageElement} */ (byId('lightboxImg'));
+      const titleEl = byId('lightboxTitle');
+      const closeBtn = byId('closeLightbox');
+
+      const open = (src, title) => {
+        titleEl.textContent = title;
+        imgEl.src = src;
+        lightbox.classList.add('open');
+      };
+      const close = () => {
+        lightbox.classList.remove('open');
+        imgEl.src = '';
+      };
+
+      closeBtn.addEventListener('click', close);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) close();
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') close();
+      });
+
+      qsa('.shot').forEach((fig) => {
+        fig.addEventListener('click', () => {
+          const src = fig.getAttribute('data-open') ?? '';
+          const title = fig.getAttribute('data-title') ?? 'Memory Frame';
+          if (src) open(src, title);
+        });
+      });
+
+      // Graceful fallback if individual <img> fails
+      qsa('.shot img').forEach((img) => {
+        img.addEventListener('error', () => {
+          const fig = img.closest('.shot');
+          if (!fig) return;
+          const fb = /** @type {HTMLElement|null} */ (fig.querySelector('.fallback'));
+          if (fb) fb.hidden = false;
+        }, { once: true });
+      });
+
+      return { open, close };
+    };
+
+    const initNotes = () => {
+      const notes = /** @type {const} */ ([
+        "You are tougher than you admit — but what I admire most is that you keep going even when it would be easier to shut down.",
+        "Your independence is not coldness. It’s a standard. You refuse to be carried — and that’s rare.",
+        "You are genuinely gifted at mathematics. Not the loud kind of smart — the precise kind. The kind that stays correct under pressure.",
+        "You work hard. Not for applause — for results. That discipline is one of the most attractive things about you.",
+        "Sometimes you undervalue yourself. I see it when you minimize what you do, or when you think you’re behind. You’re not. You’re building.",
+        "Yes, your tongue can be sharp. But I’ve learned: you don’t want to be cruel — you want to be clear. And I can handle clear.",
+        "We’ve shared a year together — and you’ve reached a real milestone: you’ve grown into a steadier maturity I can trust with my heart."
+      ]);
+
+      const noteIdx = byId('noteIdx');
+      const noteTxt = byId('noteTxt');
+      const prev = byId('prevNote');
+      const next = byId('nextNote');
+
+      let i = 0;
+
+      const render = () => {
+        const n = notes.length;
+        const k = ((i % n) + n) % n;
+        noteIdx.textContent = `Note ${(k + 1).toString().padStart(2, '0')}`;
+        noteTxt.textContent = notes[k];
+        prev.toggleAttribute('disabled', n <= 1);
+        next.toggleAttribute('disabled', n <= 1);
+      };
+
+      prev.addEventListener('click', () => (i -= 1, render()));
+      next.addEventListener('click', () => (i += 1, render()));
+      render();
+    };
+
+    const initConstellation = () => {
+      const nodesG = byId('skyNodes');
+      const linesG = byId('skyLines');
+      const tip = byId('traitTip');
+
+      const traits = /** @type {const} */ ([
+        { id: 'tough', label: 'Tough cookie', desc: 'Not performative toughness — real resilience.', x: 120, y: 250 },
+        { id: 'independent', label: 'Independent', desc: 'You protect your autonomy like it matters. Because it does.', x: 210, y: 130 },
+        { id: 'math', label: 'Mathematics', desc: 'A mind built for structure, proof, and precision.', x: 380, y: 90 },
+        { id: 'work', label: 'Work ethic', desc: 'You show up. You finish. You improve.', x: 520, y: 170 },
+        { id: 'value', label: 'Hidden value', desc: 'You underestimate yourself. I don’t.', x: 610, y: 290 },
+        { id: 'sharp', label: 'Sharp tongue', desc: 'Edge can be honesty. I learned your language.', x: 410, y: 310 }
+      ]);
+
+      const edges = /** @type {const} */ ([
+        ['tough','independent'],
+        ['independent','math'],
+        ['math','work'],
+        ['work','value'],
+        ['math','sharp'],
+        ['sharp','tough']
+      ]);
+
+      const by = Object.fromEntries(traits.map((t) => [t.id, t]));
+
+      // lines
+      const mkLine = (a, b) => {
+        const A = by[a], B = by[b];
+        const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        l.setAttribute('x1', String(A.x));
+        l.setAttribute('y1', String(A.y));
+        l.setAttribute('x2', String(B.x));
+        l.setAttribute('y2', String(B.y));
+        return l;
+      };
+
+      edges.forEach(([a,b]) => linesG.appendChild(mkLine(a,b)));
+
+      const mkNode = (t) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('tabindex', '0');
+        g.setAttribute('role', 'button');
+        g.setAttribute('aria-label', `${t.label}. ${t.desc}`);
+
+        const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        glow.setAttribute('cx', String(t.x));
+        glow.setAttribute('cy', String(t.y));
+        glow.setAttribute('r', '10');
+        glow.setAttribute('fill', 'rgba(0,242,255,0.12)');
+
+        const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        c.setAttribute('cx', String(t.x));
+        c.setAttribute('cy', String(t.y));
+        c.setAttribute('r', '4.5');
+        c.setAttribute('fill', 'rgba(231,231,255,0.95)');
+
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', String(t.x + 10));
+        label.setAttribute('y', String(t.y + 4));
+        label.setAttribute('fill', 'rgba(231,231,255,0.72)');
+        label.setAttribute('font-size', '12');
+        label.setAttribute('font-family', 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace');
+        label.textContent = t.label.toUpperCase();
+
+        g.appendChild(glow);
+        g.appendChild(c);
+        g.appendChild(label);
+
+        const show = () => {
+          tip.innerHTML = `<strong>${t.label}:</strong> ${t.desc}`;
         };
 
-        return {
-            init: () => { resize(); addEventListener('resize', throttle(resize, 120)); stars = 
+        g.addEventListener('mouseenter', show);
+        g.addEventListener('focus', show);
+        g.addEventListener('click', show);
+
+        return g;
+      };
+
+      traits.forEach((t) => nodesG.appendChild(mkNode(t)));
+    };
+
+    const initCursor = () => {
+      if (prefersReducedMotion() || isTouch()) return;
+      document.body.classList.add('cursor-on');
+
+      const dot = qs('[data-cursor-dot]');
+      const outline = qs('[data-cursor-outline]');
+
+      let x = 0, y = 0;
+      let ox = 0, oy = 0;
+
+      const tick = () => {
+        // smooth outline
+        ox += (x - ox) * 0.12;
+        oy += (y - oy) * 0.12;
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+        outline.style.left = ox + 'px';
+        outline.style.top = oy + 'px';
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+
+      window.addEventListener('mousemove', (e) => {
+        x = e.clientX; y = e.clientY;
+      }, { passive: true });
+
+      // highlight on interactive hover
+      const on = () => outline.classList.add('active');
+      const off = () => outline.classList.remove('active');
+
+      const bind = (el) => {
+        el.addEventListener('mouseenter', on);
+        el.addEventListener('mouseleave', off);
+      };
+      qsa('button, .shot, a').forEach(bind);
+    };
+
+    /** ===========================
+      Audio (lazy context + analyser)
+    ============================ */
+
+    const initVisualizerBars = () => {
+      const viz = byId('viz');
+      const count = 40;
+      const bars = Array.from({ length: count }, () => {
+        const d = document.createElement('div');
+        d.className = 'barv';
+        d.style.height = '4px';
+        viz.appendChild(d);
+        return d;
+      });
+      return bars;
+    };
+
+    const createAudioEngine = () => {
+      const audioEl = /** @type {HTMLAudioElement} */ (byId('audio'));
+      const status = byId('audioStatus');
+
+      const lazyCtx = once(() => new (window.AudioContext || window.webkitAudioContext)());
+
+      /** @type {AnalyserNode | null} */ let analyser = null;
+      /** @type {Uint8Array | null} */ let data = null;
+      /** @type {MediaElementAudioSourceNode | null} */ let src = null;
+
+      const ensureGraph = () => {
+        const ctx = lazyCtx();
+        if (src && analyser && data) return { ctx, analyser, data };
+
+        src = ctx.createMediaElementSource(audioEl);
+        analyser = ctx.createAnalyser();
+        analyser.fftSize = 128;
+
+        const bufferLength = analyser.frequencyBinCount;
+        data = new Uint8Array(bufferLength);
+
+        src.connect(analyser);
+        analyser.connect(ctx.destination);
+
+        return { ctx, analyser, data };
+      };
+
+      /** @param {HTMLElement[]} bars */
+      const startViz = (bars) => {
+        let raf = 0;
+
+        const loop = () => {
+          raf = requestAnimationFrame(loop);
+          if (!analyser || !data) return;
+
+          analyser.getByteFrequencyData(data);
+
+          // map lows-to-mids for a smooth look
+          const n = bars.length;
+          const m = data.length;
+
+          for (let i = 0; i < n; i++) {
+            const v = data[(i * 2) % m] / 255; // 0..1
+            const h = Math.max(4, Math.round(74 * Math.pow(v, 0.85)));
+            bars[i].style.height = h + 'px';
+          }
+        };
+
+        loop();
+        return () => cancelAnimationFrame(raf);
+      };
+
+      const safePlay = async () => {
+        try {
+          const { ctx } = ensureGraph();
+          if (ctx.state === 'suspended') await ctx.resume();
+
+          await audioEl.play();
+          status.textContent = 'audio: playing';
+          return /** @type {Result<void>} */ ({ ok: true, value: undefined });
+        } catch (e) {
+          const err = e instanceof Error ? e : new Error(String(e));
+          status.textContent = 'audio: unavailable';
+          console.warn('[Audio] play failed (non-fatal):', err.message);
+          return /** @type {Result<void>} */ ({ ok: false, error: err });
+        }
+      };
+
+      const safePause = () => {
+        try {
+          audioEl.pause();
+          status.textContent = 'audio: paused';
+          return /** @type {Result<void>} */ ({ ok: true, value: undefined });
+        } catch (e) {
+          const err = e instanceof Error ? e : new Error(String(e));
+          console.warn('[Audio] pause failed (non-fatal):', err.message);
+          return /** @type {Result<void>} */ ({ ok: false, error: err });
+        }
+      };
+
+      return { ensureGraph, startViz, safePlay, safePause };
+    };
+
+    /** ===========================
+      Bootstrap (no UI before ready)
+    ============================ */
+
+    const store = createStore(/** @type {State} */ ({
+      phase: 'booting',
+      progress: { done: 0, total: 0, pct: 0 },
+      assetErrors: [],
+      readyToStart: false,
+      audioAvailable: true
+    }));
+
+    const bootEl = byId('boot');
+    const entryEl = byId('entry');
+    const mainEl = byId('main');
+
+    const bootBar = /** @type {HTMLElement} */ (byId('bootBar'));
+    const bootPct = byId('bootPct');
+    const bootCount = byId('bootCount');
+    const bootWarn = byId('bootWarn');
+    const bootBadge = byId('bootBadge');
+
+    const startBtn = /** @type {HTMLButtonElement} */ (byId('startBtn'));
+    const entryTitle = byId('entryTitle');
+
+    const playBtn = /** @type {HTMLButtonElement} */ (byId('playBtn'));
+    const pauseBtn = /** @type {HTMLButtonElement} */ (byId('pauseBtn'));
+
+    // Global safety: never crash silently
+    window.addEventListener('error', (e) => {
+      console.warn('[Archive] window error (non-fatal):', e.message);
+    });
+    window.addEventListener('unhandledrejection', (e) => {
+      console.warn('[Archive] unhandled rejection (non-fatal):', e.reason);
+    });
+
+    // Bind store -> UI
+    store.subscribe((s) => {
+      bootBadge.textContent = `phase: ${s.phase}`;
+
+      const { done, total, pct } = s.progress;
+      bootBar.style.width = pct + '%';
+      bootPct.textContent = pct + '%';
+      bootCount.textContent = `${done}/${total}`;
+
+      if (s.assetErrors.length > 0) bootWarn.style.display = 'block';
+      startBtn.disabled = !s.readyToStart;
+
+      // allow play/pause only when running + audio is available
+      const canAudio = s.phase === 'running' && s.audioAvailable;
+      playBtn.disabled = !canAudio;
+      pauseBtn.disabled = !canAudio;
+    });
+
+    // Start background systems (starfield can start right away after boot)
+    const starfield = createStarfield();
+
+    const runBoot = async () => {
+      // fast entry title scramble (optimized)
+      // (We run this after boot, but we can prime it here with minimal cost)
+      const update = ({ done, total, errors }) => {
+        store.dispatch({ type: 'BOOT_PROGRESS', payload: { done, total, errors } });
+      };
+
+      const { errors, audioAvailable } = await preloadAll(update);
+      logAssetReport(errors);
+
+      store.dispatch({ type: 'BOOT_DONE', payload: { errors, audioAvailable } });
+
+      // Reveal entry, hide boot
+      bootEl.classList.add('hidden');
+      entryEl.classList.remove('hidden');
+
+      // Faster, bounded scramble (no slow load)
+      // Keep it elegant: a single transformation, not endless loops.
+      void scrambleTo(entryTitle, 'FOR DIVIJA', {
+        durationMs: 520,
+        alphabet: '!<>-_\\/[]{}—=+*^?#________',
+        seed: 1337
+      });
+    };
+
+    // Run boot immediately
+    starfield.start();
+    runBoot();
+
+    // After user click: start the journey
+    const bars = initVisualizerBars();
+    const audioEngine = createAudioEngine();
+    /** @type {null | (() => void)} */ let stopViz = null;
+
+    const startJourney = async () => {
+      store.dispatch({ type: 'START' });
+
+      entryEl.classList.add('hidden');
+      mainEl.classList.add('visible');
+
+      // Warp the stars for “journey ignition”
+      starfield.warp(46);
+
+      // Initialize UI systems once (lazy-ish: only on start)
+      initCursor();
+      initReveals();
+      initRail();
+      initGallery();
+      initNotes();
+      initConstellation();
+
+      // Hook audio controls (available only if audio preloaded)
+      playBtn.addEventListener('click', async () => {
+        audioEngine.ensureGraph();
+        if (!stopViz) stopViz = audioEngine.startViz(bars);
+        await audioEngine.safePlay();
+      });
+      pauseBtn.addEventListener('click', () => audioEngine.safePause());
+
+      // Auto-start audio on journey start (allowed due to user gesture).
+      // If it fails, it fails gracefully.
+      audioEngine.ensureGraph();
+      stopViz = audioEngine.startViz(bars);
+      await audioEngine.safePlay();
+
+      // Micro-warp when reaching finale (feels like “arrival”)
+      const finale = byId('finale');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) starfield.warp(30);
+        });
+      }, { threshold: 0.5 });
+      io.observe(finale);
+    };
+
+    startBtn.addEventListener('click', startJourney);
+
+  </script>
+</body>
+</html>
