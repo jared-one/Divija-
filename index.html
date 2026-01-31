@@ -3,597 +3,791 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Calculus of Divija | One Year</title>
-    <!-- Fonts: JetBrains Mono for Math/Logic, Cinzel for Elegance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=JetBrains+Mono:wght@100;300&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
+    <title>Divija | The Divine Constant</title>
+    <meta name="description" content="A journey of one year, from sharp words to a divine bond.">
     
+    <!-- Fonts: Cinzel for elegance, Lato for readability -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
         /* --- CSS VARIABLES & THEME --- */
         :root {
-            --void: #030305;
-            --stardust: #e0e0e0;
-            --accent-math: #00f3ff; /* Cyan for Logic */
-            --accent-love: #ff0055; /* Red for Passion */
-            --glass: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-deep: #050507;
+            --text-primary: #e0e0e0;
+            --text-secondary: #9ca3af;
+            --accent-gold: #d4af37;
+            --accent-cosmic: #7b2cbf;
+            --accent-dim: #1f1f25;
+            
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Lato', sans-serif;
+
+            --space-unit: 1rem;
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         /* --- RESET & BASE --- */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background-color: var(--void);
-            color: var(--stardust);
-            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            line-height: 1.6;
             overflow-x: hidden;
-            overflow-y: hidden; /* Locked until entry */
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* --- TYPOGRAPHY --- */
-        h1, h2, h3 { font-family: 'Cinzel', serif; font-weight: 400; letter-spacing: 0.1em; }
-        .code-font { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent-math); }
-        .highlight { color: var(--accent-love); text-shadow: 0 0 10px rgba(255, 0, 85, 0.3); }
-        .math-term { border-bottom: 1px dashed var(--accent-math); cursor: help; }
-
-        /* --- LAYOUT UTILS --- */
-        .full-screen { position: fixed; inset: 0; z-index: 10; display: flex; justify-content: center; align-items: center; }
-        .hidden { opacity: 0; pointer-events: none; visibility: hidden; }
-        
-        /* --- CANVAS --- */
-        #cosmos {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            /* Subtly pulse opacity via hardware accel */
-            will-change: opacity;
-        }
-
-        /* --- ENTRY SCREEN --- */
-        #entry-layer {
-            background: var(--void);
-            z-index: 100;
-            transition: opacity 1.5s var(--ease-out-expo);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            gap: 2rem;
-        }
-        
-        .loader-text {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            opacity: 0.7;
-            min-height: 1.5em;
+            cursor: none; /* Custom cursor */
         }
 
-        .enter-btn {
-            padding: 1rem 3rem;
+        /* --- CUSTOM CURSOR --- */
+        #cursor-dot, #cursor-ring {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+            mix-blend-mode: difference;
+        }
+        #cursor-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-gold);
+        }
+        #cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: width 0.3s var(--ease-out-expo), height 0.3s var(--ease-out-expo);
+        }
+        /* Hover state for cursor */
+        body.hovering #cursor-ring {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-gold);
+        }
+
+        /* --- BACKGROUND CANVAS --- */
+        #cosmos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0; /* Fade in via JS */
+            transition: opacity 2s ease;
+        }
+
+        /* --- ENTRY OVERLAY --- */
+        #entry-overlay {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.5s ease, visibility 1.5s;
+        }
+        #entry-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .start-btn {
             background: transparent;
-            border: 1px solid var(--accent-math);
-            color: var(--accent-math);
-            font-family: 'JetBrains Mono';
+            border: 1px solid var(--text-secondary);
+            color: var(--text-primary);
+            padding: 1rem 3rem;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            letter-spacing: 0.3em;
             text-transform: uppercase;
-            letter-spacing: 2px;
             cursor: pointer;
             transition: all 0.4s var(--ease-out-expo);
             position: relative;
             overflow: hidden;
         }
-        
-        .enter-btn:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); }
-
-        /* --- MAIN CONTENT (SCROLLABLE) --- */
-        #app-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            opacity: 0;
-            transition: opacity 2s ease;
+        .start-btn:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
         }
 
-        .section {
-            min-height: 100vh;
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: 900px; /* Constrain width for "breathing room" */
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .spacer {
+            height: 15vh; /* Breathing space */
+        }
+
+        /* --- TYPOGRAPHY & ANIMATIONS --- */
+        h1, h2, h3 {
+            font-family: var(--font-display);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .reveal-text {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1.2s ease, transform 1.2s var(--ease-out-expo);
+        }
+        .reveal-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            color: var(--accent-gold);
+            font-weight: 700;
+            display: inline-block;
+        }
+        
+        /* Specific highlight for the punchline */
+        .punchline {
+            color: var(--accent-gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 1.2em;
+            position: relative;
+        }
+
+        /* --- SECTIONS --- */
+        header {
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 4rem 2rem;
-            position: relative;
+            text-align: center;
         }
 
-        /* --- CONTENT BLOCKS --- */
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            padding: 3rem;
-            max-width: 800px;
-            width: 90%;
-            border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            margin: 2rem 0;
+        .main-title {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
         }
 
-        /* --- PHOTO GRID (Handling Portrait vs Landscape) --- */
-        .memory-grid {
+        .subtitle {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+        }
+
+        /* --- IMAGE GALLERY (Handling K1 Portrait, K2/K3 Landscape) --- */
+        .gallery-section {
+            padding: 4rem 0;
+        }
+        
+        .gallery-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 250px 250px;
-            gap: 20px;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .gallery-grid {
+                /* Asymmetrical grid to handle orientation gracefully */
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto auto;
+            }
+            /* K1 (Portrait) takes left column, spanning 2 rows */
+            .card-portrait {
+                grid-column: 1 / 2;
+                grid-row: 1 / 3;
+            }
+            /* K2 (Landscape) takes middle and right column top */
+            .card-landscape-1 {
+                grid-column: 2 / 4;
+            }
+            /* K3 (Landscape) takes middle and right column bottom */
+            .card-landscape-2 {
+                grid-column: 2 / 4;
+            }
+        }
+
+        .img-card {
+            position: relative;
             width: 100%;
-            max-width: 900px;
-            margin: 4rem auto;
+            overflow: hidden;
+            border-radius: 2px;
+            background: var(--accent-dim);
+            aspect-ratio: 16/9; /* Default landscape */
+            opacity: 0; /* JS Fade in */
+            transition: opacity 1s ease, transform 0.5s ease;
+        }
+        
+        /* Specific aspect ratio for portrait */
+        .card-portrait {
+            aspect-ratio: 3/4; 
         }
 
-        /* K1 is Portrait: Spans 2 rows on the left */
-        .photo-card.portrait {
-            grid-column: 1;
-            grid-row: 1 / span 2;
-            height: 100%;
-        }
-
-        /* K2 & K3 are Landscape: Stacked on the right */
-        .photo-card.landscape {
-            grid-column: 2;
-            height: 100%;
-        }
-
-        .photo-inner {
+        .img-card img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            filter: grayscale(80%) contrast(120%);
-            transition: filter 0.5s ease, transform 0.5s ease;
-            border: 1px solid var(--glass-border);
-            background: #111; /* Placeholder color */
+            transition: transform 1.5s var(--ease-out-expo);
+            display: block;
         }
 
-        .photo-inner:hover {
-            filter: grayscale(0%);
-            transform: scale(1.02);
-            z-index: 2;
-            border-color: var(--accent-math);
+        .img-card:hover img {
+            transform: scale(1.05);
         }
 
-        /* --- AUDIO PLAYER --- */
-        .audio-control {
+        .img-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: var(--text-primary);
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            letter-spacing: 0.1em;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+        }
+
+        .img-card:hover .img-caption {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- LETTER CONTENT --- */
+        .letter-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6rem 0;
+            margin: 4rem 0;
+        }
+
+        .letter-content {
+            columns: 1;
+            column-gap: 4rem;
+        }
+
+        @media (min-width: 900px) {
+            .letter-content {
+                columns: 2;
+            }
+        }
+
+        .letter-content p {
+            margin-bottom: 2rem;
+            text-align: justify;
+            color: rgba(224, 224, 224, 0.9);
+            font-size: 1.05rem;
+            orphans: 3;
+            widows: 3;
+        }
+
+        .letter-content p::first-letter {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            float: left;
+            margin-right: 0.5rem;
+            line-height: 0.8;
+            color: var(--accent-gold);
+        }
+
+        /* --- AUDIO VISUALIZER --- */
+        .audio-container {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            z-index: 50;
             display: flex;
             align-items: center;
             gap: 1rem;
-            opacity: 0.5;
-            transition: opacity 0.3s;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+            transition: opacity 0.5s;
         }
-        .audio-control:hover { opacity: 1; }
-        .bar-visualizer { display: flex; gap: 2px; height: 20px; align-items: flex-end; }
-        .bar { width: 3px; background: var(--accent-math); height: 5px; }
-
-        /* --- TEXT STYLING --- */
-        p { line-height: 1.8; margin-bottom: 1.5rem; font-size: 1.1rem; }
         
-        .equation-anim {
-            font-family: 'JetBrains Mono';
-            color: var(--accent-math);
-            margin-bottom: 2rem;
-            font-size: 0.8rem;
+        .audio-bars {
+            display: flex;
+            gap: 2px;
+            height: 20px;
+            align-items: flex-end;
+        }
+        
+        .bar {
+            width: 3px;
+            background: var(--accent-gold);
+            height: 2px;
+            transition: height 0.1s ease;
         }
 
-        .signature-line {
-            font-size: 1.5rem;
+        .audio-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
             text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-top: 3rem;
-            color: var(--stardust);
         }
 
-        .daddy-line {
-            font-family: 'Cinzel';
-            font-size: 1.2rem;
-            margin-top: 2rem;
-            padding: 1rem;
-            border-left: 2px solid var(--accent-love);
-            background: linear-gradient(90deg, rgba(255,0,85,0.05), transparent);
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 4rem 0;
+            font-family: var(--font-display);
         }
 
-        /* --- MOBILE ADAPTATION --- */
+        /* Mobile Optimization */
         @media (max-width: 768px) {
-            .memory-grid {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto;
-            }
-            .photo-card.portrait { grid-column: 1; aspect-ratio: 3/4; }
-            .photo-card.landscape { grid-column: 1; aspect-ratio: 16/9; }
-            .glass-panel { padding: 1.5rem; }
-            h1 { font-size: 1.8rem; }
+            #cursor-dot, #cursor-ring { display: none; }
+            body { cursor: auto; }
+            .gallery-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+            .card-portrait, .card-landscape-1, .card-landscape-2 { grid-column: auto; grid-row: auto; }
+            .letter-content { columns: 1; }
+            .audio-container { bottom: 1rem; right: 50%; transform: translateX(50%); width: 90%; justify-content: center; }
         }
-
-        /* --- UTILITY CLASSES --- */
-        .fade-up { opacity: 0; transform: translateY(30px); transition: all 1s var(--ease-out-expo); }
-        .visible { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
-    <!-- 1. The Canvas: Mathematical Universe -->
+    <!-- Canvas -->
     <canvas id="cosmos"></canvas>
 
-    <!-- 2. Entry Overlay: The "Proof" -->
-    <div id="entry-layer" class="full-screen">
-        <div class="code-font" style="margin-bottom: 1rem;">// INITIALIZING VARIABLE: DIVIJA</div>
-        <div id="scramble-target" class="loader-text">CALCULATING PROBABILITY...</div>
-        <button id="start-btn" class="enter-btn hidden">Execute Journey</button>
-    </div>
+    <!-- Cursor -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
 
-    <!-- 3. Audio Asset (Hidden) -->
-    <audio id="bg-music" loop preload="auto">
+    <!-- Audio -->
+    <audio id="bg-music" loop>
         <source src="fallen-down.mp3" type="audio/mpeg">
     </audio>
 
-    <!-- 4. Visualizer (Fixed UI) -->
-    <div class="audio-control">
-        <div class="code-font">1 YEAR.exe</div>
-        <div id="visualizer" class="bar-visualizer"></div>
+    <!-- Entry Overlay -->
+    <div id="entry-overlay">
+        <div class="container" style="text-align: center;">
+            <h2 class="subtitle" style="margin-bottom: 2rem;">A Personal Log</h2>
+            <h1 class="main-title reveal-text">DIVIJA</h1>
+            <p class="reveal-text" style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">"One Year & The Divine Milestone"</p>
+            <button class="start-btn" id="start-btn" style="margin-top: 3rem;">Initiate Sequence</button>
+        </div>
     </div>
 
-    <!-- 5. Main Scrollable Content -->
-    <div id="app-container">
+    <!-- Main Content -->
+    <main class="container">
         
-        <!-- SECTION 1: THE HYPOTHESIS -->
-        <section class="section">
-            <div class="glass-panel fade-up">
-                <div class="equation-anim">let t = 0; // The Beginning</div>
-                <h1>The Divija <span class="highlight">Paradox</span></h1>
-                <br>
-                <p>
-                    When we first collided, you were a jagged equation I couldn't solve. 
-                    Sharp-tongued. Defensive. A "tough cookie" wrapped in layers of reinforced steel.
-                </p>
-                <p>
-                    I was pissed. I thought, <em>"This variable is too volatile."</em>
-                    I saw the rudeness and labeled it immaturity. I calculated the trajectory and saw a crash.
-                </p>
-                <p>
-                    But I forgot the first rule of discovery: <span class="code-font">Never judge the data by the noise.</span>
-                </p>
+        <!-- Header / Hero -->
+        <header class="spacer">
+            <h2 class="subtitle reveal-text">The Meaning of a Name</h2>
+            <h1 class="main-title reveal-text" style="margin-top: 1rem;">DIVINE</h1>
+            <p class="reveal-text" style="max-width: 600px; margin: 2rem auto; color: var(--text-secondary);">
+                You are a tough cookie, a fortress of independence and logic. 
+                But you fail to see the value you carry—the <span class="highlight">divine</span> spark within.
+            </p>
+        </header>
+
+        <!-- Gallery Section -->
+        <section class="gallery-section">
+            <div class="gallery-grid">
+                <!-- K1: Portrait -->
+                <div class="img-card card-portrait reveal-text">
+                    <img src="K1.png" alt="Portrait of Divija" loading="lazy">
+                    <div class="img-caption">The Solver</div>
+                </div>
+                <!-- K2: Landscape -->
+                <div class="img-card card-landscape-1 reveal-text">
+                    <img src="K2.png" alt="Memory with Divija" loading="lazy">
+                    <div class="img-caption">Sharp Tongue, Soft Heart</div>
+                </div>
+                <!-- K3: Landscape -->
+                <div class="img-card card-landscape-2 reveal-text">
+                    <img src="K3.png" alt="Divija and I" loading="lazy">
+                    <div class="img-caption">One Year Strong</div>
+                </div>
             </div>
         </section>
 
-        <!-- SECTION 2: THE DISCOVERY (Photos) -->
-        <section class="section">
-            <div class="memory-grid fade-up">
-                <!-- K1: Portrait (Left) -->
-                <div class="photo-card portrait">
-                    <img src="K1.png" alt="Divija Portrait" class="photo-inner" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzExMSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SzEgTk9UIEZPVU5EPC90ZXh0Pjwvc3ZnPg=='">
-                </div>
-                <!-- K2: Landscape (Top Right) -->
-                <div class="photo-card landscape">
-                    <img src="K2.png" alt="Memory Landscape 1" class="photo-inner" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzExMSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SzIgTk9UIEZPVU5EPC90ZXh0Pjwvc3ZnPg=='">
-                </div>
-                <!-- K3: Landscape (Bottom Right) -->
-                <div class="photo-card landscape">
-                    <img src="K3.png" alt="Memory Landscape 2" class="photo-inner" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzExMSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZmlsbD0iIzMzMyIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+SzMgTk9UIEZPVU5EPC90ZXh0Pjwvc3ZnPg=='">
-                </div>
-            </div>
-            <div class="glass-panel fade-up" style="margin-top: -2rem; z-index: 5;">
-                <p>
-                    I stayed. I observed. And the pattern emerged.
-                    Under that independent armor lies a mind that dances with numbers and a heart that feels deeper than you let the world see.
+        <!-- Letter / Poem -->
+        <section class="letter-section">
+            <div class="letter-content">
+                <p class="reveal-text">
+                    To <strong>Divija</strong>. In the language of the stars, your name means <em>Divine</em>—born of the heavens. 
+                    Yet, on Earth, you wield logic like a scalpel. Your skill in mathematics is not just talent; it is the way you structure your universe. 
+                    You are a "tough cookie," armored in independence, grinding with a work ethic that outlasts the sun.
                 </p>
-                <p class="code-font" style="text-align: center;">Result = Hidden Gem.</p>
-            </div>
-        </section>
-
-        <!-- SECTION 3: THE CONSTANT (Poem & Message) -->
-        <section class="section">
-            <div class="glass-panel fade-up">
-                <div class="equation-anim">Status: Maturity Reached</div>
-                <h2>To The Girl <span class="highlight">Born of the Divine</span></h2>
-                <br>
-                <p>
-                    <strong>Divija</strong>. Your name means heavenly born, yet you fight so hard to prove you are made of stone.
+                <p class="reveal-text">
+                    I will be honest. When we first met, our paths did not align in harmony. I was pissed. I saw rudeness, immaturity, and a sharp tongue that cut without remorse. 
+                    I considered you hopeless. But mathematics teaches us to look for the variable that changes the equation. I stayed. I looked past the initial static.
                 </p>
-                <p>
-                    You look down at yourself, calculating your worth and finding remainders that don't exist.
-                    But when I check your work, all I see is brilliance. 
-                    I see the work ethic of a star burning to keep its system alive.
+                <p class="reveal-text">
+                    And there it was. A gem hidden behind layers of defense. I realized your sharpness was a shield for a sensitivity you rarely show. 
+                    I watched notes pile up—every one a reflection of how you captivated me, despite the odds. 
+                    You went from a rude stranger to my constant thought.
                 </p>
-                <p>
-                    One year of solving this together.
-                    From the chaos of our first meeting to the tranquility of now.
-                    You have grown. You have matured.
-                    My heart rests easy knowing the woman you are becoming.
+                <p class="reveal-text">
+                    Today marks a milestone. You are not just the tough girl I met; you have reached a point of true maturity. 
+                    You have evolved into someone I can rest my heart upon. You have changed for the good, Divija, finally seeing the worth that I saw from the start.
                 </p>
-                <p>
-                    You are my constant thought. My favorite variable. My beautiful proof.
+                <p class="reveal-text">
+                    We have shared memories, played through the friction, and built a year that means more to me than you know.
+                    You are amazing. You are divine.
                 </p>
-
-                <div class="daddy-line fade-up">
-                    <span class="code-font">System Note:</span><br>
-                    As much as you may hate to hear this: <br>
-                    <span style="font-size: 1.4em; color: var(--accent-math); font-weight: bold;">I will always be DADDY</span>
-                </div>
-
-                <div class="signature-line">
+                <p class="reveal-text" style="text-align: center; margin-top: 3rem;">
                     I love you.
-                </div>
+                </p>
             </div>
         </section>
 
-        <!-- FOOTER SPACE -->
-        <div style="height: 100px;"></div>
+        <!-- Punchline -->
+        <div style="text-align: center; margin-bottom: 4rem;" class="reveal-text">
+            <p style="color: var(--text-secondary); margin-bottom: 1rem;">And a final reminder...</p>
+            <span class="punchline">As much as you may hate to hear this: I will always be DADDY</span>
+        </div>
+
+    </main>
+
+    <footer>
+        <p class="subtitle">One Year & Counting</p>
+    </footer>
+
+    <!-- Fixed Audio Widget -->
+    <div class="audio-container" id="audio-widget">
+        <div class="audio-label">Now Playing</div>
+        <div class="audio-bars" id="visualizer">
+            <!-- Bars injected by JS -->
+        </div>
     </div>
 
-<script>
-/**
- * ARCHITECTURE: Functional Programming / Event-Driven
- * 1. MathUtils: Pure functions for calculations.
- * 2. AssetLoader: Promise-based lazy loading.
- * 3. ParticleSystem: Float32Array optimization for 60fps canvas.
- * 4. DOMManipulator: Side-effect management.
- */
+    <script>
+        /**
+         * FUNCTIONAL PROGRAMMING ARCHITECTURE
+         * 1. Immutability: State objects are never mutated directly; new states are derived.
+         * 2. Composition: Logic is built by composing small, pure functions.
+         * 3. Performance: Using TypedArrays (Float32Array) for memory layout akin to Rust/C++.
+         * 4. Lazy Evaluation: Assets load only when in viewport (IntersectionObserver).
+         */
 
-// --- 1. MATHEMATICAL CORE (Pure) ---
-const MathCore = {
-    // Linear Interpolation
-    lerp: (start, end, t) => start * (1 - t) + end * t,
-    // Random Range
-    random: (min, max) => Math.random() * (max - min) + min,
-    // Map range
-    map: (n, start1, stop1, start2, stop2) => 
-        ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2
-};
+        (function() {
+            'use strict';
 
-// --- 2. ASYNC ASSET MANAGEMENT (Robustness) ---
-const AssetManager = (() => {
-    const checkAudio = (id) => {
-        const el = document.getElementById(id);
-        return new Promise((resolve, reject) => {
-            el.oncanplaythrough = () => resolve(true);
-            el.onerror = () => {
-                console.warn(`Audio ${id} failed. UX continuing without it.`);
-                resolve(false); // Resolve false instead of reject to prevent crash
+            // --- 1. UTILITIES & FP HELPERS ---
+            
+            // Curried composition
+            const compose = (...fns) => x => fns.reduceRight((v, f) => f(v), x);
+            
+            // Safe access (Maybe Monad equivalent)
+            const safeGet = (obj, path) => path.reduce((acc, key) => (acc && acc[key] !== undefined) ? acc[key] : undefined, obj);
+
+            // Logger that doesn't crash the app
+            const logError = (err) => console.warn(`[Asset Load Warning]: ${err.message}`);
+
+            // --- 2. STATE MANAGEMENT (Store) ---
+            
+            const initialState = {
+                audioCtx: null,
+                isPlaying: false,
+                warpSpeed: 0, // 0 to 100
+                stars: null,  // Float32Array
+                numStars: 1500,
+                width: 0,
+                height: 0,
+                assetsLoaded: false
             };
-            // Timeout fallback
-            setTimeout(() => resolve(false), 3000);
-        });
-    };
 
-    return {
-        init: async () => {
-            console.log("System: Checking Assets...");
-            // We proceed even if audio fails, we just log it.
-            await checkAudio('bg-music'); 
-            return true; 
-        }
-    };
-})();
+            // State container (Closure based)
+            const Store = (initState) => {
+                let state = initState;
+                return {
+                    get: () => state,
+                    update: (updater) => { state = updater(state); return state; }
+                };
+            };
 
-// --- 3. HIGH PERFORMANCE VISUALS (The "Cosmos") ---
-const Universe = (() => {
-    const canvas = document.getElementById('cosmos');
-    const ctx = canvas.getContext('2d', { alpha: false }); // Optimize: No alpha channel on bg
-    
-    let width, height;
-    let particles; // Float32Array: [x, y, z, size, speed]
-    const COUNT = 1000; 
-    const PROP_COUNT = 5; // properties per particle
+            const store = Store(initialState);
 
-    const resize = () => {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-        initParticles();
-    };
-
-    const initParticles = () => {
-        particles = new Float32Array(COUNT * PROP_COUNT);
-        for(let i = 0; i < COUNT; i++) {
-            resetParticle(i, true);
-        }
-    };
-
-    const resetParticle = (i, randomZ = false) => {
-        const idx = i * PROP_COUNT;
-        particles[idx] = (Math.random() - 0.5) * width;     // x
-        particles[idx+1] = (Math.random() - 0.5) * height;  // y
-        particles[idx+2] = randomZ ? Math.random() * width : width; // z (depth)
-        particles[idx+3] = Math.random() * 2;               // size
-        particles[idx+4] = MathCore.map(particles[idx+3], 0, 2, 0.5, 3); // speed based on size
-    };
-
-    const render = () => {
-        // Clear with trail effect
-        ctx.fillStyle = 'rgba(3, 3, 5, 0.4)'; 
-        ctx.fillRect(0, 0, width, height);
-        
-        ctx.fillStyle = '#e2e2ff';
-        
-        const cx = width / 2;
-        const cy = height / 2;
-
-        for(let i = 0; i < COUNT; i++) {
-            const idx = i * PROP_COUNT;
+            // --- 3. STARFIELD SYSTEM (Optimized) ---
             
-            // Update Z
-            particles[idx+2] -= particles[idx+4]; // move closer
+            // Initialize Star Data (Memory efficient contiguous array)
+            // Structure: [x, y, z, size, r, g, b] per star. 7 floats per star.
+            const initStarData = (count, width, height) => {
+                const buffer = new Float32Array(count * 7);
+                for (let i = 0; i < count; i++) {
+                    const i7 = i * 7;
+                    buffer[i7 + 0] = (Math.random() - 0.5) * width;     // x
+                    buffer[i7 + 1] = (Math.random() - 0.5) * height;    // y
+                    buffer[i7 + 2] = Math.random() * 2000;              // z (depth)
+                    buffer[i7 + 3] = Math.random() * 2;                // size
+                    // Color: mostly white/blueish
+                    buffer[i7 + 4] = 0.8 + Math.random() * 0.2; // R
+                    buffer[i7 + 5] = 0.8 + Math.random() * 0.2; // G
+                    buffer[i7 + 6] = 1.0; // B
+                }
+                return buffer;
+            };
 
-            // Reset if passed screen
-            if(particles[idx+2] <= 1) {
-                resetParticle(i, false);
-            }
-
-            // Project 3D to 2D
-            const z = particles[idx+2];
-            const perspective = 300 / z; // Focal length approximation
-            const x = cx + particles[idx] * perspective;
-            const y = cy + particles[idx+1] * perspective;
-            const s = particles[idx+3] * perspective;
-
-            // Draw
-            if(x > 0 && x < width && y > 0 && y < height) {
-                // Optimization: Draw rects instead of arcs (faster) for tiny stars
-                ctx.fillRect(x, y, s, s);
-            }
-        }
-        requestAnimationFrame(render);
-    };
-
-    return {
-        start: () => {
-            window.addEventListener('resize', resize);
-            resize();
-            render();
-        }
-    };
-})();
-
-// --- 4. SCRAMBLE TEXT EFFECT (Optimized) ---
-const Scramble = (elementId, targetText, duration = 1500) => {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
-    const frames = 60;
-    const steps = duration / (1000 / 60);
-    let frame = 0;
-
-    const anim = () => {
-        const progress = frame / steps;
-        const revealedCount = Math.floor(targetText.length * progress);
-        
-        let output = '';
-        for(let i = 0; i < targetText.length; i++) {
-            if (i < revealedCount) {
-                output += targetText[i];
-            } else {
-                output += chars[Math.floor(Math.random() * chars.length)];
-            }
-        }
-        
-        el.innerText = output;
-        frame++;
-        
-        if (frame <= steps) {
-            requestAnimationFrame(anim);
-        } else {
-            el.innerText = targetText; // Ensure final state
-            document.getElementById('start-btn').classList.remove('hidden');
-        }
-    };
-    anim();
-};
-
-// --- 5. AUDIO VISUALIZER (Web Audio API) ---
-const AudioEngine = (() => {
-    let context, analyser, source;
-    const bars = [];
-    const container = document.getElementById('visualizer');
-
-    const setupUI = () => {
-        // Create 10 bars
-        for(let i=0; i<8; i++) {
-            const d = document.createElement('div');
-            d.className = 'bar';
-            container.appendChild(d);
-            bars.push(d);
-        }
-    };
-
-    const start = () => {
-        const audio = document.getElementById('bg-music');
-        
-        // Attempt play
-        audio.play().then(() => {
-            // Init Web Audio
-            context = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = context.createAnalyser();
-            source = context.createMediaElementSource(audio);
-            
-            source.connect(analyser);
-            analyser.connect(context.destination);
-            
-            analyser.fftSize = 32;
-            const bufferLength = analyser.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-
-            const draw = () => {
-                requestAnimationFrame(draw);
-                analyser.getByteFrequencyData(dataArray);
+            const updateStars = (state) => {
+                const { stars, numStars, width, height, warpSpeed } = state;
+                const speed = 2 + (warpSpeed * 0.5); // Base speed + warp
                 
-                // Map low frequencies to bars
-                for(let i=0; i<bars.length; i++) {
-                    const val = dataArray[i]; // Low freqs are at start
-                    const h = MathCore.map(val, 0, 255, 3, 20);
-                    bars[i].style.height = `${h}px`;
+                // We mutate the Float32Array directly for performance, 
+                // but functionally we return a "new" state snapshot if other props changed.
+                // In Rust, we'd map over. Here, imperative mutation inside a pure update function is the "optimal compromise".
+                for (let i = 0; i < numStars; i++) {
+                    const i7 = i * 7;
+                    
+                    // Move star closer
+                    stars[i7 + 2] -= speed;
+
+                    // Reset if passed camera or behind
+                    if (stars[i7 + 2] <= 1) {
+                        stars[i7 + 0] = (Math.random() - 0.5) * width;
+                        stars[i7 + 1] = (Math.random() - 0.5) * height;
+                        stars[i7 + 2] = 2000;
+                    }
+                }
+                return state;
+            };
+
+            const drawStars = (ctx, state) => {
+                const { stars, numStars, width, height } = state;
+                const cx = width / 2;
+                const cy = height / 2;
+
+                // Clear screen with trail effect
+                ctx.fillStyle = 'rgba(5, 5, 7, 0.4)';
+                ctx.fillRect(0, 0, width, height);
+
+                for (let i = 0; i < numStars; i++) {
+                    const i7 = i * 7;
+                    const x = stars[i7 + 0];
+                    const y = stars[i7 + 1];
+                    const z = stars[i7 + 2];
+                    const size = stars[i7 + 3];
+                    const r = stars[i7 + 4];
+                    const g = stars[i7 + 5];
+                    const b = stars[i7 + 6];
+
+                    // Projection math
+                    const sx = (x / z) * 400 + cx;
+                    const sy = (y / z) * 400 + cy;
+                    
+                    // Scale size by depth
+                    const s = (1000 / z) * size;
+
+                    if (sx > 0 && sx < width && sy > 0 && sy < height) {
+                        const alpha = Math.min(1, (2000 - z) / 1000);
+                        ctx.fillStyle = `rgba(${r*255}, ${g*255}, ${b*255}, ${alpha})`;
+                        ctx.beginPath();
+                        ctx.arc(sx, sy, s, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
                 }
             };
-            draw();
-        }).catch(e => {
-            console.log("Autoplay prevented or file missing. UI fallback.");
-            container.style.opacity = 0; // Hide visualizer if no audio
-        });
-    };
 
-    return { init: () => { setupUI(); }, play: start };
-})();
+            // --- 4. ASSET LOADER (Lazy & Fault Tolerant) ---
+            
+            const loadImages = () => {
+                const images = document.querySelectorAll('img');
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src || img.src; // Ensure load
+                            
+                            // Error handling per asset
+                            img.onerror = () => {
+                                logError(new Error(`Failed to load ${img.src}`));
+                                img.style.display = 'none'; // Graceful degradation
+                            };
+                            
+                            img.onload = () => {
+                                img.classList.add('visible');
+                                img.parentElement.classList.add('visible');
+                            };
+                            
+                            obs.unobserve(img);
+                        }
+                    });
+                }, { threshold: 0.1 });
 
-// --- 6. INTERSECTION OBSERVER (Lazy Reveal) ---
-const ObserverSystem = (() => {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+                images.forEach(img => observer.observe(img));
+            };
+
+            // --- 5. ANIMATION LOOP ---
+
+            const canvas = document.getElementById('cosmos');
+            const ctx = canvas.getContext('2d', { alpha: false }); // Optimization
+
+            const resize = () => {
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                canvas.width = w;
+                canvas.height = h;
+                store.update(s => ({ ...s, width: w, height: h, stars: initStarData(s.numStars, w, h) }));
+            };
+
+            const loop = () => {
+                const currentState = store.get();
+                const updatedState = updateStars(currentState);
+                drawStars(ctx, updatedState);
+                
+                // Decay warp speed
+                if (currentState.warpSpeed > 0) {
+                    store.update(s => ({ ...s, warpSpeed: Math.max(0, s.warpSpeed - 1) }));
+                }
+                
+                requestAnimationFrame(loop);
+            };
+
+            // --- 6. UI INTERACTION & AUDIO ---
+
+            const setupAudio = async () => {
+                const audio = document.getElementById('bg-music');
+                const visualizer = document.getElementById('visualizer');
+                
+                // Create bars
+                for(let i=0; i<15; i++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'bar';
+                    visualizer.appendChild(bar);
+                }
+                const bars = visualizer.querySelectorAll('.bar');
+
+                try {
+                    // Context must be created after user interaction
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    const ctx = new AudioContext();
+                    const src = ctx.createMediaElementSource(audio);
+                    const analyser = ctx.createAnalyser();
+                    
+                    src.connect(analyser);
+                    analyser.connect(ctx.destination);
+                    
+                    analyser.fftSize = 32;
+                    const bufferLength = analyser.frequencyBinCount;
+                    const dataArray = new Uint8Array(bufferLength);
+
+                    audio.play();
+
+                    const renderAudio = () => {
+                        if (!audio.paused) {
+                            analyser.getByteFrequencyData(dataArray);
+                            bars.forEach((bar, i) => {
+                                const val = dataArray[i];
+                                const h = Math.max(2, (val / 255) * 20);
+                                bar.style.height = `${h}px`;
+                            });
+                        }
+                        requestAnimationFrame(renderAudio);
+                    };
+                    renderAudio();
+
+                } catch (e) {
+                    logError(e);
+                    // Fallback: CSS animation if AudioContext fails
+                    bars.forEach(b => b.style.animation = "pulse 0.5s infinite alternate");
+                }
+            };
+
+            const init = () => {
+                resize();
+                window.addEventListener('resize', resize);
+                loop();
+                loadImages();
+
+                const startBtn = document.getElementById('start-btn');
+                const overlay = document.getElementById('entry-overlay');
+                const cosmos = document.getElementById('cosmos');
+                const reveals = document.querySelectorAll('.reveal-text');
+
+                startBtn.addEventListener('click', () => {
+                    // Trigger Warp
+                    store.update(s => ({ ...s, warpSpeed: 50 }));
+                    
+                    // UI Transition
+                    overlay.classList.add('hidden');
+                    cosmos.style.opacity = '1';
+                    
+                    setupAudio();
+
+                    // Staggered Text Reveal (The "fast" textual animation)
+                    reveals.forEach((el, index) => {
+                        setTimeout(() => {
+                            el.classList.add('visible');
+                        }, 500 + (index * 200)); // Cascading delay
+                    });
+                });
+
+                // Custom Cursor Logic (Performance: rAF not strictly needed for mouse, but good for smoothing)
+                const cursorDot = document.getElementById('cursor-dot');
+                const cursorRing = document.getElementById('cursor-ring');
+                
+                let mouseX = 0, mouseY = 0;
+                let ringX = 0, ringY = 0;
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+                    
+                    cursorDot.style.left = `${mouseX}px`;
+                    cursorDot.style.top = `${mouseY}px`;
+                });
+
+                const animateCursor = () => {
+                    // Linear interpolation for smooth trailing
+                    ringX += (mouseX - ringX) * 0.15;
+                    ringY += (mouseY - ringY) * 0.15;
+                    
+                    cursorRing.style.left = `${ringX}px`;
+                    cursorRing.style.top = `${ringY}px`;
+                    requestAnimationFrame(animateCursor);
+                };
+                animateCursor();
+
+                // Hover effects for cursor
+                const interactables = document.querySelectorAll('a, button, .img-card');
+                interactables.forEach(el => {
+                    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+                });
+            };
+
+            // Start application
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
             }
-        });
-    }, { threshold: 0.1 });
 
-    return {
-        observe: () => {
-            document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-        }
-    };
-})();
-
-// --- MAIN EXECUTION PIPELINE ---
-window.onload = () => {
-    // 1. Start Background immediately
-    Universe.start();
-    AudioEngine.init();
-
-    // 2. Run Text Scramble "Loading" logic
-    setTimeout(() => {
-        Scramble('scramble-target', 'ACCESS GRANTED: DIVIJA');
-    }, 500);
-
-    // 3. User Interaction (Required for Audio context)
-    document.getElementById('start-btn').addEventListener('click', () => {
-        const overlay = document.getElementById('entry-layer');
-        const main = document.getElementById('app-container');
-        
-        // Transition
-        overlay.style.opacity = 0;
-        
-        setTimeout(() => {
-            overlay.classList.add('hidden');
-            document.body.style.overflowY = 'auto'; // Unlock scroll
-            main.style.opacity = 1;
-            
-            // Start Systems
-            AudioEngine.play();
-            ObserverSystem.observe();
-            
-        }, 1500);
-    });
-};
-
-</script>
+        })();
+    </script>
 </body>
 </html>
