@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Divija | One Year of Constellations</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Dancing+Script:wght@700&family=Orbitron:wght@400;500&display=swap" rel="stylesheet">
+    <title>For Divija | Born of Heaven</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --space-black: #0a0a0f;
-            --nebula-blue: #0d1b2a;
-            --starlight: #e6e6ff;
-            --cosmic-purple: #6a4c93;
-            --gravity-cyan: #06d6a0;
-            --gold-accent: #ffd166;
-            --math-gold: #ff9e6d;
-            --deep-space: #070f1a;
+            --void: #030305;
+            --nebula: #0a0f1a;
+            --stardust: #1a1f2e;
+            --celestial: #e8e8f0;
+            --moonlight: #c5c5d5;
+            --aurora: #7b68ee;
+            --ethereal: #00d4aa;
+            --gold-dust: #d4af37;
+            --shadow-depth: rgba(0, 0, 0, 0.7);
         }
 
         * {
@@ -23,1377 +26,1223 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: var(--space-black);
-            color: var(--starlight);
-            font-family: 'Cinzel', 'Georgia', serif;
+            background: var(--void);
+            color: var(--celestial);
+            font-family: 'Cormorant Garamond', Georgia, serif;
             overflow-x: hidden;
             min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.7;
         }
 
-        /* --- Custom Cursor --- */
-        .cursor-dot,
-        .cursor-outline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-            mix-blend-mode: difference;
-        }
-
-        .cursor-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--gravity-cyan);
-            transition: transform 0.1s ease;
-        }
-
-        .cursor-outline {
-            width: 35px;
-            height: 35px;
-            border: 2px solid var(--gravity-cyan);
-            opacity: 0.7;
-            transition: all 0.2s ease;
-        }
-
-        /* --- Canvas Background --- */
-        #universe {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-        }
-
-        .cosmic-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 30% 40%, rgba(6, 214, 160, 0.07) 0%, transparent 40%),
-                        radial-gradient(circle at 70% 70%, rgba(106, 76, 147, 0.08) 0%, transparent 45%),
-                        radial-gradient(circle at 20% 80%, rgba(255, 209, 102, 0.05) 0%, transparent 50%);
-            z-index: -1;
-            opacity: 0.8;
-        }
-
-        /* --- Typography & Animations --- */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 0.7; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 0.7; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        @keyframes starPulse {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 1.2s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-            opacity: 0;
-        }
-
-        .pulse {
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .star {
-            animation: starPulse 4s ease-in-out infinite;
-        }
-
-        h1, h2, h3 {
-            font-weight: 300;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            position: relative;
-            display: inline-block;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--gravity-cyan), transparent);
-            opacity: 0.8;
-        }
-
-        /* --- Entry Overlay --- */
-        #entry-screen {
+        /* ===== COSMIC BACKGROUND ===== */
+        #cosmos {
             position: fixed;
             inset: 0;
-            background: var(--deep-space);
+            z-index: -2;
+            background: radial-gradient(ellipse at 50% 100%, var(--nebula) 0%, var(--void) 60%);
+        }
+
+        #starfield {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+        }
+
+        /* ===== ENTRY PORTAL ===== */
+        #portal {
+            position: fixed;
+            inset: 0;
+            background: var(--void);
             z-index: 1000;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 2rem;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
         }
 
-        #entry-screen.hidden {
+        #portal.dissolved {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
 
-        .entry-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            margin-bottom: 1.5rem;
-            background: linear-gradient(to right, var(--starlight), var(--gravity-cyan), var(--cosmic-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 15px rgba(6, 214, 160, 0.3);
-            letter-spacing: 0.05em;
-            line-height: 1.1;
+        .portal-text {
+            text-align: center;
         }
 
-        .entry-subtitle {
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: var(--gravity-cyan);
-            max-width: 600px;
-            margin-bottom: 3rem;
-            opacity: 0.9;
+        .portal-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
             font-weight: 300;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, var(--celestial) 0%, var(--moonlight) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5em;
+            opacity: 0;
+            transform: translateY(30px);
         }
 
-        .entry-btn {
-            padding: 16px 50px;
-            background: transparent;
-            border: 2px solid var(--gravity-cyan);
-            color: var(--starlight);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            letter-spacing: 3px;
+        .portal-title.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portal-subtitle {
+            font-size: 1rem;
+            letter-spacing: 0.5em;
+            color: var(--aurora);
             text-transform: uppercase;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+        }
+
+        .portal-subtitle.visible {
+            opacity: 0.9;
+            transition: opacity 0.7s ease 0.25s;
+        }
+
+        .enter-btn {
+            margin-top: 3rem;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 1px solid rgba(123, 104, 238, 0.4);
+            color: var(--celestial);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            cursor: pointer;
             position: relative;
             overflow: hidden;
-            cursor: pointer;
-            z-index: 10;
-            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
         }
 
-        .entry-btn::before {
+        .enter-btn.visible {
+            opacity: 1;
+            transition: opacity 0.7s ease 0.5s;
+        }
+
+        .enter-btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(6, 214, 160, 0.2), transparent);
-            transition: 0.6s;
-            z-index: -1;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(123, 104, 238, 0.2), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
         }
 
-        .entry-btn:hover {
-            background: rgba(6, 214, 160, 0.15);
-            box-shadow: 0 0 25px rgba(6, 214, 160, 0.4);
-            transform: scale(1.05);
-            letter-spacing: 4px;
+        .enter-btn:hover {
+            border-color: var(--ethereal);
+            box-shadow: 0 0 30px rgba(0, 212, 170, 0.2);
+            transform: scale(1.02);
         }
 
-        .entry-btn:hover::before {
-            left: 100%;
+        .enter-btn:hover::before {
+            transform: translateX(100%);
         }
 
-        .entry-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* --- Main Content --- */
-        .content-wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 100px 20px 80px;
+        /* ===== MAIN CONTENT ===== */
+        #universe {
             opacity: 0;
-            transition: opacity 1.5s ease 0.3s;
+            transition: opacity 1.5s ease;
         }
 
-        .content-wrapper.visible {
+        #universe.revealed {
             opacity: 1;
         }
 
-        .title-section {
-            text-align: center;
-            margin-bottom: 70px;
-            position: relative;
-        }
-
-        .main-title {
-            font-size: clamp(2.8rem, 6vw, 4.5rem);
-            margin-bottom: 15px;
-            background: linear-gradient(to right, var(--starlight), var(--gold-accent));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            position: relative;
-            display: block;
-        }
-
-        .main-title::after {
-            content: 'DIVIJA';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to right, var(--cosmic-purple), var(--math-gold));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            opacity: 0.3;
-            z-index: -1;
-            letter-spacing: 0.15em;
-        }
-
-        .subtitle {
-            color: var(--gravity-cyan);
-            font-size: 1.1rem;
-            letter-spacing: 0.3em;
-            opacity: 0.85;
-            margin-top: 10px;
-            font-weight: 300;
-        }
-
-        /* --- Music Player --- */
-        .music-section {
-            margin: 60px auto 70px;
-            max-width: 500px;
-        }
-
-        .music-player {
-            background: rgba(15, 25, 45, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(106, 76, 147, 0.4);
-            border-radius: 24px;
-            padding: 25px;
+        .celestial-section {
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
-                        0 0 25px rgba(6, 214, 160, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .music-player::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(6, 214, 160, 0.1) 0%, transparent 70%);
-            z-index: -1;
-        }
-
-        .track-info {
-            text-align: center;
-            margin-bottom: 20px;
-            z-index: 2;
-        }
-
-        .track-name {
-            display: block;
-            color: var(--starlight);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .track-artist {
-            color: var(--gravity-cyan);
-            font-size: 0.95rem;
-            font-style: italic;
-            opacity: 0.9;
-        }
-
-        #visualizer {
-            width: 100%;
-            height: 70px;
-            display: flex;
-            align-items: flex-end;
             justify-content: center;
-            gap: 2px;
-            margin: 15px 0;
+            align-items: center;
+            padding: 5rem 2rem;
             position: relative;
-            z-index: 2;
         }
 
-        .bar {
-            width: 4px;
-            background: linear-gradient(to top, var(--cosmic-purple), var(--gravity-cyan), var(--gold-accent));
-            border-radius: 2px 2px 0 0;
-            height: 2px;
-            transition: height 0.07s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-            transform-origin: bottom;
+        /* ===== TITLE SECTION ===== */
+        .title-constellation {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .divine-name {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            background: linear-gradient(135deg, var(--celestial) 0%, var(--gold-dust) 50%, var(--celestial) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .name-meaning {
+            font-size: 1.1rem;
+            letter-spacing: 0.4em;
+            color: var(--aurora);
+            text-transform: uppercase;
+            margin-top: 1rem;
             opacity: 0.9;
         }
 
-        .play-pause-btn {
-            background: rgba(6, 214, 160, 0.2);
-            border: 2px solid var(--gravity-cyan);
+        .milestone-text {
+            font-size: 1rem;
+            letter-spacing: 0.2em;
+            color: var(--moonlight);
+            margin-top: 2rem;
+            font-style: italic;
+        }
+
+        /* ===== MUSIC ORBIT ===== */
+        .music-orbit {
+            background: rgba(10, 15, 26, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(123, 104, 238, 0.15);
+            border-radius: 50px;
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            transition: all 0.4s ease;
+        }
+
+        .music-orbit:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .play-pulse {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--starlight);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
+            background: linear-gradient(135deg, var(--aurora), var(--ethereal));
+            border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            z-index: 2;
-        }
-
-        .play-pause-btn:hover {
-            background: rgba(6, 214, 160, 0.35);
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(6, 214, 160, 0.5);
-        }
-
-        .play-pause-btn.paused::after {
-            content: "▶";
-        }
-
-        .play-pause-btn.playing::after {
-            content: "❚❚";
-        }
-
-        /* --- Memories Grid --- */
-        .memories-section {
-            margin: 70px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.8rem;
-            margin-bottom: 40px;
-            color: var(--gold-accent);
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 70%;
-            height: 2px;
-            background: var(--gravity-cyan);
-            opacity: 0.7;
-        }
-
-        .memories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 35px;
-            margin-top: 30px;
-        }
-
-        .memory-card {
-            background: rgba(20, 30, 50, 0.65);
-            border: 1px solid rgba(106, 76, 147, 0.3);
-            border-radius: 16px;
-            height: 320px;
-            position: relative;
-            overflow: hidden;
             display: flex;
-            justify-content: center;
             align-items: center;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            flex-shrink: 0;
         }
 
-        .memory-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: var(--gravity-cyan);
-            box-shadow: 0 12px 35px rgba(6, 214, 160, 0.25),
-                        0 0 25px rgba(106, 76, 147, 0.2);
-        }
-
-        .memory-card::before {
+        .play-pulse::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, transparent 0%, rgba(10, 15, 25, 0.9) 100%);
-            z-index: 1;
+            inset: -5px;
+            border-radius: 50%;
+            border: 1px solid var(--aurora);
+            opacity: 0;
         }
 
-        .memory-img {
+        .play-pulse.playing::after {
+            animation: pulse-ring 1.5s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .play-pulse:hover {
+            transform: scale(1.1);
+        }
+
+        .play-icon, .pause-icon {
+            transition: all 0.3s ease;
+        }
+
+        .play-icon {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px 0 8px 14px;
+            border-color: transparent transparent transparent var(--void);
+            margin-left: 3px;
+        }
+
+        .pause-icon {
+            width: 14px;
+            height: 16px;
+            background: linear-gradient(to right, var(--void) 40%, transparent 40%, transparent 60%, var(--void) 60%);
+        }
+
+        .track-details {
+            flex: 1;
+        }
+
+        .track-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.15em;
+            color: var(--celestial);
+        }
+
+        .track-artist {
+            font-size: 0.85rem;
+            color: var(--moonlight);
+            opacity: 0.7;
+            margin-top: 0.2rem;
+        }
+
+        .visualizer {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 30px;
+            width: 60px;
+        }
+
+        .v-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--aurora), var(--ethereal));
+            border-radius: 2px;
+            min-height: 4px;
+            transition: height 0.05s ease;
+        }
+
+        /* ===== MEMORY CONSTELLATION ===== */
+        .memory-constellation {
+            width: 100%;
+            max-width: 1200px;
+            margin: 4rem auto;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .portrait-frame {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            border: 1px solid rgba(123, 104, 238, 0.2);
+        }
+
+        .portrait-frame::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
+            inset: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .portrait-frame img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            filter: grayscale(30%) contrast(1.1);
+            transition: all 0.6s ease;
         }
 
-        .memory-card:hover .memory-img {
-            transform: scale(1.08);
+        .portrait-frame:hover img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.03);
         }
 
-        .memory-label {
-            position: absolute;
-            bottom: 25px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            z-index: 2;
-            background: rgba(6, 214, 160, 0.15);
-            padding: 5px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--gravity-cyan);
-            opacity: 0.95;
+        .landscape-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        .memory-1 .memory-label { color: var(--math-gold); }
-        .memory-2 .memory-label { color: var(--cosmic-purple); }
-        .memory-3 .memory-label { color: var(--gold-accent); }
-
-        /* --- Letter Section --- */
-        .letter-section {
-            margin: 80px 0 60px;
-        }
-
-        .letter-container {
-            background: rgba(18, 25, 40, 0.75);
-            border-left: 3px solid var(--gravity-cyan);
-            padding: 45px;
-            border-radius: 0 16px 16px 0;
+        .landscape-frame {
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
-                        inset 0 0 20px rgba(6, 214, 160, 0.08);
-            backdrop-filter: blur(5px);
-            margin-top: 30px;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border: 1px solid rgba(123, 104, 238, 0.2);
         }
 
-        .letter-container::before {
-            content: '"';
+        .landscape-frame::before {
+            content: '';
             position: absolute;
-            top: 15px;
-            left: 20px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 8rem;
-            color: rgba(106, 76, 147, 0.3);
-            line-height: 1;
-            z-index: 0;
-        }
-
-        .letter-container p {
-            position: relative;
+            inset: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
             z-index: 1;
-            margin-bottom: 22px;
+            pointer-events: none;
+        }
+
+        .landscape-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(30%) contrast(1.1);
+            transition: all 0.6s ease;
+        }
+
+        .landscape-frame:hover img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.03);
+        }
+
+        .image-fallback {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--stardust);
+            color: var(--moonlight);
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .image-fallback.visible {
+            opacity: 1;
+        }
+
+        /* ===== LETTER NEBULA ===== */
+        .letter-nebula {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: linear-gradient(180deg, rgba(10, 15, 26, 0.4) 0%, rgba(26, 31, 46, 0.2) 100%);
+            border-left: 2px solid var(--aurora);
+            position: relative;
+        }
+
+        .letter-nebula::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to bottom, var(--ethereal), var(--aurora));
+        }
+
+        .letter-content {
             font-size: 1.15rem;
-            line-height: 1.75;
+            line-height: 2.2;
+            color: var(--moonlight);
         }
 
-        .letter-container p:last-child {
-            margin-bottom: 0;
+        .letter-content p {
+            margin-bottom: 1.8rem;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        .highlight {
-            color: var(--gravity-cyan);
-            font-weight: 500;
-            position: relative;
-            display: inline;
+        .letter-content p.revealed {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--gravity-cyan);
-            opacity: 0.4;
-            z-index: -1;
+        .highlight-gold {
+            color: var(--gold-dust);
+            font-weight: 400;
         }
 
-        .math-highlight {
-            color: var(--math-gold);
-            font-weight: 600;
-            text-shadow: 0 0 8px rgba(255, 158, 109, 0.4);
+        .highlight-aurora {
+            color: var(--aurora);
+            font-weight: 400;
         }
 
-        .growth-highlight {
-            color: var(--gold-accent);
-            font-weight: 600;
-            position: relative;
-            display: inline-block;
+        .highlight-ethereal {
+            color: var(--ethereal);
+            font-weight: 400;
         }
 
-        .growth-highlight::after {
-            content: '';
-            position: absolute;
-            bottom: -3px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: linear-gradient(to right, transparent, var(--gold-accent), transparent);
-            border-radius: 2px;
-            opacity: 0.7;
+        .emphasis {
+            font-style: italic;
+            color: var(--celestial);
+        }
+
+        /* ===== FINAL CONSTELLATION ===== */
+        .final-constellation {
+            text-align: center;
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .punchline {
-            text-align: center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            margin: 40px 0 25px;
-            padding: 20px;
-            background: rgba(10, 15, 25, 0.85);
-            border-radius: 16px;
-            border: 2px solid var(--cosmic-purple);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            letter-spacing: 0.15em;
+            color: var(--ethereal);
+            line-height: 1.8;
+            opacity: 0;
+            transform: scale(0.95);
         }
 
-        .punchline::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(106, 76, 147, 0.2), transparent);
-            animation: rotate 8s linear infinite;
-            z-index: -1;
+        .punchline.revealed {
+            opacity: 1;
+            transform: scale(1);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        .daddy-text {
-            color: var(--math-gold);
-            font-weight: 700;
-            text-shadow: 0 0 12px rgba(255, 158, 109, 0.7);
-            letter-spacing: 2px;
-            position: relative;
+        .punchline .daddy-highlight {
+            color: var(--gold-dust);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+            font-weight: 600;
             display: inline-block;
+            animation: daddy-glow 2s ease-in-out infinite;
         }
 
-        .daddy-text::after {
-            content: '✧';
-            position: absolute;
-            top: -25px;
-            right: -20px;
-            font-size: 1.8rem;
-            color: var(--gold-accent);
-            animation: bounce 2s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0) rotate(0); }
-            50% { transform: translateY(-10px) rotate(15deg); }
-        }
-
-        /* --- Signature --- */
-        .signature-section {
-            text-align: center;
-            margin-top: 60px;
-            padding-top: 30px;
-            border-top: 1px solid rgba(106, 76, 147, 0.3);
+        @keyframes daddy-glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+            50% { text-shadow: 0 0 40px rgba(212, 175, 55, 0.7); }
         }
 
         .signature {
-            font-family: 'Dancing Script', cursive;
-            font-size: 3.5rem;
-            background: linear-gradient(45deg, var(--gravity-cyan), var(--gold-accent), var(--cosmic-purple));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-            letter-spacing: 3px;
-            position: relative;
-            display: inline-block;
-        }
-
-        .signature::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, var(--gravity-cyan), var(--gold-accent), var(--cosmic-purple), transparent);
-            border-radius: 2px;
-        }
-
-        .duration {
-            display: block;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Cinzel', serif;
             font-size: 1.3rem;
-            color: var(--gravity-cyan);
-            margin-top: 15px;
-            letter-spacing: 2px;
-            opacity: 0.9;
+            letter-spacing: 0.3em;
+            color: var(--aurora);
+            margin-top: 4rem;
+            opacity: 0;
         }
 
-        /* --- Footer Note --- */
-        .footer-note {
-            text-align: center;
-            margin-top: 50px;
-            font-size: 0.95rem;
-            color: rgba(230, 230, 255, 0.6);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-            padding: 20px;
-            font-style: italic;
+        .signature.revealed {
+            opacity: 1;
+            transition: opacity 1s ease 0.5s;
         }
 
-        /* --- Responsive Design --- */
+        /* ===== SCROLL REVEAL ===== */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        .particle {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: var(--gold-dust);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: -1;
+        }
+
+        /* ===== MOBILE ===== */
         @media (max-width: 768px) {
-            .content-wrapper {
-                padding: 80px 25px 60px;
-            }
-            
-            .main-title {
-                font-size: clamp(2.5rem, 7vw, 3.8rem);
-            }
-            
-            .letter-container {
-                padding: 30px 25px 30px 40px;
-            }
-            
-            .memory-card {
-                height: 280px;
-            }
-            
-            .punchline {
-                font-size: 1.5rem;
-                padding: 15px;
-            }
-            
-            .signature {
-                font-size: 2.8rem;
-            }
-            
-            .cursor-dot, .cursor-outline {
-                display: none;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .entry-title {
-                font-size: clamp(2.2rem, 8vw, 3.5rem);
-            }
-            
-            .entry-btn {
-                padding: 14px 35px;
-                font-size: 0.95rem;
-                letter-spacing: 2px;
-            }
-            
-            .memories-grid {
+            .memory-constellation {
                 grid-template-columns: 1fr;
             }
             
-            .letter-container p {
-                font-size: 1.05rem;
+            .letter-nebula {
+                padding: 2rem;
             }
             
-            .punchline {
-                font-size: 1.4rem;
-                margin: 30px 0 20px;
+            .celestial-section {
+                padding: 3rem 1.5rem;
             }
-            
-            .signature {
-                font-size: 2.4rem;
-            }
-        }
 
-        /* --- Accessibility --- */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-                scroll-behavior: auto !important;
+            .music-orbit {
+                padding: 1rem 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
             }
-            
-            .floating, .pulse, .star {
-                animation: none !important;
+
+            .visualizer {
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
             }
         }
     </style>
+<base target="_blank">
 </head>
 <body>
-    <!-- Custom Cursor -->
-    <div class="cursor-dot" data-cursor-dot></div>
-    <div class="cursor-outline" data-cursor-outline></div>
+    <!-- COSMIC BACKGROUND -->
+    <div id="cosmos"></div>
+    <canvas id="starfield"></canvas>
 
-    <!-- Background Canvas -->
-    <canvas id="universe"></canvas>
-    <div class="cosmic-overlay"></div>
-
-    <!-- Entry Overlay -->
-    <div id="entry-screen">
-        <h1 class="entry-title">A Cosmic Birthday Tribute</h1>
-        <p class="entry-subtitle">For the one who transformed my universe. One year of constellations, equations, and unexpected supernovas.</p>
-        <button class="entry-btn" id="start-btn">Begin Stellar Journey</button>
+    <!-- ENTRY PORTAL -->
+    <div id="portal">
+        <div class="portal-text">
+            <h1 class="portal-title" id="portal-title">Divija</h1>
+            <p class="portal-subtitle" id="portal-subtitle">Born of Heaven</p>
+        </div>
+        <button class="enter-btn" id="enter-btn">Enter Our Universe</button>
     </div>
 
-    <!-- Main Content -->
-    <div class="content-wrapper" id="main-content">
-        <section class="title-section fade-in" style="animation-delay: 0.2s">
-            <h1 class="main-title">For Divija</h1>
-            <p class="subtitle">One Year of Constellations</p>
-        </section>
+    <!-- MAIN UNIVERSE -->
+    <main id="universe">
+        <!-- TITLE CONSTELLATION -->
+        <section class="celestial-section">
+            <div class="title-constellation scroll-reveal">
+                <h1 class="divine-name">DIVIJA</h1>
+                <p class="name-meaning">Heavenly Born · Divine Light</p>
+                <p class="milestone-text">One Year. One Journey. One Love.</p>
+            </div>
 
-        <section class="music-section fade-in" style="animation-delay: 0.4s">
-            <div class="music-player">
-                <div class="track-info">
-                    <span class="track-name">Stellar Equations</span>
-                    <span class="track-artist">A melody for the mathematician of my heart</span>
+            <!-- MUSIC ORBIT -->
+            <div class="music-orbit scroll-reveal">
+                <button class="play-pulse" id="play-btn" aria-label="Play music">
+                    <div class="play-icon" id="play-icon"></div>
+                </button>
+                <div class="track-details">
+                    <div class="track-name">Fallen Down</div>
+                    <div class="track-artist">Our Song</div>
                 </div>
-                <div id="visualizer"></div>
-                <div class="play-pause-btn paused" id="play-pause-btn"></div>
-                <audio id="bg-music" preload="metadata">
+                <div class="visualizer" id="visualizer"></div>
+                <audio id="bg-music" loop crossorigin="anonymous" preload="none">
                     <source src="fallen-down.mp3" type="audio/mpeg">
-                    Your browser does not support the audio element.
                 </audio>
             </div>
         </section>
 
-        <section class="memories-section fade-in" style="animation-delay: 0.6s">
-            <h2 class="section-title">Celestial Memories</h2>
-            <div class="memories-grid">
-                <div class="memory-card memory-1">
-                    <img src="K1.png" alt="A portrait of resilience" class="memory-img" onerror="this.onerror=null; this.parentElement.style.background='linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)'; this.style.display='none'; console.log('K1.png failed to load')">
-                    <div class="memory-label">Resilience</div>
+        <!-- MEMORY CONSTELLATION -->
+        <section class="celestial-section">
+            <div class="memory-constellation scroll-reveal">
+                <div class="portrait-frame" id="frame-k1">
+                    <img src="K1.png" alt="Divija" loading="lazy" decoding="async">
+                    <div class="image-fallback">Memory K1</div>
                 </div>
-                <div class="memory-card memory-2">
-                    <img src="K2.png" alt="A landscape of brilliance" class="memory-img" onerror="this.onerror=null; this.parentElement.style.background='linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%)'; this.style.display='none'; console.log('K2.png failed to load')">
-                    <div class="memory-label">Brilliance</div>
-                </div>
-                <div class="memory-card memory-3">
-                    <img src="K3.png" alt="Our cosmic journey" class="memory-img" onerror="this.onerror=null; this.parentElement.style.background='linear-gradient(135deg, #162447 0%, #0f1c3f 100%)'; this.style.display='none'; console.log('K3.png failed to load')">
-                    <div class="memory-label">Our Orbit</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="letter-section fade-in" style="animation-delay: 0.8s">
-            <div class="letter-container">
-                <p>Divija—your name means <span class="highlight">"divine," "celestial," "born of the stars."</span> How perfectly it captures the essence of you. When we first met, I saw only the sharp edges—the tough exterior, the quick tongue, the fortress you'd built around yourself. I mistook your strength for coldness, your independence for indifference.</p>
-                
-                <p>But mathematics teaches us that truth lies beneath the surface of equations. And so I learned to solve for the variables of your heart. Behind the <span class="math-highlight">formidable intellect</span> that conquers complex theorems lies a profound tenderness. Behind the "tough cookie" exterior beats a heart of extraordinary loyalty and depth. You work with a discipline that humbles me, yet you rarely see the masterpiece you've become.</p>
-                
-                <p>This year has been my greatest education. I've watched you evolve—not by shedding your strength, but by <span class="growth-highlight">channeling it with newfound wisdom</span>. The same fierce determination that once built walls now builds bridges. The sharp tongue that could wound now speaks truths with purpose. You've reached a milestone far greater than any birthday: <span class="highlight">the maturity of a soul who knows her power and chooses grace</span>.</p>
-                
-                <p>You often look down upon yourself, blind to the supernova you are. So let these words be your mirror: You are <span class="highlight">brilliant beyond measure</span>, resilient beyond compare, and loved beyond the edges of the observable universe. In your equations, I found my constant. In your orbit, I found my home.</p>
-                
-                <p>One year ago, I never imagined a universe where you'd become my constant thought, my quiet peace, my greatest adventure. Every note I wrote about you was a star added to my personal constellation—each one mapping the extraordinary person I discovered beneath the surface.</p>
-                
-                <div class="punchline">
-                    As much as you may hate to hear this: I will always be <span class="daddy-text">DADDY</span>
+                <div class="landscape-pair">
+                    <div class="landscape-frame" id="frame-k2">
+                        <img src="K2.png" alt="Our Memory" loading="lazy" decoding="async">
+                        <div class="image-fallback">Memory K2</div>
+                    </div>
+                    <div class="landscape-frame" id="frame-k3">
+                        <img src="K3.png" alt="Our Journey" loading="lazy" decoding="async">
+                        <div class="image-fallback">Memory K3</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="signature-section fade-in" style="animation-delay: 1.0s">
-            <div class="signature">With all my cosmos</div>
-            <div class="duration">One Year and Counting</div>
+        <!-- LETTER NEBULA -->
+        <section class="celestial-section">
+            <div class="letter-nebula scroll-reveal">
+                <div class="letter-content" id="letter">
+                    <p>My <span class="highlight-gold">Divija</span>,</p>
+                    
+                    <p>When we first met, I won't lie—I was <span class="emphasis">irritated</span>. You came across as rude, immature, someone I had no patience for. I dismissed you before I even knew you.</p>
+                    
+                    <p>But something made me stay. Something made me look <span class="highlight-aurora">beyond</span> that sharp tongue, beyond the walls you built so high. And when I did, I discovered what you couldn't see in yourself—a <span class="highlight-gold">gem</span> hidden beneath layers of self-protection.</p>
+                    
+                    <p>You've always been the <span class="highlight-ethereal">tough cookie</span>, haven't you? Independent to a fault, working tirelessly, solving problems with that <span class="highlight-aurora">brilliant mathematical mind</span> of yours. You look down on yourself, failing to see the <span class="highlight-gold">extraordinary value</span> you carry. But I see it. I've always seen it.</p>
+                    
+                    <p>Through every memory we've built, every moment shared, I've written <span class="highlight-aurora">notes</span> in my heart—each one a testament to how deeply I've fallen. You became my constant thought, my gravitational center.</p>
+                    
+                    <p>And now, looking at you today, I can finally rest my heart. You've reached a <span class="highlight-gold">milestone</span> of maturity that leaves me in awe. The growth, the transformation—it's nothing short of <span class="highlight-ethereal">divine</span>.</p>
+                    
+                    <p>You are <span class="highlight-ethereal">skilled</span>, <span class="highlight-ethereal">brilliant</span>, and <span class="highlight-gold">loved</span> beyond measure. Never forget that.</p>
+                    
+                    <p>I love you.</p>
+                </div>
+            </div>
         </section>
 
-        <p class="footer-note fade-in" style="animation-delay: 1.2s">
-            This celestial journey is optimized for stargazers. If any cosmic elements fail to load, the universe continues to expand in your heart. 
-            Created with functional precision and infinite affection.
-        </p>
-    </div>
+        <!-- FINAL CONSTELLATION -->
+        <section class="final-constellation">
+            <div class="punchline" id="punchline">
+                As much as you may hate to hear this:<br>
+                I will always be <span class="daddy-highlight">DADDY</span>
+            </div>
+            <div class="signature" id="signature">
+                Forever Yours
+            </div>
+        </section>
+    </main>
 
     <script>
-        /**
-         * COSMIC BIRTHDAY TRIBUTE FOR DIVIJA
-         * Functional Programming Implementation with TypeScript-inspired Practices
-         * 
-         * Design Philosophy:
-         * - Pure functions with immutable data structures where possible
-         * - Lazy initialization of expensive resources
-         * - Mathematical optimization of animations
-         * - Robust error handling for asset loading
-         * - Psychological nuance in messaging (validated by PhD criteria)
-         * 
-         * PhD Fields Addressed:
-         * 1. Psychology: Validation of self-perception vs. reality, growth narrative
-         * 2. Cognitive Science: Information chunking, emphasis patterns
-         * 3. Linguistics: Name etymology integration, metaphor consistency
-         * 4. HCI: Emotional journey mapping, interaction pacing
-         * 5. Typography: Readability with emotional resonance
-         * 6. Mathematics: Algorithmic efficiency, spatial relationships
-         * 7. Neuroscience: Sensory integration (audio/visual synchronization)
-         * 8. Design Theory: Breathing space, visual hierarchy
-         * 9. Narrative Theory: Character arc (initial friction to deep connection)
-         * 10. Semiotics: Symbolic use of cosmic/mathematical motifs
-         */
-
-        // ======================
-        // TYPE DEFINITIONS (TypeScript-inspired)
-        // ======================
-        /**
-         * @typedef {Object} Star
-         * @property {number} x - Normalized x position (-0.5 to 0.5)
-         * @property {number} y - Normalized y position (-0.5 to 0.5)
-         * @property {number} z - Depth (1 to 2000)
-         * @property {number} size - Visual size (0.3 to 2.5)
-         * @property {string} color - Star color hex code
-         * @property {number} speed - Movement speed factor
-         */
-
-        /**
-         * @typedef {Object} AudioContextState
-         * @property {AudioContext|null} context
-         * @property {AnalyserNode|null} analyser
-         * @property {Uint8Array|null} dataArray
-         * @property {boolean} initialized
-         */
-
-        // ======================
-        // PURE UTILITY FUNCTIONS
-        // ======================
-        const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
-        const lerp = (start, end, t) => start * (1 - t) + end * t;
-        const getRandomFloat = (min, max) => Math.random() * (max - min) + min;
-        const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-        const getRandomColor = () => {
-            const colors = ['#ffffff', '#e6e6ff', '#06d6a0', '#ffd166', '#6a4c93'];
-            return colors[Math.floor(Math.random() * colors.length)];
+    // ===== FUNCTIONAL PROGRAMMING CORE =====
+    const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+    const compose = (...fns) => (x) => fns.reduceRight((v, f) => f(v), x);
+    const curry = (fn) => (...args) => 
+        args.length >= fn.length ? fn(...args) : curry(fn.bind(null, ...args));
+    
+    const memoize = (fn, limit = 100) => {
+        const cache = new Map();
+        return (...args) => {
+            const key = JSON.stringify(args);
+            if (cache.has(key)) {
+                const val = cache.get(key);
+                cache.delete(key);
+                cache.set(key, val);
+                return val;
+            }
+            if (cache.size >= limit) {
+                const firstKey = cache.keys().next().value;
+                cache.delete(firstKey);
+            }
+            const result = fn(...args);
+            cache.set(key, result);
+            return result;
         };
+    };
+
+    const throttle = (fn, ms) => {
+        let last = 0;
+        return (...args) => {
+            const now = Date.now();
+            if (now - last >= ms) {
+                last = now;
+                fn(...args);
+            }
+        };
+    };
+
+    const lazy = (fn) => {
+        let evaluated = false;
+        let result;
+        return () => {
+            if (!evaluated) {
+                result = fn();
+                evaluated = true;
+            }
+            return result;
+        };
+    };
+
+    // ===== RUST-INSPIRED RESULT TYPE =====
+    const Result = {
+        Ok: (value) => ({ 
+            ok: true, value, 
+            map: (f) => Result.Ok(f(value)), 
+            unwrap: () => value,
+            unwrapOr: () => value
+        }),
+        Err: (error) => ({ 
+            ok: false, error, 
+            map: () => Result.Err(error), 
+            unwrap: () => { throw error; },
+            unwrapOr: (defaultVal) => defaultVal
+        }),
+        tryCatch: (fn) => {
+            try { return Result.Ok(fn()); } catch (e) { return Result.Err(e); }
+        }
+    };
+
+    // ===== OPTION TYPE =====
+    const Option = {
+        Some: (value) => ({
+            isSome: true,
+            isNone: false,
+            map: (f) => Option.Some(f(value)),
+            getOrElse: () => value
+        }),
+        None: () => ({
+            isSome: false,
+            isNone: true,
+            map: () => Option.None(),
+            getOrElse: (defaultVal) => defaultVal
+        }),
+        fromNullable: (val) => val == null ? Option.None() : Option.Some(val)
+    };
+
+    // ===== STARFIELD SYSTEM =====
+    const Starfield = (() => {
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d', { alpha: false });
         
-        // ======================
-        // CANVAS STARFIELD (Optimized Functional Implementation)
-        // ======================
-        class StarField {
-            /**
-             * @param {HTMLCanvasElement} canvas
-             * @param {number} starCount - Optimized count based on device
-             */
-            constructor(canvas, starCount = 600) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d', { alpha: false });
-                this.starCount = starCount;
-                this.stars = [];
-                this.warpSpeed = 0;
-                this.targetSpeed = 1.8;
-                this.animationFrameId = null;
-                this.resizeObserver = null;
-                
-                // Device optimization
-                if (window.matchMedia('(max-width: 768px)').matches) {
-                    this.starCount = Math.floor(starCount * 0.7);
-                }
-                if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                    this.starCount = Math.floor(starCount * 0.4);
-                    this.targetSpeed = 0.5;
-                }
-                
-                this.init();
-                this.setupResizeHandler();
-            }
-            
-            // Pure function to generate a single star
-            createStar = (initial = false) => ({
-                x: getRandomFloat(-0.5, 0.5),
-                y: getRandomFloat(-0.5, 0.5),
-                z: initial ? getRandomFloat(1, 2000) : 2000,
-                size: getRandomFloat(0.3, 2.5),
-                color: getRandomColor(),
-                speed: getRandomFloat(0.8, 1.5)
-            });
-            
-            init() {
-                this.resizeCanvas();
-                this.stars = Array.from({ length: this.starCount }, () => this.createStar(true));
-                this.animate();
-            }
-            
-            resizeCanvas() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-                this.centerX = this.canvas.width / 2;
-                this.centerY = this.canvas.height / 2;
-                this.maxDim = Math.max(this.canvas.width, this.canvas.height);
-            }
-            
-            setupResizeHandler() {
-                this.resizeObserver = new ResizeObserver(() => {
-                    this.resizeCanvas();
-                    // Reinitialize stars on significant resize
-                    if (Math.abs(this.prevWidth - this.canvas.width) > 100) {
-                        this.stars = Array.from({ length: this.starCount }, () => this.createStar(true));
-                    }
-                    this.prevWidth = this.canvas.width;
-                });
-                this.resizeObserver.observe(document.body);
-            }
-            
-            // Pure function to project star position
-            projectStar(star) {
-                const scale = this.maxDim / (star.z || 1);
-                return {
-                    x: this.centerX + star.x * scale,
-                    y: this.centerY + star.y * scale,
-                    size: (star.size * scale) / 8,
-                    opacity: clamp(1 - star.z / 2000, 0.1, 1),
-                    visible: star.z > 1 && 
-                            star.x * scale > -100 && star.x * scale < this.canvas.width + 100 &&
-                            star.y * scale > -100 && star.y * scale < this.canvas.height + 100
-                };
-            }
-            
-            updateStars() {
-                // Ease warp speed
-                this.warpSpeed = lerp(this.warpSpeed, this.targetSpeed, 0.05);
-                
-                return this.stars.map(star => {
-                    const newZ = star.z - this.warpSpeed * star.speed;
-                    return newZ > 1 ? 
-                        {...star, z: newZ} : 
-                        this.createStar();
-                });
-            }
-            
-            drawStars() {
-                this.ctx.fillStyle = 'rgba(10, 10, 15, 0.1)';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.stars.forEach(star => {
-                    const proj = this.projectStar(star);
-                    if (proj.visible) {
-                        this.ctx.fillStyle = star.color;
-                        this.ctx.globalAlpha = proj.opacity;
-                        this.ctx.beginPath();
-                        this.ctx.arc(proj.x, proj.y, proj.size, 0, Math.PI * 2);
-                        this.ctx.fill();
-                    }
-                });
-                
-                this.ctx.globalAlpha = 1;
-            }
-            
-            animate = () => {
-                this.stars = this.updateStars();
-                this.drawStars();
-                this.animationFrameId = requestAnimationFrame(this.animate);
-            };
-            
-            destroy() {
-                cancelAnimationFrame(this.animationFrameId);
-                if (this.resizeObserver) {
-                    this.resizeObserver.disconnect();
-                }
-            }
-        }
+        let width = 0, height = 0;
+        let animationId = null;
+        let isActive = true;
 
-        // ======================
-        // AUDIO VISUALIZER (Functional Reactive Implementation)
-        // ======================
-        class AudioVisualizer {
-            /**
-             * @param {HTMLAudioElement} audioElement
-             * @param {HTMLElement} container
-             * @param {number} barCount
-             */
-            constructor(audioElement, container, barCount = 40) {
-                this.audio = audioElement;
-                this.container = container;
-                this.barCount = barCount;
-                this.bars = [];
-                this.audioContextState = {
-                    context: null,
-                    analyser: null,
-                    dataArray: null,
-                    initialized: false
-                };
-                this.animationFrameId = null;
-                this.isRunning = false;
-                
-                this.init();
-            }
-            
-            init() {
-                // Create bar elements with pure mapping
-                this.bars = Array.from({ length: this.barCount }, (_, i) => {
-                    const bar = document.createElement('div');
-                    bar.className = 'bar';
-                    bar.style.height = `${getRandomInt(2, 15)}px`;
-                    this.container.appendChild(bar);
-                    return bar;
-                });
-                
-                // Setup audio context on user interaction
-                this.setupAudioContext();
-            }
-            
-            async setupAudioContext() {
-                try {
-                    // Lazy initialization - only create context when needed
-                    if (!this.audioContextState.initialized) {
-                        const AudioContext = window.AudioContext || window.webkitAudioContext;
-                        this.audioContextState.context = new AudioContext();
-                        this.audioContextState.analyser = this.audioContextState.context.createAnalyser();
-                        
-                        const source = this.audioContextState.context.createMediaElementSource(this.audio);
-                        source.connect(this.audioContextState.analyser);
-                        this.audioContextState.analyser.connect(this.audioContextState.context.destination);
-                        
-                        this.audioContextState.analyser.fftSize = 128;
-                        const bufferLength = this.audioContextState.analyser.frequencyBinCount;
-                        this.audioContextState.dataArray = new Uint8Array(bufferLength);
-                        this.audioContextState.initialized = true;
-                        
-                        // Start visualization
-                        this.start();
-                    }
-                } catch (error) {
-                    console.error('Audio context setup failed:', error);
-                    // Fallback animation
-                    this.fallbackAnimation();
-                }
-            }
-            
-            start() {
-                if (this.isRunning || !this.audioContextState.initialized) return;
-                this.isRunning = true;
-                this.animate();
-            }
-            
-            stop() {
-                this.isRunning = false;
-                if (this.animationFrameId) {
-                    cancelAnimationFrame(this.animationFrameId);
-                }
-            }
-            
-            // Pure function to calculate bar height from frequency data
-            calculateBarHeight(index, dataArray, bufferLength) {
-                // Map index to frequency bin with mathematical distribution
-                const binIndex = Math.floor((index / this.barCount) * bufferLength);
-                const value = dataArray[binIndex] || 0;
-                // Non-linear scaling for visual appeal
-                return Math.pow(value / 255, 1.6) * 65;
-            }
-            
-            animate = () => {
-                if (!this.isRunning || !this.audioContextState.initialized) return;
-                
-                this.audioContextState.analyser.getByteFrequencyData(this.audioContextState.dataArray);
-                const bufferLength = this.audioContextState.analyser.frequencyBinCount;
-                
-                // Pure mapping of data to visual representation
-                this.bars.forEach((bar, i) => {
-                    const height = this.calculateBarHeight(i, this.audioContextState.dataArray, bufferLength);
-                    bar.style.height = `${clamp(height, 2, 65)}px`;
-                });
-                
-                this.animationFrameId = requestAnimationFrame(this.animate);
-            };
-            
-            // Fallback animation if Web Audio API fails
-            fallbackAnimation() {
-                this.bars.forEach(bar => {
-                    const animateBar = () => {
-                        if (!this.isRunning) return;
-                        const height = Math.sin(Date.now() / 300 + Math.random() * 10) * 30 + 35;
-                        bar.style.height = `${clamp(height, 5, 65)}px`;
-                        requestAnimationFrame(animateBar);
-                    };
-                    animateBar();
-                });
-            }
-            
-            destroy() {
-                this.stop();
-                if (this.audioContextState.context) {
-                    this.audioContextState.context.close().catch(console.error);
-                }
-            }
-        }
+        const STAR_COUNT = 500;
+        const BYTES_PER_STAR = 20;
+        const starBuffer = new ArrayBuffer(STAR_COUNT * BYTES_PER_STAR);
+        const stars = new Float32Array(starBuffer);
+        const colors = ['#ffffff', '#7b68ee', '#00d4aa'];
+        const colorIndices = new Uint8Array(STAR_COUNT);
 
-        // ======================
-        // CUSTOM CURSOR (Optimized Event Handling)
-        // ======================
-        class CustomCursor {
-            /**
-             * @param {string} dotSelector
-             * @param {string} outlineSelector
-             */
-            constructor(dotSelector, outlineSelector) {
-                this.dot = document.querySelector(dotSelector);
-                this.outline = document.querySelector(outlineSelector);
-                this.pos = { x: 0, y: 0 };
-                this.outlinePos = { x: 0, y: 0 };
-                this.animationFrameId = null;
-                this.isActive = true;
-                
-                // Disable on touch devices
-                if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-                    this.isActive = false;
-                    if (this.dot) this.dot.style.display = 'none';
-                    if (this.outline) this.outline.style.display = 'none';
-                    return;
-                }
-                
-                this.init();
+        const initStars = () => {
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const idx = i * 5;
+                stars[idx] = (Math.random() - 0.5) * 2;
+                stars[idx + 1] = (Math.random() - 0.5) * 2;
+                stars[idx + 2] = Math.random() * 800 + 200;
+                stars[idx + 3] = Math.random() * 1.2 + 0.3;
+                stars[idx + 4] = Math.random();
+                colorIndices[i] = Math.random() > 0.9 ? (Math.random() > 0.5 ? 1 : 2) : 0;
             }
-            
-            init() {
-                if (!this.isActive) return;
-                
-                // Optimized mouse move handler with throttle
-                let lastMove = 0;
-                document.addEventListener('mousemove', (e) => {
-                    if (Date.now() - lastMove > 16) { // ~60fps cap
-                        this.pos = { x: e.clientX, y: e.clientY };
-                        lastMove = Date.now();
-                    }
-                });
-                
-                // Interactive elements enhancement
-                const interactiveElements = 'a, button, .memory-card, .play-pause-btn, .entry-btn';
-                document.querySelectorAll(interactiveElements).forEach(el => {
-                    el.addEventListener('mouseenter', () => {
-                        if (this.outline) {
-                            this.outline.style.transform = 'translate(-50%, -50%) scale(1.3)';
-                            this.outline.style.borderColor = 'var(--math-gold)';
-                        }
-                        if (this.dot) {
-                            this.dot.style.transform = 'translate(-50%, -50%) scale(1.8)';
-                        }
-                    });
-                    
-                    el.addEventListener('mouseleave', () => {
-                        if (this.outline) {
-                            this.outline.style.transform = 'translate(-50%, -50%) scale(1)';
-                            this.outline.style.borderColor = 'var(--gravity-cyan)';
-                        }
-                        if (this.dot) {
-                            this.dot.style.transform = 'translate(-50%, -50%) scale(1)';
-                        }
-                    });
-                });
-                
-                this.animate();
-            }
-            
-            animate = () => {
-                if (!this.isActive) return;
-                
-                // Smooth easing for outline
-                this.outlinePos.x += (this.pos.x - this.outlinePos.x) * 0.1;
-                this.outlinePos.y += (this.pos.y - this.outlinePos.y) * 0.1;
-                
-                if (this.dot) {
-                    this.dot.style.left = `${this.pos.x}px`;
-                    this.dot.style.top = `${this.pos.y}px`;
-                }
-                
-                if (this.outline) {
-                    this.outline.style.left = `${this.outlinePos.x}px`;
-                    this.outline.style.top = `${this.outlinePos.y}px`;
-                }
-                
-                this.animationFrameId = requestAnimationFrame(this.animate);
-            };
-            
-            destroy() {
-                if (this.animationFrameId) {
-                    cancelAnimationFrame(this.animationFrameId);
-                }
-            }
-        }
+        };
 
-        // ======================
-        // MAIN APPLICATION (Functional Composition)
-        // ======================
-        document.addEventListener('DOMContentLoaded', () => {
-            // Asset loading with error handling
-            const assetLoader = {
-                loadImages: () => {
-                    const images = ['K1.png', 'K2.png', 'K3.png'];
-                    images.forEach(src => {
-                        const img = new Image();
-                        img.src = src;
-                        img.onload = () => console.log(`Loaded: ${src}`);
-                        img.onerror = () => console.warn(`Failed to load: ${src}`);
-                    });
-                },
-                loadAudio: (audioElement) => {
-                    audioElement.load();
-                    audioElement.onerror = () => {
-                        console.error('Audio failed to load: fallen-down.mp3');
-                        // Create fallback ambient sound
-                        console.log('Using fallback ambient animation');
-                    };
+        const resize = () => {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        };
+
+        const render = () => {
+            if (!isActive) return;
+            
+            if (document.hidden) {
+                animationId = requestAnimationFrame(render);
+                return;
+            }
+
+            ctx.fillStyle = 'rgba(3, 3, 5, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            const cx = width / 2;
+            const cy = height / 2;
+            const time = Date.now() * 0.001;
+
+            for (let i = 0; i < STAR_COUNT; i++) {
+                const idx = i * 5;
+                let x = stars[idx];
+                let y = stars[idx + 1];
+                let z = stars[idx + 2];
+                const size = stars[idx + 3];
+                const twinkle = stars[idx + 4];
+
+                z -= 0.3;
+                if (z < 50) {
+                    z = 1000;
+                    stars[idx] = (Math.random() - 0.5) * 2;
+                    stars[idx + 1] = (Math.random() - 0.5) * 2;
                 }
-            };
-            
-            // Initialize components with lazy loading
-            const initApp = () => {
-                // Canvas background
-                const canvas = document.getElementById('universe');
-                const starField = new StarField(canvas);
-                
-                // Audio elements
-                const audio = document.getElementById('bg-music');
-                const playPauseBtn = document.getElementById('play-pause-btn');
-                const visualizerContainer = document.getElementById('visualizer');
-                const visualizer = new AudioVisualizer(audio, visualizerContainer);
-                
-                // Custom cursor
-                const cursor = new CustomCursor('[data-cursor-dot]', '[data-cursor-outline]');
-                
-                // Entry screen interaction
-                const entryScreen = document.getElementById('entry-screen');
-                const startBtn = document.getElementById('start-btn');
-                const mainContent = document.getElementById('main-content');
-                
-                // Play/pause toggle
-                playPauseBtn.addEventListener('click', () => {
-                    if (audio.paused) {
-                        audio.play().then(() => {
-                            playPauseBtn.classList.remove('paused');
-                            playPauseBtn.classList.add('playing');
-                        }).catch(e => {
-                            console.error('Playback failed:', e);
-                            // Attempt to resume after user gesture
-                            setTimeout(() => {
-                                if (audio.paused) audio.play().catch(() => {});
-                            }, 100);
-                        });
-                    } else {
-                        audio.pause();
-                        playPauseBtn.classList.remove('playing');
-                        playPauseBtn.classList.add('paused');
-                    }
-                });
-                
-                // Start journey
-                startBtn.addEventListener('click', () => {
-                    // Trigger warp effect
-                    if (starField) starField.warpSpeed = 35;
+                stars[idx + 2] = z;
+
+                const scale = 400 / z;
+                const sx = x * scale * width + cx;
+                const sy = y * scale * height + cy;
+                const ss = size * scale;
+
+                if (sx > -ss && sx < width + ss && sy > -ss && sy < height + ss) {
+                    const alpha = Math.min(1, (1000 - z) / 400) * 
+                                  (0.7 + 0.3 * Math.sin(time * 2 + twinkle * 10));
                     
-                    // Hide entry screen
-                    entryScreen.classList.add('hidden');
-                    
-                    // Show main content after transition
-                    setTimeout(() => {
-                        mainContent.classList.add('visible');
-                        
-                        // Start audio with user gesture context
-                        audio.volume = 0.6;
-                        audio.play().then(() => {
-                            playPauseBtn.classList.remove('paused');
-                            playPauseBtn.classList.add('playing');
-                        }).catch(e => {
-                            console.warn('Audio autoplay blocked, will play on click:', e);
-                            playPauseBtn.classList.add('paused');
-                        });
-                        
-                        // Load assets after user interaction
-                        assetLoader.loadImages();
-                    }, 700);
-                });
-                
-                // Handle audio errors
-                audio.onerror = () => {
-                    console.error('Critical audio error - fallen-down.mp3 not found or unsupported');
-                    playPauseBtn.style.display = 'none';
-                    visualizerContainer.style.opacity = '0.3';
-                };
-                
-                // Cleanup on unload
-                window.addEventListener('beforeunload', () => {
-                    starField.destroy();
-                    visualizer.destroy();
-                    cursor.destroy();
-                });
-            };
-            
-            // Initialize after brief delay for entry screen impact
-            setTimeout(initApp, 800);
-            
-            // Preload assets after initial render
-            window.addEventListener('load', () => {
-                assetLoader.loadAudio(document.getElementById('bg-music'));
-            });
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = colors[colorIndices[i]];
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, ss, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            animationId = requestAnimationFrame(render);
+        };
+
+        const start = () => {
+            if (animationId) return;
+            isActive = true;
+            render();
+        };
+
+        const stop = () => {
+            isActive = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        };
+
+        const init = () => {
+            resize();
+            initStars();
+            window.addEventListener('resize', throttle(resize, 200), { passive: true });
+            start();
+        };
+
+        return { init, start, stop };
+    })();
+
+    // ===== AUDIO SYSTEM =====
+    const AudioSystem = (() => {
+        const audio = document.getElementById('bg-music');
+        const playBtn = document.getElementById('play-btn');
+        const playIcon = document.getElementById('play-icon');
+        const visualizer = document.getElementById('visualizer');
+
+        let audioCtx = null;
+        let analyser = null;
+        let dataArray = null;
+        let isPlaying = false;
+        let visualizerId = null;
+        let bars = [];
+
+        const createBars = lazy(() => {
+            const fragment = document.createDocumentFragment();
+            const barElements = [];
+            for (let i = 0; i < 16; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'v-bar';
+                bar.style.height = '4px';
+                fragment.appendChild(bar);
+                barElements.push(bar);
+            }
+            visualizer.appendChild(fragment);
+            return barElements;
         });
 
-        // ======================
-        // ACCESSIBILITY ENHANCEMENTS
-        // ======================
-        (function accessibilityEnhancements() {
-            // Skip animation for prefers-reduced-motion
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.documentElement.style.scrollBehavior = 'auto';
-                const allAnimations = document.querySelectorAll('*');
-                allAnimations.forEach(el => {
-                    el.style.animation = 'none !important';
-                    el.style.transition = 'none !important';
-                });
-            }
+        const initAudioContext = () => {
+            if (audioCtx) return Result.Ok({ ctx: audioCtx, analyser, dataArray });
             
-            // Keyboard navigation support
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && document.getElementById('entry-screen') && !document.getElementById('entry-screen').classList.contains('hidden')) {
-                    document.getElementById('start-btn').click();
+            return Result.tryCatch(() => {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const src = ctx.createMediaElementSource(audio);
+                const anal = ctx.createAnalyser();
+                anal.fftSize = 32;
+                anal.smoothingTimeConstant = 0.8;
+                src.connect(anal);
+                anal.connect(ctx.destination);
+                
+                audioCtx = ctx;
+                analyser = anal;
+                dataArray = new Uint8Array(anal.frequencyBinCount);
+                return { ctx, analyser, dataArray };
+            });
+        };
+
+        const updateVisualizer = () => {
+            if (!isPlaying || !analyser) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            if (bars.length === 0) bars = createBars();
+            
+            for (let i = 0; i < bars.length; i++) {
+                const dataIdx = Math.floor(i * dataArray.length / bars.length);
+                const value = dataArray[dataIdx] || 0;
+                const height = Math.max(4, (value / 255) * 25);
+                bars[i].style.height = `${height}px`;
+            }
+
+            visualizerId = requestAnimationFrame(updateVisualizer);
+        };
+
+        const toggle = async () => {
+            if (!isPlaying) {
+                const result = initAudioContext();
+                if (!result.ok) {
+                    console.warn('[Audio] Context failed:', result.error.message);
                 }
-                if (e.key === ' ') {
-                    const playBtn = document.getElementById('play-pause-btn');
-                    if (playBtn && !document.getElementById('entry-screen').classList.contains('hidden')) {
-                        playBtn.click();
-                        e.preventDefault();
+                
+                try {
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        await audioCtx.resume();
+                    }
+                    await audio.play();
+                    isPlaying = true;
+                    playBtn.classList.add('playing');
+                    playIcon.className = 'pause-icon';
+                    updateVisualizer();
+                } catch (e) {
+                    console.warn('[Audio] Playback failed:', e.message);
+                }
+            } else {
+                audio.pause();
+                isPlaying = false;
+                playBtn.classList.remove('playing');
+                playIcon.className = 'play-icon';
+                if (visualizerId) cancelAnimationFrame(visualizerId);
+            }
+        };
+
+        const setup = () => {
+            playBtn.addEventListener('click', toggle);
+            
+            audio.addEventListener('error', (e) => {
+                const error = audio.error;
+                console.warn(`[Audio] Load failed (code ${error?.code}): Ensure fallen-down.mp3 exists in the same directory`);
+                playBtn.style.opacity = '0.4';
+                playBtn.style.pointerEvents = 'none';
+                playBtn.title = 'Audio file not found';
+            });
+
+            audio.addEventListener('canplay', () => {
+                console.log('[Audio] File loaded successfully');
+            });
+        };
+
+        return { setup };
+    })();
+
+    // ===== SCROLL REVEAL SYSTEM =====
+    const ScrollReveal = (() => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px 0px -10% 0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const observe = (selector) => {
+            document.querySelectorAll(selector).forEach(el => observer.observe(el));
+        };
+
+        return { observe };
+    })();
+
+    // ===== LETTER REVEAL =====
+    const LetterReveal = (() => {
+        const letter = document.getElementById('letter');
+        const paragraphs = Array.from(letter.querySelectorAll('p'));
+
+        const revealParagraphs = () => {
+            paragraphs.forEach((p, i) => {
+                setTimeout(() => p.classList.add('revealed'), i * 300);
+            });
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    revealParagraphs();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        const init = () => observer.observe(letter);
+
+        return { init };
+    })();
+
+    // ===== PUNCHLINE REVEAL =====
+    const PunchlineReveal = (() => {
+        const punchline = document.getElementById('punchline');
+        const signature = document.getElementById('signature');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    punchline.classList.add('revealed');
+                    setTimeout(() => signature.classList.add('revealed'), 600);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.4 });
+
+        const init = () => observer.observe(punchline);
+
+        return { init };
+    })();
+
+    // ===== IMAGE FALLBACK SYSTEM =====
+    const ImageFallback = (() => {
+        const frames = ['frame-k1', 'frame-k2', 'frame-k3'];
+
+        const handleImageError = (img, fallback, src) => {
+            img.style.display = 'none';
+            fallback.classList.add('visible');
+            console.warn(`[Image] Failed to load: ${src}`);
+        };
+
+        const setup = () => {
+            frames.forEach(id => {
+                const frame = document.getElementById(id);
+                if (!frame) return;
+                
+                const img = frame.querySelector('img');
+                const fallback = frame.querySelector('.image-fallback');
+                
+                if (img && fallback) {
+                    const src = img.src;
+                    img.addEventListener('error', () => handleImageError(img, fallback, src));
+                    
+                    if (img.complete && img.naturalWidth === 0) {
+                        handleImageError(img, fallback, src);
                     }
                 }
             });
-        })();
+        };
+
+        return { setup };
+    })();
+
+    // ===== ENTRY PORTAL =====
+    const EntryPortal = (() => {
+        const portal = document.getElementById('portal');
+        const enterBtn = document.getElementById('enter-btn');
+        const universe = document.getElementById('universe');
+        const portalTitle = document.getElementById('portal-title');
+        const portalSubtitle = document.getElementById('portal-subtitle');
+
+        const animateEntrance = () => {
+            requestAnimationFrame(() => {
+                portalTitle.classList.add('visible');
+                setTimeout(() => portalSubtitle.classList.add('visible'), 200);
+                setTimeout(() => enterBtn.classList.add('visible'), 400);
+            });
+        };
+
+        const dissolve = () => {
+            portal.classList.add('dissolved');
+            setTimeout(() => {
+                universe.classList.add('revealed');
+                ScrollReveal.observe('.scroll-reveal');
+            }, 300);
+        };
+
+        const init = () => {
+            animateEntrance();
+            enterBtn.addEventListener('click', dissolve);
+        };
+
+        return { init };
+    })();
+
+    // ===== FLOATING PARTICLES =====
+    const FloatingParticles = (() => {
+        const PARTICLE_COUNT = 15;
+        const particles = [];
+
+        const createParticle = () => {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = `${Math.random() * 100}vw`;
+            p.style.top = `${Math.random() * 100}vh`;
+            document.body.appendChild(p);
+            return {
+                el: p,
+                x: parseFloat(p.style.left),
+                y: parseFloat(p.style.top),
+                vx: (Math.random() - 0.5) * 0.02,
+                vy: (Math.random() - 0.5) * 0.02 - 0.01,
+                opacity: 0,
+                phase: Math.random() * Math.PI * 2
+            };
+        };
+
+        const animate = () => {
+            const time = Date.now() * 0.001;
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity = 0.3 + 0.3 * Math.sin(time + p.phase);
+
+                if (p.x < 0) p.x = 100;
+                if (p.x > 100) p.x = 0;
+                if (p.y < 0) p.y = 100;
+                if (p.y > 100) p.y = 0;
+
+                p.el.style.left = `${p.x}vw`;
+                p.el.style.top = `${p.y}vh`;
+                p.el.style.opacity = p.opacity;
+            });
+
+            requestAnimationFrame(animate);
+        };
+
+        const init = () => {
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(createParticle());
+            }
+            animate();
+        };
+
+        return { init };
+    })();
+
+    // ===== MAIN INITIALIZATION =====
+    const init = () => {
+        Starfield.init();
+        EntryPortal.init();
+        AudioSystem.setup();
+        ImageFallback.setup();
+        LetterReveal.init();
+        PunchlineReveal.init();
+        FloatingParticles.init();
+
+        console.log('[System] All modules initialized successfully');
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+    </script>
+</body>
+</html>
+arseFloat(p.style.left),
+                y: parseFloat(p.style.top),
+                vx: (Math.random() - 0.5) * 0.02,
+                vy: (Math.random() - 0.5) * 0.02 - 0.01,
+                opacity: 0,
+                phase: Math.random() * Math.PI * 2
+            };
+        };
+
+        const animate = () => {
+            const time = Date.now() * 0.001;
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.opacity = 0.3 + 0.3 * Math.sin(time + p.phase);
+
+                // Wrap around
+                if (p.x < 0) p.x = 100;
+                if (p.x > 100) p.x = 0;
+                if (p.y < 0) p.y = 100;
+                if (p.y > 100) p.y = 0;
+
+                p.el.style.left = `${p.x}vw`;
+                p.el.style.top = `${p.y}vh`;
+                p.el.style.opacity = p.opacity;
+            });
+
+            requestAnimationFrame(animate);
+        };
+
+        const init = () => {
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                particles.push(createParticle());
+            }
+            animate();
+        };
+
+        return { init };
+    })();
+
+    // ===== MAIN INITIALIZATION =====
+    const init = () => {
+        // Start systems in order of priority
+        Starfield.init();
+        EntryPortal.init();
+        AudioSystem.setup();
+        ImageFallback.setup();
+        LetterReveal.init();
+        PunchlineReveal.init();
+        FloatingParticles.init();
+
+        console.log('[System] All modules initialized successfully');
+    };
+
+    // Initialize immediately if ready, otherwise wait
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
     </script>
 </body>
 </html>
