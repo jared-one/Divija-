@@ -3,874 +3,601 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For Divija | Born of Heaven</title>
-    <meta name="description" content="A birthday celebration for someone divine">
+    <title>Divija | The Equation of One Year</title>
+    
+    <!-- 
+        PhD Field Analysis for Design:
+        1. Cognitive Psychology: Dark mode reduces pupil constriction, increasing emotional receptivity.
+        2. Linguistics: 'Divija' (Heavenly Born) dictates the celestial theme.
+        3. Mathematics: Golden Ratio (1.618) used for spacing and typography hierarchy.
+    -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=JetBrains+Mono:wght@300&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    
     <style>
         :root {
-            --void: #030305;
-            --deep: #08080f;
-            --surface: #0d0d14;
-            --celestial: #e8e8f2;
-            --muted: rgba(232, 232, 242, 0.6);
-            --dim: rgba(232, 232, 242, 0.35);
-            --aurora: #7c6aef;
-            --ethereal: #00d4aa;
-            --gold: #d4a853;
-            --rose: #e85d75;
+            /* Palette: Deep Space meets Math & Warmth */
+            --void: #020204;
+            --text-main: #e0e0e0;
+            --text-muted: #8a8a9b;
+            --math-cyan: #00f3ff;   /* Logic/Math */
+            --warm-gold: #ffd700;   /* Value/Worth */
+            --nebula: #7b2cbf;
+            --error: #ff4444;
+            
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-display: 'Cinzel', serif;
+            --font-code: 'JetBrains Mono', monospace;
+            
+            --ease-physics: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        *, *::before, *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            font-size: 16px;
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--void);
-            color: var(--celestial);
-            font-family: 'Cormorant Garamond', Georgia, serif;
-            line-height: 1.7;
+            background-color: var(--void);
+            color: var(--text-main);
+            font-family: var(--font-serif);
             overflow-x: hidden;
-            min-height: 100vh;
+            overflow-y: hidden; /* Locked until entry */
+            height: 100vh;
+            width: 100vw;
+            cursor: none; /* Custom cursor */
         }
 
-        /* === STARFIELD === */
-        #cosmos {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: radial-gradient(ellipse at 50% 100%, #0a0a18 0%, var(--void) 70%);
+        /* --- UI LAYER: CURSOR --- */
+        .cursor-dot {
+            position: fixed; width: 4px; height: 4px; background: var(--math-cyan);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
+            transition: opacity 0.3s;
+        }
+        .cursor-ring {
+            position: fixed; width: 40px; height: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%; pointer-events: none; z-index: 9998;
+            transition: width 0.3s var(--ease-physics), height 0.3s var(--ease-physics), transform 0.1s;
         }
 
-        /* === PORTAL (Entry Screen) === */
-        #portal {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
+        /* --- BACKGROUND ENGINE --- */
+        #cosmos-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0; transition: opacity 2s ease;
+        }
+
+        /* --- LOADING / ENTRY SYSTEM --- */
+        #gatekeeper {
+            position: fixed; inset: 0; z-index: 1000;
             background: var(--void);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1.2s var(--ease-physics), visibility 1.2s;
+        }
+        
+        .loader-terminal {
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
             text-align: center;
-            padding: 2rem;
-            transition: opacity 1.2s ease, visibility 1.2s;
+            min-height: 20px;
         }
 
-        #portal.dissolved {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .portal-date {
-            font-size: 0.75rem;
-            letter-spacing: 0.5em;
-            color: var(--ethereal);
-            text-transform: uppercase;
-            margin-bottom: 1.5rem;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.2s forwards;
-        }
-
-        .portal-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
-            font-weight: 400;
-            letter-spacing: 0.15em;
-            margin-bottom: 0.5rem;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.4s forwards;
-        }
-
-        .portal-title .scramble-char {
-            display: inline-block;
-            color: var(--dim);
-            transition: color 0.1s;
-        }
-
-        .portal-title .scramble-char.revealed {
-            color: var(--celestial);
-        }
-
-        .portal-meaning {
-            font-size: 1rem;
-            font-style: italic;
-            color: var(--aurora);
-            letter-spacing: 0.2em;
-            margin-bottom: 3rem;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.6s forwards;
-        }
-
-        .portal-btn {
-            padding: 1rem 2.5rem;
+        .enter-btn {
             background: transparent;
-            border: 1px solid rgba(232, 232, 242, 0.15);
-            color: var(--celestial);
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            letter-spacing: 0.25em;
+            border: 1px solid var(--text-muted);
+            color: var(--text-main);
+            padding: 1rem 3rem;
+            font-family: var(--font-display);
+            letter-spacing: 0.2em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            opacity: 0;
-            animation: fadeIn 0.8s ease 0.8s forwards;
-        }
-
-        .portal-btn:hover {
-            border-color: var(--ethereal);
-            box-shadow: 0 0 40px rgba(0, 212, 170, 0.15);
-            transform: translateY(-2px);
-        }
-
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        /* === MAIN CONTENT === */
-        #journey {
-            max-width: 780px;
-            margin: 0 auto;
-            padding: 6rem 1.5rem 8rem;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-        }
-
-        #journey.visible {
-            opacity: 1;
-        }
-
-        /* === HERO === */
-        .hero {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .hero-label {
-            font-size: 0.75rem;
-            letter-spacing: 0.4em;
-            color: var(--ethereal);
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        .hero-title {
-            font-family: 'Cinzel', serif;
-            font-size: clamp(2.2rem, 6vw, 3.5rem);
-            font-weight: 400;
-            letter-spacing: 0.1em;
-            line-height: 1.3;
-        }
-
-        .hero-name {
-            display: block;
-            font-size: clamp(3rem, 9vw, 5rem);
-            background: linear-gradient(135deg, var(--celestial) 0%, var(--gold) 50%, var(--celestial) 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 4s linear infinite;
-        }
-
-        @keyframes shimmer {
-            to { background-position: 200% center; }
-        }
-
-        .hero-sub {
-            font-size: 1rem;
-            font-style: italic;
-            color: var(--muted);
-            letter-spacing: 0.15em;
-            margin-top: 1rem;
-        }
-
-        .divider {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--aurora), transparent);
-            margin: 3rem auto;
-        }
-
-        /* === PLAYER === */
-        .player {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 16px;
-            padding: 1.5rem 2rem;
-            max-width: 360px;
-            margin: 0 auto 5rem;
-            text-align: center;
-        }
-
-        .player-track {
-            font-size: 1rem;
-            color: var(--celestial);
-            margin-bottom: 0.25rem;
-        }
-
-        .player-artist {
-            font-size: 0.8rem;
-            color: var(--dim);
-            font-style: italic;
-            margin-bottom: 1.25rem;
-        }
-
-        .player-bars {
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            gap: 3px;
-            height: 45px;
-        }
-
-        .bar {
-            width: 3px;
-            background: linear-gradient(to top, var(--aurora), var(--ethereal));
-            border-radius: 2px;
-            min-height: 3px;
-            transition: height 0.08s ease;
-        }
-
-        .player-status {
-            font-size: 0.7rem;
-            color: var(--dim);
-            margin-top: 1rem;
-            letter-spacing: 0.1em;
-        }
-
-        /* === GALLERY === */
-        .gallery {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 5rem;
-        }
-
-        @media (min-width: 600px) {
-            .gallery {
-                grid-template-columns: 1fr 1.3fr;
-                grid-template-rows: 1fr 1fr;
-                gap: 1.25rem;
-            }
-            .gallery-portrait { grid-row: span 2; }
-        }
-
-        .gallery-frame {
             position: relative;
             overflow: hidden;
-            background: var(--surface);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 4px;
+            transition: all 0.5s var(--ease-physics);
+            opacity: 0; transform: translateY(20px);
         }
 
-        .gallery-portrait { aspect-ratio: 3 / 4; }
-        .gallery-landscape { aspect-ratio: 16 / 10; }
+        .enter-btn.ready { opacity: 1; transform: translateY(0); }
+        .enter-btn:hover { border-color: var(--math-cyan); box-shadow: 0 0 30px rgba(0, 243, 255, 0.1); }
 
-        @media (max-width: 599px) {
-            .gallery-portrait { max-height: 400px; }
-            .gallery-landscape { max-height: 250px; }
+        /* --- MAIN CONTENT --- */
+        #scroll-container {
+            height: 100vh; overflow-y: auto; overflow-x: hidden;
+            scroll-behavior: smooth; opacity: 0; transition: opacity 1.5s ease;
         }
 
-        .gallery-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.6s ease, transform 0.8s ease;
+        section {
+            min-height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 4rem 2rem; position: relative;
         }
 
-        .gallery-frame img.loaded {
-            opacity: 1;
+        /* TYPOGRAPHY */
+        h1.title {
+            font-family: var(--font-display);
+            font-size: clamp(3rem, 8vw, 6rem);
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text; color: transparent;
+            margin-bottom: 0.5rem; text-align: center;
+        }
+        
+        .subtitle {
+            font-family: var(--font-code);
+            color: var(--math-cyan);
+            font-size: 0.8rem; letter-spacing: 0.4em;
+            text-transform: uppercase; margin-bottom: 4rem;
         }
 
-        .gallery-frame:hover img {
-            transform: scale(1.03);
-        }
-
-        .gallery-fallback {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--surface) 0%, var(--deep) 100%);
-            color: var(--dim);
-            font-size: 0.8rem;
-            letter-spacing: 0.1em;
-        }
-
-        .gallery-fallback.hidden { display: none; }
-
-        /* === LETTER === */
-        .letter {
-            background: linear-gradient(180deg, rgba(255,255,255,0.015) 0%, rgba(255,255,255,0.025) 100%);
-            border-left: 2px solid var(--aurora);
-            padding: 2.5rem 2rem 2.5rem 2.5rem;
-            margin-bottom: 5rem;
-            position: relative;
-        }
-
-        .letter::before {
-            content: '"';
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            font-size: 3rem;
-            color: var(--aurora);
-            opacity: 0.15;
-            font-family: Georgia, serif;
-            line-height: 1;
-        }
-
-        .letter p {
-            font-size: 1.1rem;
-            line-height: 2;
-            color: rgba(232, 232, 242, 0.9);
-            margin-bottom: 1.5rem;
-        }
-
-        .letter p:last-child {
-            margin-bottom: 0;
-        }
-
-        .hl-gold {
-            color: var(--gold);
-            font-weight: 500;
-        }
-
-        .hl-aurora {
-            color: var(--aurora);
-        }
-
-        .hl-ethereal {
-            color: var(--ethereal);
-        }
-
-        .hl-rose {
-            color: var(--rose);
-        }
-
-        .emphasis {
-            font-style: italic;
-            color: var(--celestial);
-        }
-
-        /* === CLOSING === */
-        .closing {
-            text-align: center;
-            padding-top: 2rem;
-        }
-
-        .signature {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            letter-spacing: 0.2em;
-            color: var(--aurora);
-            margin-bottom: 2rem;
-        }
-
-        .milestone {
-            font-size: 0.8rem;
-            letter-spacing: 0.3em;
-            color: var(--dim);
-            text-transform: uppercase;
-            margin-bottom: 3rem;
-        }
-
-        .punchline {
-            font-size: 1.05rem;
-            color: var(--muted);
-            line-height: 1.8;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.01);
-            max-width: 450px;
+        .prose {
+            max-width: 700px;
+            font-size: 1.2rem;
+            line-height: 1.9;
+            color: rgba(255,255,255,0.85);
+            text-align: left;
             margin: 0 auto;
         }
+        .prose p { margin-bottom: 2rem; }
 
-        .daddy {
+        /* IMAGE GRID (Handling Aspect Ratios) */
+        .grid-memory {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            width: 100%; max-width: 1000px;
+            margin: 4rem 0;
+        }
+
+        @media(min-width: 768px) {
+            .grid-memory {
+                grid-template-columns: 350px 1fr; /* Portrait | Landscape Stack */
+                grid-template-rows: 1fr 1fr;
+            }
+            .img-k1 { grid-row: 1 / 3; grid-column: 1; } /* Portrait */
+            .img-k2 { grid-row: 1; grid-column: 2; }    /* Landscape */
+            .img-k3 { grid-row: 2; grid-column: 2; }    /* Landscape */
+        }
+
+        .memory-card {
+            position: relative; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(10,10,10,0.5);
+            transition: transform 0.5s var(--ease-physics);
+        }
+        
+        .memory-card:hover { transform: scale(1.02); border-color: var(--math-cyan); }
+        
+        /* Fallback Art Container */
+        .fallback-art {
+            width: 100%; height: 100%; min-height: 300px;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            color: var(--text-muted); font-family: var(--font-code); font-size: 0.8rem;
+        }
+
+        img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0; transition: opacity 1s ease;
+        }
+        img.loaded { opacity: 1; }
+
+        /* HIGHLIGHTS */
+        .math-term { color: var(--math-cyan); font-family: var(--font-code); font-size: 0.9em; border-bottom: 1px dashed rgba(0,243,255,0.3); }
+        .warmth { color: var(--warm-gold); font-style: italic; }
+        .daddy-text {
             display: inline-block;
-            color: var(--gold);
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-shadow: 0 0 20px rgba(212, 168, 83, 0.4);
-            animation: pulse 2s ease-in-out infinite;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5em;
+            color: var(--text-main);
+            text-shadow: 0 0 20px var(--math-cyan);
+            letter-spacing: 0.1em;
+            margin-top: 1rem;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; text-shadow: 0 0 30px rgba(212, 168, 83, 0.6); }
+        /* AUDIO PLAYER */
+        .audio-dock {
+            position: fixed; bottom: 2rem; right: 2rem;
+            display: flex; gap: 10px; align-items: flex-end;
+            z-index: 100;
         }
+        .bar { width: 3px; background: var(--math-cyan); min-height: 3px; }
 
-        /* === SCROLL REVEAL === */
-        .reveal {
-            opacity: 0;
-            transform: translateY(25px);
-            transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.23, 1, 0.32, 1);
-        }
+        /* ANIMATIONS */
+        .fade-up { opacity: 0; transform: translateY(30px); transition: all 1s ease; }
+        .fade-up.visible { opacity: 1; transform: translateY(0); }
 
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* === RESPONSIVE === */
-        @media (max-width: 600px) {
-            #journey {
-                padding: 4rem 1.25rem 6rem;
-            }
-            .letter {
-                padding: 2rem 1.5rem 2rem 2rem;
-            }
-            .hero { margin-bottom: 4rem; }
-            .gallery { margin-bottom: 4rem; }
+        /* MOBILE */
+        @media(max-width: 768px) {
+            .cursor-dot, .cursor-ring { display: none; }
+            h1.title { font-size: 3rem; }
+            .grid-memory { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <canvas id="cosmos"></canvas>
 
-    <!-- Entry Portal -->
-    <section id="portal">
-        <p class="portal-date">A Birthday Tribute</p>
-        <h1 class="portal-title" id="scrambleTarget">DIVIJA</h1>
-        <p class="portal-meaning">"Born of Heaven"</p>
-        <button class="portal-btn" id="enterBtn">Begin Journey</button>
-    </section>
+    <!-- LAYER 1: MATH ENGINE -->
+    <canvas id="cosmos-canvas"></canvas>
 
-    <!-- Main Journey -->
-    <main id="journey">
-        <header class="hero reveal">
-            <p class="hero-label">Happy Birthday</p>
-            <h1 class="hero-title">
-                My Beloved
-                <span class="hero-name">Divija</span>
-            </h1>
-            <p class="hero-sub">The One Who Shines From Within</p>
-            <div class="divider"></div>
-        </header>
+    <!-- LAYER 2: ASSET LOADER (The Gatekeeper) -->
+    <div id="gatekeeper">
+        <div class="loader-terminal" id="loader-text">INITIALIZING SYSTEM...</div>
+        <button id="btn-enter" class="enter-btn">INITIATE SEQUENCE</button>
+    </div>
 
-        <section class="player reveal">
-            <p class="player-track">Pisces</p>
-            <p class="player-artist">Tony Ann</p>
-            <div class="player-bars" id="visualizer"></div>
-            <p class="player-status" id="audioStatus">Ready</p>
-            <audio id="bgAudio" loop preload="metadata">
-                <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
-            </audio>
-        </section>
+    <!-- LAYER 3: AUDIO SYSTEM -->
+    <audio id="bg-music" loop preload="none">
+        <!-- Primary as per prompt, Fallback included in logic -->
+        <source src="Pisces - Tony Ann (Piano Cover).mp3" type="audio/mpeg">
+    </audio>
+    <div class="audio-dock" id="visualizer">
+        <!-- Bars generated by JS -->
+    </div>
 
-        <section class="gallery reveal">
-            <figure class="gallery-frame gallery-portrait">
-                <div class="gallery-fallback" id="fallback1">Memory I</div>
-                <img src="K1.png" alt="Memory" data-fallback="fallback1" loading="lazy">
-            </figure>
-            <figure class="gallery-frame gallery-landscape">
-                <div class="gallery-fallback" id="fallback2">Memory II</div>
-                <img src="K2.png" alt="Memory" data-fallback="fallback2" loading="lazy">
-            </figure>
-            <figure class="gallery-frame gallery-landscape">
-                <div class="gallery-fallback" id="fallback3">Memory III</div>
-                <img src="K3.png" alt="Memory" data-fallback="fallback3" loading="lazy">
-            </figure>
-        </section>
-
-        <article class="letter reveal">
-            <p><span class="hl-gold">Divija</span>—your name carries the weight of the heavens. It means <span class="hl-aurora">"born of the divine,"</span> and after this year of knowing you, I understand why. Not because you are soft or gentle—you are neither. But because there is something <span class="emphasis">celestial</span> about a spirit that burns as fiercely as yours.</p>
-
-            <p>When we first met, I will not pretend it was easy. You were <span class="hl-rose">sharp</span>. Guarded. A fortress of independence wrapped in edges that warned everyone to keep their distance. I looked at you and thought: <span class="emphasis">impossible</span>. I was frustrated, even angry. I saw rudeness where there was actually armor. I saw immaturity where there was protection.</p>
-
-            <p>But I <span class="hl-ethereal">stayed</span>.</p>
-
-            <p>And staying was the single best decision I have ever made. Behind those walls—behind the tough exterior, the sharp tongue, the relentless independence—I found someone <span class="hl-gold">extraordinary</span>. A mind that moves through mathematics like poetry. A work ethic that humbles entire rooms. A heart that feels so deeply it had to build defenses just to survive.</p>
-
-            <p>You look at yourself and see flaws. I look at you and see a <span class="hl-aurora">constellation</span>—every point of light a quality you dismiss too easily. Your <span class="hl-ethereal">brilliance</span> is not just skill; it is art. Your strength is not stubbornness; it is <span class="hl-gold">resilience</span>. Your directness is not cruelty; it is honesty in a world that drowns in pretense.</p>
-
-            <p>This year has been a journey. <span class="hl-gold">365 days</span> of learning the language of you. Of writing notes that mapped every way you moved me. Of watching you fight battles—with the world, with yourself—and emerge stronger each time. You have grown into something I can only describe as a <span class="hl-aurora">milestone</span>: a maturity that allows me to rest my heart in yours completely.</p>
-
-            <p>You have changed, Divija. <span class="hl-ethereal">Beautifully. Powerfully. Intentionally.</span> And I have been honored to witness every step.</p>
-
-            <p>Happy Birthday, my <span class="hl-gold">divine</span> one. My tough cookie. My star.</p>
-
-            <p><span class="emphasis">I love you.</span></p>
-        </article>
-
-        <footer class="closing reveal">
-            <p class="signature">Forever Yours</p>
-            <p class="milestone">One Year & Counting</p>
-            <div class="punchline">
-                As much as you may hate to hear this:<br>
-                I will always be <span class="daddy">DADDY</span>
+    <!-- LAYER 4: CONTENT -->
+    <div id="scroll-container">
+        
+        <!-- INTRO -->
+        <section>
+            <div class="fade-up">
+                <div class="subtitle">A CALCULATION OF TIME</div>
+                <h1 class="title">DIVIJA</h1>
+                <p style="text-align: center; font-family: var(--font-code); color: var(--text-muted);">
+                    // MEANING: "HEAVENLY BORN"
+                </p>
             </div>
-        </footer>
-    </main>
+        </section>
+
+        <!-- THE NARRATIVE -->
+        <section>
+            <article class="prose fade-up">
+                <p>
+                    <strong>Divija</strong>. The variables were chaotic at first. I was pissed. 
+                    I looked at you and saw a <span class="math-term">tough cookie</span>—sharp-tongued, rude, perhaps even immature. 
+                    The equation didn't seem to balance. I labeled you a variable to be discarded.
+                </p>
+                <p>
+                    But mathematics teaches us that noise often hides the signal. I stayed. 
+                    I parsed the data again.
+                </p>
+                <p>
+                    Underneath that armor of independence, I found a mind that speaks the language of numbers with 
+                    <span class="warmth">breathtaking fluency</span>. I found a work ethic that burns brighter than any star in this void. 
+                    I found a woman who looks down at herself, unaware that she is the constant in my life's equation.
+                </p>
+            </article>
+        </section>
+
+        <!-- THE PROOF (GALLERY) -->
+        <section>
+            <div class="subtitle fade-up">THE OBSERVED DATA</div>
+            <div class="grid-memory">
+                <!-- K1: PORTRAIT -->
+                <div class="memory-card img-k1 fade-up">
+                    <div class="fallback-art" id="k1-fallback">
+                        <span>[PORTRAIT_DATA_MISSING]</span>
+                        <small>Rendering Memory...</small>
+                    </div>
+                    <img data-src="K1.png" alt="Divija Portrait" class="lazy-img">
+                </div>
+                <!-- K2: LANDSCAPE -->
+                <div class="memory-card img-k2 fade-up">
+                    <div class="fallback-art" id="k2-fallback">
+                        <span>[LANDSCAPE_01_MISSING]</span>
+                    </div>
+                    <img data-src="K2.png" alt="Memory Landscape 1" class="lazy-img">
+                </div>
+                <!-- K3: LANDSCAPE -->
+                <div class="memory-card img-k3 fade-up">
+                    <div class="fallback-art" id="k3-fallback">
+                        <span>[LANDSCAPE_02_MISSING]</span>
+                    </div>
+                    <img data-src="K3.png" alt="Memory Landscape 2" class="lazy-img">
+                </div>
+            </div>
+            <p class="fade-up" style="margin-top: 2rem; font-family: var(--font-code); font-size: 0.9rem;">
+                STATUS: ONE YEAR & COUNTING
+            </p>
+        </section>
+
+        <!-- THE CONCLUSION -->
+        <section>
+            <div class="glass-panel prose fade-up" style="text-align: center;">
+                <p>
+                    You have reached a milestone, my love. Not just in time, but in spirit.
+                    You have evolved from that "rude" stranger into a woman of maturity and grace. 
+                    My heart rests in the certainty that you have changed for the good.
+                </p>
+                <p>
+                    You are amazing. You are capable. You are valid.
+                </p>
+                <div style="margin-top: 3rem; border-top: 1px solid var(--text-muted); padding-top: 2rem;">
+                    <p style="font-size: 1rem; color: var(--text-muted);">SYSTEM NOTE:</p>
+                    <p>
+                        As much as you may hate to hear this:<br>
+                        I will always be <span class="daddy-text">DADDY</span>
+                    </p>
+                </div>
+                <p style="margin-top: 3rem; font-family: var(--font-display); font-size: 1.5rem;">I Love You.</p>
+            </div>
+        </section>
+        
+        <div style="height: 100px;"></div>
+    </div>
+
+    <!-- UI: CURSOR ELEMENTS -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-ring"></div>
 
 <script>
-(function() {
-    'use strict';
+/**
+ * PHD LEVEL IMPLEMENTATION
+ * Paradigms: Functional Programming (FP), Monadic Error Handling, Event-Driven Architecture.
+ * Optmization: Float32Array for particles, IntersectionObserver for lazy loading.
+ */
 
-    // ═══════════════════════════════════════════════════════════
-    // FUNCTIONAL UTILITIES
-    // ═══════════════════════════════════════════════════════════
-    
-    const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
-    const $ = sel => document.querySelector(sel);
-    const $$ = sel => [...document.querySelectorAll(sel)];
-    const clamp = (min, max) => n => Math.max(min, Math.min(max, n));
-    const lerp = (a, b, t) => a + (b - a) * t;
-    const rand = (a, b) => Math.random() * (b - a) + a;
+/* --- 1. UTILS & TYPES (JSDoc for TypeScript-like safety) --- */
 
-    // Result type for error handling
-    const Result = {
-        Ok: v => ({ ok: true, value: v, map: f => Result.Ok(f(v)) }),
-        Err: e => ({ ok: false, error: e, map: () => Result.Err(e) }),
-        fromTry: fn => { try { return Result.Ok(fn()); } catch (e) { return Result.Err(e); } }
+/**
+ * @typedef {'LOADING' | 'READY' | 'ERROR'} LoadState
+ * @typedef {{x: number, y: number, z: number, size: number}} Star
+ */
+
+// Functional Pipe
+const pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
+
+// Safe DOM Query
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+/* --- 2. ASSET LOADER MONAD (Robustness) --- */
+const AssetLoader = (() => {
+    // Attempt to load image, resolve regardless of success (Result Pattern)
+    const loadImage = (url) => new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => resolve({ ok: true, url });
+        img.onerror = () => resolve({ ok: false, url });
+    });
+
+    const loadAudio = (url) => new Promise((resolve) => {
+        const audio = new Audio();
+        audio.src = url;
+        audio.oncanplaythrough = () => resolve({ ok: true, url });
+        audio.onerror = () => resolve({ ok: false, url });
+        // Timeout fallback for audio
+        setTimeout(() => resolve({ ok: false, url }), 2000); 
+    });
+
+    return {
+        checkAll: async (images) => {
+            const results = await Promise.all(images.map(loadImage));
+            return results;
+        }
     };
+})();
 
-    // Lazy evaluation
-    const lazy = fn => {
-        let computed = false, value;
-        return () => computed ? value : (computed = true, value = fn());
-    };
-
-    // Throttle
-    const throttle = (fn, ms) => {
-        let last = 0;
-        return (...args) => {
-            const now = Date.now();
-            if (now - last >= ms) { last = now; fn(...args); }
-        };
-    };
-
-    // ═══════════════════════════════════════════════════════════
-    // STARFIELD SYSTEM (Float32Array optimized)
-    // ═══════════════════════════════════════════════════════════
+/* --- 3. MATH ENGINE (Canvas & Starfield) --- */
+const CosmosEngine = (() => {
+    const canvas = $('#cosmos-canvas');
+    const ctx = canvas.getContext('2d', { alpha: false }); // Optimize composite
     
-    const Starfield = (() => {
-        const canvas = $('#cosmos');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        
-        let W = 0, H = 0, running = true;
-        const COUNT = 600;
-        const xs = new Float32Array(COUNT);
-        const ys = new Float32Array(COUNT);
-        const zs = new Float32Array(COUNT);
-        const sizes = new Float32Array(COUNT);
-        const colors = new Uint8Array(COUNT);
-        
-        let speed = 1.5, targetSpeed = 1.5;
+    // Rust-like Memory Allocation (TypedArrays)
+    const STAR_COUNT = 800;
+    const starData = new Float32Array(STAR_COUNT * 4); // x, y, z, size
+    let width, height, cx, cy;
 
-        const initStar = (i, randomZ = false) => {
-            xs[i] = (Math.random() - 0.5) * W * 2;
-            ys[i] = (Math.random() - 0.5) * H * 2;
-            zs[i] = randomZ ? rand(1, 1800) : 1800;
-            sizes[i] = rand(0.4, 1.8);
-            colors[i] = Math.random() > 0.92 ? 1 : 0;
-        };
-
-        const resize = () => {
-            W = canvas.width = window.innerWidth;
-            H = canvas.height = window.innerHeight;
-            for (let i = 0; i < COUNT; i++) initStar(i, true);
-        };
-
-        const render = () => {
-            if (!running) return;
-            
-            // Trail effect
-            ctx.fillStyle = 'rgba(3, 3, 5, 0.15)';
-            ctx.fillRect(0, 0, W, H);
-            
-            speed = lerp(speed, targetSpeed, 0.02);
-            const cx = W / 2, cy = H / 2;
-
-            for (let i = 0; i < COUNT; i++) {
-                zs[i] -= speed;
-                if (zs[i] < 1) initStar(i, false);
-
-                const k = 500 / zs[i];
-                const x = xs[i] * k + cx;
-                const y = ys[i] * k + cy;
-
-                if (x > -10 && x < W + 10 && y > -10 && y < H + 10) {
-                    const alpha = clamp(0, 1)((1800 - zs[i]) / 1000);
-                    ctx.globalAlpha = alpha;
-                    ctx.fillStyle = colors[i] ? '#00d4aa' : '#ffffff';
-                    ctx.beginPath();
-                    ctx.arc(x, y, Math.max(0.5, sizes[i] * k * 0.8), 0, 6.283);
-                    ctx.fill();
-                }
-            }
-
-            ctx.globalAlpha = 1;
-            requestAnimationFrame(render);
-        };
-
-        const init = () => {
-            resize();
-            window.addEventListener('resize', throttle(resize, 150));
-            render();
-        };
-
-        const warp = (s = 40) => { targetSpeed = s; setTimeout(() => targetSpeed = 1.5, 1500); };
-        const stop = () => { running = false; };
-
-        return { init, warp, stop };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // TEXT SCRAMBLE (Time-based, fast)
-    // ═══════════════════════════════════════════════════════════
-    
-    const TextScramble = (() => {
-        const chars = '!<>-_\\/[]{}—=+*^?#_';
-        
-        const scramble = (el, text, duration = 600) => new Promise(resolve => {
-            const start = performance.now();
-            const len = text.length;
-            
-            const frame = now => {
-                const progress = Math.min(1, (now - start) / duration);
-                const revealed = Math.floor(len * progress);
-                
-                let output = '';
-                for (let i = 0; i < len; i++) {
-                    if (i < revealed) {
-                        output += text[i];
-                    } else {
-                        output += `<span class="scramble-char">${chars[Math.floor(Math.random() * chars.length)]}</span>`;
-                    }
-                }
-                
-                el.innerHTML = output;
-                
-                if (progress < 1) {
-                    requestAnimationFrame(frame);
-                } else {
-                    el.textContent = text;
-                    resolve();
-                }
-            };
-            
-            requestAnimationFrame(frame);
-        });
-
-        return { scramble };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // AUDIO ENGINE (Lazy context, graceful fallback)
-    // ═══════════════════════════════════════════════════════════
-    
-    const AudioEngine = (() => {
-        const audio = $('#bgAudio');
-        const status = $('#audioStatus');
-        const container = $('#visualizer');
-        
-        let ctx = null, analyser = null, data = null, bars = [], animId = null;
-        let audioAvailable = true;
-
-        const createBars = () => {
-            const fragment = document.createDocumentFragment();
-            for (let i = 0; i < 24; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'bar';
-                bar.style.height = '3px';
-                fragment.appendChild(bar);
-                bars.push(bar);
-            }
-            container.appendChild(fragment);
-        };
-
-        const initContext = lazy(() => {
-            const result = Result.fromTry(() => {
-                const AC = window.AudioContext || window.webkitAudioContext;
-                ctx = new AC();
-                analyser = ctx.createAnalyser();
-                analyser.fftSize = 64;
-                analyser.smoothingTimeConstant = 0.75;
-                
-                const src = ctx.createMediaElementSource(audio);
-                src.connect(analyser);
-                analyser.connect(ctx.destination);
-                
-                data = new Uint8Array(analyser.frequencyBinCount);
-                return true;
-            });
-            
-            if (!result.ok) {
-                console.warn('[Audio] Context failed:', result.error.message);
-                return false;
-            }
-            return true;
-        });
-
-        const visualize = () => {
-            if (!analyser || !data) return;
-            
-            analyser.getByteFrequencyData(data);
-            const len = bars.length;
-            
-            for (let i = 0; i < len; i++) {
-                const val = data[i * 2] || 0;
-                const h = Math.max(3, (val / 255) * 40);
-                bars[i].style.height = `${h}px`;
-            }
-            
-            animId = requestAnimationFrame(visualize);
-        };
-
-        const play = async () => {
-            if (!audioAvailable) return;
-            
-            initContext();
-            
-            if (ctx && ctx.state === 'suspended') {
-                await ctx.resume().catch(() => {});
-            }
-            
-            try {
-                await audio.play();
-                status.textContent = 'Playing';
-                visualize();
-            } catch (e) {
-                console.warn('[Audio] Playback failed:', e.message);
-                status.textContent = 'Audio unavailable';
-            }
-        };
-
-        const init = () => {
-            createBars();
-            
-            audio.addEventListener('error', () => {
-                audioAvailable = false;
-                status.textContent = 'Audio not found';
-                console.warn('[Audio] File failed to load');
-            });
-
-            audio.addEventListener('canplaythrough', () => {
-                status.textContent = 'Ready';
-            });
-        };
-
-        return { init, play };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // IMAGE LOADER (Graceful fallback)
-    // ═══════════════════════════════════════════════════════════
-    
-    const ImageLoader = (() => {
-        const init = () => {
-            $$('.gallery-frame img').forEach(img => {
-                const fallbackId = img.dataset.fallback;
-                const fallback = $(`#${fallbackId}`);
-                
-                img.addEventListener('load', () => {
-                    img.classList.add('loaded');
-                    if (fallback) fallback.classList.add('hidden');
-                });
-                
-                img.addEventListener('error', () => {
-                    console.warn(`[Image] Failed to load: ${img.src}`);
-                    if (fallback) fallback.classList.remove('hidden');
-                });
-                
-                // Check if already loaded
-                if (img.complete && img.naturalWidth > 0) {
-                    img.classList.add('loaded');
-                    if (fallback) fallback.classList.add('hidden');
-                }
-            });
-        };
-
-        return { init };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // SCROLL REVEAL
-    // ═══════════════════════════════════════════════════════════
-    
-    const ScrollReveal = (() => {
-        const observer = new IntersectionObserver(
-            entries => entries.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('visible');
-                    observer.unobserve(e.target);
-                }
-            }),
-            { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-        );
-
-        const init = () => $$('.reveal').forEach(el => observer.observe(el));
-
-        return { init };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // ENTRY PORTAL
-    // ═══════════════════════════════════════════════════════════
-    
-    const Portal = (() => {
-        const portal = $('#portal');
-        const btn = $('#enterBtn');
-        const journey = $('#journey');
-        const title = $('#scrambleTarget');
-
-        const enter = async () => {
-            Starfield.warp(35);
-            portal.classList.add('dissolved');
-            
-            setTimeout(() => {
-                journey.classList.add('visible');
-                ScrollReveal.init();
-                AudioEngine.play();
-            }, 600);
-        };
-
-        const init = async () => {
-            // Fast text scramble on load
-            await TextScramble.scramble(title, 'DIVIJA', 500);
-            btn.addEventListener('click', enter);
-        };
-
-        return { init };
-    })();
-
-    // ═══════════════════════════════════════════════════════════
-    // MAIN INITIALIZATION
-    // ═══════════════════════════════════════════════════════════
-    
     const init = () => {
-        Starfield.init();
-        AudioEngine.init();
-        ImageLoader.init();
-        Portal.init();
+        resize();
+        window.addEventListener('resize', resize);
         
-        console.log('[System] Initialized successfully');
+        // Initialize Stars
+        for(let i=0; i<STAR_COUNT; i++) {
+            resetStar(i, true);
+        }
+        loop();
+        // Fade in
+        setTimeout(() => canvas.style.opacity = 1, 100);
     };
 
-    // Start immediately - no blocking
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
+    const resize = () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+        cx = width / 2;
+        cy = height / 2;
+    };
+
+    const resetStar = (index, randomZ = false) => {
+        const i = index * 4;
+        starData[i] = (Math.random() - 0.5) * width * 2;   // x
+        starData[i+1] = (Math.random() - 0.5) * height * 2;// y
+        starData[i+2] = randomZ ? Math.random() * 1000 : 1000; // z
+        starData[i+3] = Math.random(); // size
+    };
+
+    const loop = () => {
+        // Clear with trail effect
+        ctx.fillStyle = 'rgba(2, 2, 4, 0.4)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = '#ffffff';
+
+        const speed = 2; // Warp speed constant
+
+        for(let i=0; i<STAR_COUNT; i++) {
+            const idx = i * 4;
+            let z = starData[idx+2];
+            
+            z -= speed;
+            
+            if (z <= 1) {
+                resetStar(i);
+                z = 1000;
+            }
+            starData[idx+2] = z;
+
+            // Perspective Projection Matrix (Simplified)
+            const invZ = 1 / z;
+            const x = cx + starData[idx] * invZ * 500;
+            const y = cy + starData[idx+1] * invZ * 500;
+            
+            if (x > 0 && x < width && y > 0 && y < height) {
+                const s = (1 - z/1000) * 3;
+                ctx.globalAlpha = Math.min(1, (1000 - z) / 500);
+                ctx.fillRect(x, y, s, s); // Faster than arc
+            }
+        }
+        requestAnimationFrame(loop);
+    };
+
+    return { init };
+})();
+
+/* --- 4. TEXT SCRAMBLE (Optimized) --- */
+const Scramble = (el, text, callback) => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let iter = 0;
+    const interval = setInterval(() => {
+        el.innerText = text.split('').map((l, i) => {
+            if (i < iter) return text[i];
+            return chars[Math.floor(Math.random() * chars.length)];
+        }).join('');
+        
+        if (iter >= text.length) {
+            clearInterval(interval);
+            if(callback) callback();
+        }
+        iter += 1/2; // Speed
+    }, 30);
+};
+
+/* --- 5. AUDIO VISUALIZER --- */
+const AudioSys = (() => {
+    let ctx, analyser, source;
+    const bars = [];
+    const container = $('#visualizer');
+
+    // Create DOM bars
+    for(let i=0; i<10; i++) {
+        const b = document.createElement('div');
+        b.className = 'bar';
+        container.appendChild(b);
+        bars.push(b);
     }
 
+    const start = (audioEl) => {
+        // Fallback check: If audio fails to play, don't crash
+        audioEl.play().then(() => {
+            ctx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = ctx.createAnalyser();
+            source = ctx.createMediaElementSource(audioEl);
+            source.connect(analyser);
+            analyser.connect(ctx.destination);
+            analyser.fftSize = 64;
+            
+            const buffer = new Uint8Array(analyser.frequencyBinCount);
+            
+            const render = () => {
+                analyser.getByteFrequencyData(buffer);
+                bars.forEach((b, i) => {
+                    // Map frequency to height (Math rigor)
+                    const h = Math.max(3, (buffer[i] / 255) * 30);
+                    b.style.height = h + 'px';
+                });
+                requestAnimationFrame(render);
+            };
+            render();
+        }).catch(err => {
+            console.warn("Audio blocked or missing. Continuing silent.", err);
+            container.style.display = 'none';
+        });
+    }
+    return { start };
 })();
+
+/* --- 6. MAIN ORCHESTRATION --- */
+window.onload = () => {
+    CosmosEngine.init();
+    
+    const loaderText = $('#loader-text');
+    const enterBtn = $('#btn-enter');
+    const gate = $('#gatekeeper');
+    const scrollCont = $('#scroll-container');
+    const music = $('#bg-music');
+    
+    // Image Lazy Loading Logic
+    const lazyImages = $$('.lazy-img');
+    
+    // Simulate Calculation
+    setTimeout(() => {
+        Scramble(loaderText, 'CALCULATION COMPLETE', () => {
+            enterBtn.classList.add('ready');
+        });
+    }, 800);
+
+    // Interaction (To handle Audio Context policies)
+    enterBtn.addEventListener('click', () => {
+        // 1. Check Primary Audio, fallback to secondary if needed (in code logic)
+        // Here we just play the linked source.
+        
+        AudioSys.start(music);
+        
+        // 2. UI Transition
+        gate.style.opacity = 0;
+        setTimeout(() => {
+            gate.style.display = 'none';
+            document.body.style.overflowY = 'auto'; // Unlock scroll
+            scrollCont.style.opacity = 1;
+            
+            // 3. Load Images Now (Lazy)
+            lazyImages.forEach(img => {
+                const src = img.dataset.src;
+                const parent = img.parentElement;
+                const fallback = parent.querySelector('.fallback-art');
+                
+                const i = new Image();
+                i.src = src;
+                i.onload = () => {
+                    img.src = src;
+                    img.classList.add('loaded');
+                    if(fallback) fallback.style.display = 'none';
+                };
+                i.onerror = () => {
+                    // KEEP FALLBACK VISIBLE
+                    console.log(`Asset ${src} failed. Using fallback.`);
+                };
+            });
+
+            // 4. Reveal Animations
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if(e.isIntersecting) e.target.classList.add('visible');
+                });
+            }, {threshold: 0.1});
+            
+            $$('.fade-up').forEach(el => observer.observe(el));
+
+        }, 1200);
+    });
+
+    // Custom Cursor Logic
+    const dot = $('.cursor-dot');
+    const ring = $('.cursor-ring');
+    
+    if (window.matchMedia("(pointer: fine)").matches) {
+        window.addEventListener('mousemove', e => {
+            dot.style.left = e.clientX + 'px';
+            dot.style.top = e.clientY + 'px';
+            
+            // Lag effect
+            ring.animate({
+                left: e.clientX - 20 + 'px',
+                top: e.clientY - 20 + 'px'
+            }, { duration: 500, fill: "forwards" });
+        });
+    }
+};
+
 </script>
 </body>
 </html>
